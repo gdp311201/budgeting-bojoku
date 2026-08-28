@@ -71,10 +71,10 @@
           <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
           <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
           <option value="💰 TABUNGAN/ INVESTASI">💰 TABUNGAN/ INVESTASI</option>
-          <option value="🥩 KEBUTUHAN POKOK">🥩 KEBUTUHAN POKOK</option>
+          <option value="🍚 KEBUTUHAN POKOK">🍚 KEBUTUHAN POKOK</option>
           <option value="🏠 TEMPAT TINGGAL">🏠 TEMPAT TINGGAL</option>
-          <option value="🛺 TRANSPORTASI">🛺 TRANSPORTASI</option>
-          <option value="⚕️ KESEHATAN">⚕️ KESEHATAN</option>
+          <option value="🚌 TRANSPORTASI">🚌 TRANSPORTASI</option>
+          <option value="🩺 KESEHATAN">🩺 KESEHATAN</option>
           <option value="💇 PERAWATAN DIRI">💇 PERAWATAN DIRI</option>
           <option value="📚 PENGEMBANGAN DIRI">📚 PENGEMBANGAN DIRI</option>
           <option value="🎉 GAYA HIDUP/ HIBURAN">🎉 GAYA HIDUP/ HIBURAN</option>
@@ -130,14 +130,14 @@
       clickOpens: true
     });
 
-    // Data Helper Sub Kategori
+    // Data Helper Sub Kategori (Sudah Diselaraskan dengan Emoji Kategori)
     const SUB_DATA = {
       "💸 PINDAH DANA": ["SEABANK", "BCA", "MANDIRI", "DANA", "CASH"],
       "💵 PEMASUKAN": ["Gaji / Salary", "Bonus & Komisi", "Dividen Saham", "Pendapatan Lain-Lain", "Penjualan Aset / Properti", "Hibah / Hadiah Uang", "THR / Tunjangan Tahunan"],
-      "🥩 KEBUTUHAN POKOK": ["Makanan", "Minuman", "Snack / Cemilan", "Kebutuhan Rumah Tangga", "Kebutuhan Dapur"],
+      "🍚 KEBUTUHAN POKOK": ["Makanan", "Minuman", "Snack / Cemilan", "Kebutuhan Rumah Tangga", "Kebutuhan Dapur"],
       "🏠 TEMPAT TINGGAL": ["Sewa / KPR Rumah", "Maintenance Rumah", "Listrik", "Air", "Internet"],
-      "🛺 TRANSPORTASI": ["BBM", "Ojek Online", "Transportasi Umum", "Maintenance Kendaraan"],
-      "⚕️ KESEHATAN": ["Vitamin & Obat", "Asuransi / BPJS", "Periksa ke Dokter"],
+      "🚌 TRANSPORTASI": ["BBM", "Ojek Online", "Transportasi Umum", "Maintenance Kendaraan"],
+      "🩺 KESEHATAN": ["Vitamin & Obat", "Asuransi / BPJS", "Periksa ke Dokter"],
       "💇 PERAWATAN DIRI": ["Skincare", "Barbershop / Salon", "Bodycare", "Gym", "IPL", "Pilates", "Treatment"],
       "📚 PENGEMBANGAN DIRI": ["Pendidikan / Pelatihan", "Buku", "Kursus", "Aplikasi Belajar", "Webinar"],
       "💰 TABUNGAN/ INVESTASI": ["Safety Money", "Deposito Bank", "Reksadana", "Arisan", "Logam Mulia", "Saham"],
@@ -191,7 +191,6 @@
       };
 
       try {
-        // Menggunakan mode no-cors untuk kompatibilitas pengiriman lintas domain (Cross-Origin) ke Google Apps Script
         await fetch(GAS_URL, {
           method: 'POST',
           mode: 'no-cors',
