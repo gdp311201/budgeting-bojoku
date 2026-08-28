@@ -83,6 +83,15 @@
       font-style: italic;
       font-weight: 400;
     }
+
+    /* Animation Smooth Pop Modal */
+    @keyframes popIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
@@ -191,6 +200,26 @@
     </div>
   </div>
 
+  <!-- Custom Cute Notification Modal (Pastel Glassmorphism 4px Blur) -->
+  <div id="cuteModal" class="fixed inset-0 bg-pink-950/20 backdrop-blur-[4px] flex items-center justify-center p-4 z-50 hidden transition-opacity duration-200">
+    <div class="bg-white/80 border border-white/80 backdrop-blur-md rounded-3xl p-5 max-w-xs w-full text-center shadow-xl animate-pop relative overflow-hidden">
+      
+      <!-- Icon Emoji Bubble -->
+      <div id="modalIconBg" class="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl shadow-inner bg-pink-100 border border-pink-200">
+        <span id="modalIcon">🐘</span>
+      </div>
+
+      <!-- Title & Message -->
+      <h3 id="modalTitle" class="text-sm font-bold text-pink-950 mb-1">Berhasil!</h3>
+      <p id="modalMessage" class="text-xs text-pink-800/80 font-medium mb-4 leading-relaxed">Transaksi berhasil dicatat ke Google Sheets 💕</p>
+
+      <!-- Action Button -->
+      <button onclick="closeCuteModal()" id="modalBtn" class="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition duration-150 border border-pink-200/60">
+        Oke, Makasih! 🐘
+      </button>
+    </div>
+  </div>
+
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxKE6HQJGUPhK8yfcSjRF5LRVbsEhXMn9iuUrZtu-8oT842UohdGdeKtORGhdYBL6Pq8g/exec";
 
@@ -216,7 +245,37 @@
       "⚠️ LAIN-LAIN": ["Admin Bank", "Pengeluaran Tak Terduga", "Bantu Keluarga", "Barang Rusak", "Parkir"]
     };
 
-    // Fungsi Format Input ke Rupiah
+    // Fungsi Custom Modal Notifikasi Cute
+    function showCuteModal(isSuccess, title, message) {
+      const modal = document.getElementById('cuteModal');
+      const modalIcon = document.getElementById('modalIcon');
+      const modalIconBg = document.getElementById('modalIconBg');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalMessage = document.getElementById('modalMessage');
+      const modalBtn = document.getElementById('modalBtn');
+
+      if (isSuccess) {
+        modalIcon.innerText = "🐘💕";
+        modalIconBg.className = "w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center text-2xl shadow-inner bg-pink-100/80 border border-pink-200/80";
+        modalTitle.className = "text-sm font-bold text-pink-950 mb-1";
+        modalBtn.className = "w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition duration-150 border border-pink-200/60";
+      } else {
+        modalIcon.innerText = "🐘💔";
+        modalIconBg.className = "w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center text-2xl shadow-inner bg-rose-100/80 border border-rose-200/80";
+        modalTitle.className = "text-sm font-bold text-rose-950 mb-1";
+        modalBtn.className = "w-full bg-gradient-to-r from-rose-400 to-red-400 hover:from-rose-500 hover:to-red-500 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition duration-150 border border-rose-200/60";
+      }
+
+      modalTitle.innerText = title;
+      modalMessage.innerText = message;
+      modal.classList.remove('hidden');
+    }
+
+    function closeCuteModal() {
+      document.getElementById('cuteModal').classList.add('hidden');
+    }
+
+    // Format Input Rupiah
     function formatRupiahInput(el) {
       let value = el.value.replace(/[^0-9]/g, '');
       if (value === '') {
@@ -258,11 +317,10 @@
       btn.disabled = true;
       btn.innerHTML = '<span>Memproses...</span> 🐘';
 
-      // Mengambil angka murni (menghapus "Rp " dan titik ".")
       const rawNominal = document.getElementById('nominal').value.replace(/[^0-9]/g, '');
 
       if (!rawNominal || parseInt(rawNominal) <= 0) {
-        alert("Silakan masukkan nominal transaksi yang valid!");
+        showCuteModal(false, "Opps!", "Silakan masukkan nominal transaksi yang valid dulu ya! 🐘");
         btn.disabled = false;
         btn.innerHTML = '<span>Simpan Transaksi</span> 🐘';
         return;
@@ -272,7 +330,7 @@
         kolomA: document.getElementById('tanggal').value,
         kolomB: document.getElementById('kategori').value,
         kolomC: document.getElementById('subKategori').value,
-        kolomD: rawNominal, // Mengirim angka murni ke Google Sheets
+        kolomD: rawNominal,
         kolomE: document.getElementById('akun').value
       };
 
@@ -286,7 +344,8 @@
           body: JSON.stringify(payload)
         });
 
-        alert("✅ Transaksi Berhasil Dicatat ke Google Sheets!");
+        // Notifikasi Sukses Cute
+        showCuteModal(true, "Yey, Berhasil!", "Transaksi kamu berhasil dicatat ke Google Sheets! 💕");
         
         document.getElementById('nominal').value = '';
         document.getElementById('kategori').selectedIndex = 0;
@@ -298,7 +357,8 @@
         handleCategoryChange();
 
       } catch (err) {
-        alert("❌ Gagal mencatat: " + err.message);
+        // Notifikasi Gagal Cute
+        showCuteModal(false, "Gagal Mencatat!", "Terjadi kesalahan: " + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<span>Simpan Transaksi</span> 🐘';
