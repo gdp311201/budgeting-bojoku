@@ -3,47 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Budgeting - Input Transaksi</title>
+  <title>Budgeting - Input Transaksi Cute Elephant</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Flatpickr CSS (Dark Theme Style) -->
+  <!-- Flatpickr CSS & Theme Light/Pink -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
   
   <!-- Flatpickr JS -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
   <style>
-    body { background-color: #0b0f19; color: #e5e7eb; font-family: sans-serif; }
+    body { 
+      background-color: #f7d6e0; 
+      background-image: radial-gradient(#f2b5d4 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: #4a3e3d; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    }
     
-    /* Penyesuaian Custom Style Kalender Flatpickr */
+    /* Penyesuaian Custom Style Kalender Flatpickr Tema Soft Pink */
     .flatpickr-calendar {
-      background: #111827 !important;
-      border: 1px solid #374151 !important;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+      background: #fff0f5 !important;
+      border: 2px solid #f2b5d4 !important;
+      box-shadow: 0 10px 25px -5px rgba(235, 133, 169, 0.3) !important;
+      border-radius: 16px !important;
+      color: #5c3d46 !important;
     }
     .flatpickr-day.selected {
-      background: #2563eb !important;
-      border-color: #2563eb !important;
+      background: #f08080 !important;
+      border-color: #f08080 !important;
+      color: white !important;
     }
     .flatpickr-day:hover {
-      background: #1f2937 !important;
+      background: #fbe4e8 !important;
+    }
+
+    /* Glassmorphism Soft Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 8px 32px 0 rgba(220, 150, 170, 0.25);
+    }
+
+    .custom-input {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1.5px solid #f2b5d4;
+      color: #5c3d46;
+      transition: all 0.2s ease;
+    }
+
+    .custom-input:focus {
+      background: #ffffff;
+      border-color: #f08080;
+      box-shadow: 0 0 0 3px rgba(240, 128, 128, 0.2);
     }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
-  <div class="w-full max-w-md bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-2xl">
+  <div class="w-full max-w-md glass-card rounded-3xl p-6 relative overflow-hidden">
     
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-800">
-      <div>
-        <h1 class="text-xl font-bold text-white tracking-wide">INPUT TRANSAKSI</h1>
-        <p class="text-xs text-gray-400 mt-0.5">Budgeting Master Sync</p>
+    <!-- Elemen Dekorasi Kartun Gajah -->
+    <div class="text-center mb-2">
+      <div class="inline-flex items-center justify-center bg-pink-100 p-3 rounded-full border-2 border-pink-200 shadow-sm">
+        <span class="text-4xl">🐘</span>
+        <span class="text-xs font-bold text-pink-600 bg-white px-2 py-0.5 rounded-full shadow-inner ml-1">🚩 Pinky Parade</span>
       </div>
-      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-950 text-emerald-400 border border-emerald-800">
+    </div>
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-5 pb-3 border-b border-pink-200/80">
+      <div>
+        <h1 class="text-xl font-extrabold text-pink-900 tracking-wide">INPUT TRANSAKSI</h1>
+        <p class="text-xs text-pink-600 font-medium">Budgeting Master Sync 🐘💕</p>
+      </div>
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-300 shadow-sm">
         ● Live Sync
       </span>
     </div>
@@ -53,11 +91,11 @@
       
       <!-- Tanggal (Dynamic Flatpickr Calendar Input) -->
       <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Tanggal</label>
+        <label class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Tanggal</label>
         <div class="relative">
           <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required 
-            class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm cursor-pointer">
-          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+            class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm cursor-pointer font-medium">
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400">
             📅
           </div>
         </div>
@@ -65,8 +103,8 @@
 
       <!-- Kategori -->
       <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Kategori</label>
-        <select id="kategori" onchange="handleCategoryChange()" required class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm">
+        <label class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Kategori</label>
+        <select id="kategori" onchange="handleCategoryChange()" required class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm font-medium">
           <option value="" disabled selected>-- Pilih Kategori --</option>
           <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
           <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
@@ -85,22 +123,22 @@
 
       <!-- Sub Kategori -->
       <div>
-        <label id="lblSubKategori" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Sub Kategori</label>
-        <select id="subKategori" required class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm">
+        <label id="lblSubKategori" class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Sub Kategori</label>
+        <select id="subKategori" required class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm font-medium">
           <option value="" disabled selected>-- Pilih Kategori Dulu --</option>
         </select>
       </div>
 
       <!-- Nominal -->
       <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Nominal (Rp)</label>
-        <input type="number" id="nominal" placeholder="0" min="1" required class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm">
+        <label class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Nominal (Rp)</label>
+        <input type="number" id="nominal" placeholder="0" min="1" required class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm font-medium">
       </div>
 
       <!-- Akun Bank -->
       <div>
-        <label id="lblAkun" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Akun Bank</label>
-        <select id="akun" required class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm">
+        <label id="lblAkun" class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Akun Bank</label>
+        <select id="akun" required class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm font-medium">
           <option value="" disabled selected>-- Pilih Akun --</option>
           <option value="SEABANK">SEABANK</option>
           <option value="BCA">BCA</option>
@@ -111,26 +149,31 @@
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" id="btnSubmit" class="w-full mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-200 text-sm flex justify-center items-center">
-        Simpan Transaksi
+      <button type="submit" id="btnSubmit" class="w-full mt-3 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold py-3 px-4 rounded-2xl shadow-md hover:shadow-lg transition duration-200 text-sm flex justify-center items-center gap-2 border border-pink-300">
+        <span>Simpan Transaksi</span> 🐘
       </button>
 
     </form>
+    
+    <!-- Footer Lucu -->
+    <div class="mt-4 text-center text-xs text-pink-500 font-semibold">
+      <span>🐘 🐘 🐘 Kirab Gajah Kecil Siap Catat Keuangan 🚩</span>
+    </div>
   </div>
 
   <script>
     // URL Deployment Web App Google Apps Script Anda
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxKE6HQJGUPhK8yfcSjRF5LRVbsEhXMn9iuUrZtu-8oT842UohdGdeKtORGhdYBL6Pq8g/exec";
 
-    // Inisialisasi Datepicker Flatpickr
-    flatpickr("#tanggal", {
+    // Inisialisasi Datepicker Flatpickr dan simpan instance-nya
+    const fpInstance = flatpickr("#tanggal", {
       dateFormat: "Y-m-d",
       defaultDate: "today",
       allowInput: true,
       clickOpens: true
     });
 
-    // Data Helper Sub Kategori (Sudah Diselaraskan dengan Emoji Kategori)
+    // Data Helper Sub Kategori
     const SUB_DATA = {
       "💸 PINDAH DANA": ["SEABANK", "BCA", "MANDIRI", "DANA", "CASH"],
       "💵 PEMASUKAN": ["Gaji / Salary", "Bonus & Komisi", "Dividen Saham", "Pendapatan Lain-Lain", "Penjualan Aset / Properti", "Hibah / Hadiah Uang", "THR / Tunjangan Tahunan"],
@@ -179,7 +222,7 @@
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
       btn.disabled = true;
-      btn.innerText = "Memproses...";
+      btn.innerHTML = '<span>Memproses...</span> 🐘';
 
       // Payload dipetakan berurutan ke Kolom A - E di Sheet "TRANSAKSI"
       const payload = {
@@ -202,18 +245,22 @@
 
         alert("✅ Transaksi Berhasil Dicatat ke Google Sheets!");
         
-        // Reset Input Form
+        // Reset Input Form & Kembalikan Tanggal ke Hari Ini
         document.getElementById('nominal').value = '';
         document.getElementById('kategori').selectedIndex = 0;
         document.getElementById('subKategori').innerHTML = '<option value="" disabled selected>-- Pilih Kategori Dulu --</option>';
         document.getElementById('akun').selectedIndex = 0;
+        
+        // Reset Tanggal Flatpickr ke "today"
+        fpInstance.setDate("today");
+        
         handleCategoryChange();
 
       } catch (err) {
         alert("❌ Gagal mencatat: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerText = "Simpan Transaksi";
+        btn.innerHTML = '<span>Simpan Transaksi</span> 🐘';
       }
     }
   </script>
