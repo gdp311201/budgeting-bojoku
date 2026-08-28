@@ -25,12 +25,10 @@
 
   <style>
     body { 
-      /* Gradient Background + Watermark Gajah Lucu Seamless Pattern */
+      /* Background Gradient + Watermark Gajah Seamless Pattern */
       background-color: #d8b0c0;
       background-image: 
-        /* Overlay Pattern Watermark Gajah Pink Soft Transparan */
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.18'%3E%3Cpath d='M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z M13 30 c0-2.8 2.2-5 5-5 h1 v8 h-1 c-2.8 0-5-2.2-5-5 z M25 18 c2.8 0 5 2.2 5 5 s-2.2 5-5 5 s-5-2.2-5-5 s2.2-5 5-5 z'/%3E%3Ccircle cx='27' cy='15' r='1.5' fill='%23d8b0c0' fill-opacity='0.5'/%3E%3Cpath d='M75 58 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C53.2 62.4 50 65.8 50 70 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C73.8 75.1 75 71.7 75 68 v-10 z M53 70 c0-2.8 2.2-5 5-5 h1 v8 h-1 c-2.8 0-5-2.2-5-5 z M65 58 c2.8 0 5 2.2 5 5 s-2.2 5-5 5 s-5-2.2-5-5 s2.2-5 5-5 z'/%3E%3Ccircle cx='67' cy='55' r='1.5' fill='%23d8b0c0' fill-opacity='0.5'/%3E%3C/g%3E%3C/svg%3E"),
-        /* Linear Gradient Halus */
         linear-gradient(135deg, #8a96a8 0%, #ba9eb1 50%, #e3b9ca 100%);
       background-attachment: fixed;
       color: #4a3e47; 
@@ -50,56 +48,35 @@
       border-color: #c88ea7 !important;
       color: white !important;
     }
-    .flatpickr-day:hover {
-      background: #f0d6e2 !important;
-    }
 
     .glass-card {
-      background: rgba(255, 255, 255, 0.48);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.52);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.75);
       box-shadow: 0 12px 35px rgba(70, 60, 80, 0.15);
     }
 
+    .glass-mini {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+    }
+
     .custom-input {
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.75);
       border: 1px solid rgba(220, 180, 200, 0.7);
       color: #52404d;
       transition: all 0.2s ease;
     }
 
     .custom-input:focus {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       border-color: #c88ea7;
       box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.2);
     }
 
-    select.custom-input:invalid {
-      color: rgba(92, 67, 83, 0.45);
-      font-style: italic;
-      font-weight: 400;
-    }
-
-    select option[disabled] {
-      color: rgba(92, 67, 83, 0.45);
-      font-style: italic;
-    }
-
-    select option:not([disabled]) {
-      color: #52404d;
-      font-style: normal;
-      font-weight: 500;
-      background: #fdf8fa;
-    }
-
-    .custom-input::placeholder {
-      color: rgba(92, 67, 83, 0.45);
-      font-style: italic;
-      font-weight: 400;
-    }
-
-    /* Animation Pop Modal Cute */
+    /* Animation Pop Modal & Splash Screen */
     @keyframes popIn {
       0% { transform: scale(0.85); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
@@ -107,125 +84,261 @@
     .animate-pop {
       animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255,255,255,0.6)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(255,182,193,0.9)); }
+    }
+    .animate-glow-elephant {
+      animation: pulseGlow 1.8s ease-in-out infinite;
+    }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="flex flex-col items-center justify-center min-h-screen p-3 sm:p-4">
 
-  <div class="w-full max-w-md glass-card rounded-3xl p-6 relative overflow-hidden">
+  <!-- ==================== SPLASH SCREEN ANIMATION ==================== -->
+  <div id="splashScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#ca9bb2] transition-all duration-700 ease-in-out">
+    <!-- Motif Watermark Overlay -->
+    <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Cg fill=\'%23ffffff\'%3E%3Cpath d=\'M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z\'/%3E%3C/g%3E%3C/svg%3E');"></div>
+    
+    <div class="relative z-10 text-center px-4">
+      <div class="animate-glow-elephant inline-block mb-4">
+        <img src="https://i.ibb.co/dJDL0bzv/Untitled-design.png" alt="Elephant Logo" class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl shadow-2xl border-4 border-white/80">
+      </div>
+      <h2 class="text-white font-bold text-lg sm:text-xl tracking-wide">Budgeting Master Sync 🐘💕</h2>
+      <p class="text-pink-100/90 text-xs font-medium mt-1.5 animate-pulse">Menyiapkan Keuangan Cantikmu...</p>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN CONTAINER ==================== -->
+  <div class="w-full max-w-md glass-card rounded-3xl p-5 sm:p-6 relative overflow-hidden my-auto">
     
     <!-- Header Badge -->
     <div class="text-center mb-3">
       <div class="inline-flex items-center justify-center bg-white/60 px-3.5 py-1.5 rounded-full border border-pink-200/70 shadow-sm backdrop-blur-sm">
         <span class="text-2xl mr-1.5">🐘</span>
-        <span class="text-xs font-semibold text-pink-900/80 tracking-wide">💕 With Love, Julyo Sechar</span>
+        <span class="text-xs font-semibold text-pink-900/80 tracking-wide">With Love, Julyo Sechar 💕</span>
       </div>
     </div>
 
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-5 pb-3 border-b border-pink-200/50">
-      <div>
-        <h1 class="text-lg font-bold text-pink-950/80 tracking-wide">INPUT TRANSAKSI</h1>
-        <p class="text-xs text-pink-800/60 font-medium">Budgeting Master Sync 🐘💕</p>
-      </div>
-      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-pink-100/70 text-pink-800 border border-pink-200/70 shadow-sm">
-        ● Live Sync
-      </span>
+    <!-- Navigation Tab Switcher -->
+    <div class="grid grid-cols-2 gap-1.5 p-1 bg-white/40 rounded-2xl border border-pink-200/60 mb-5 shadow-inner">
+      <button id="tabInputBtn" onclick="switchTab('input')" class="py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm">
+        📝 Form Input
+      </button>
+      <button id="tabDashBtn" onclick="switchTab('dashboard')" class="py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200">
+        📊 Live Dashboard
+      </button>
     </div>
 
-    <!-- Form -->
-    <form id="txForm" onsubmit="handleSubmit(event)" class="space-y-4">
+    <!-- ==================== TAB 1: FORM INPUT ==================== -->
+    <div id="viewInput" class="block transition-all duration-300">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-pink-200/50">
+        <div>
+          <h1 class="text-base font-bold text-pink-950/80 tracking-wide">INPUT TRANSAKSI</h1>
+          <p class="text-[11px] text-pink-800/60 font-medium">Catat pengeluaran & pemasukan 🐘</p>
+        </div>
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium bg-pink-100/80 text-pink-800 border border-pink-200 shadow-sm">
+          ● Auto Sync
+        </span>
+      </div>
+
+      <form id="txForm" onsubmit="handleSubmit(event)" class="space-y-3.5">
+        <!-- Tanggal -->
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Tanggal</label>
+          <div class="relative">
+            <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required 
+              class="w-full custom-input rounded-xl px-3.5 py-2 text-xs font-medium cursor-pointer">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400">
+              📅
+            </div>
+          </div>
+        </div>
+
+        <!-- Kategori -->
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Kategori</label>
+          <select id="kategori" onchange="handleCategoryChange()" required class="w-full custom-input rounded-xl px-3.5 py-2 text-xs">
+            <option value="" disabled selected>-- Pilih Kategori --</option>
+            <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
+            <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
+            <option value="💰 TABUNGAN/ INVESTASI">💰 TABUNGAN/ INVESTASI</option>
+            <option value="🍚 KEBUTUHAN POKOK">🍚 KEBUTUHAN POKOK</option>
+            <option value="🏠 TEMPAT TINGGAL">🏠 TEMPAT TINGGAL</option>
+            <option value="🚌 TRANSPORTASI">🚌 TRANSPORTASI</option>
+            <option value="🩺 KESEHATAN">🩺 KESEHATAN</option>
+            <option value="💇 PERAWATAN DIRI">💇 PERAWATAN DIRI</option>
+            <option value="📚 PENGEMBANGAN DIRI">📚 PENGEMBANGAN DIRI</option>
+            <option value="🎉 GAYA HIDUP/ HIBURAN">🎉 GAYA HIDUP/ HIBURAN</option>
+            <option value="💳 HUTANG / CICILAN">💳 HUTANG / CICILAN</option>
+            <option value="⚠️ LAIN-LAIN">⚠️ LAIN-LAIN</option>
+          </select>
+        </div>
+
+        <!-- Sub Kategori -->
+        <div>
+          <label id="lblSubKategori" class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Sub Kategori</label>
+          <select id="subKategori" required class="w-full custom-input rounded-xl px-3.5 py-2 text-xs">
+            <option value="" disabled selected>-- Pilih Kategori Dulu --</option>
+          </select>
+        </div>
+
+        <!-- Nominal -->
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Nominal (Rp)</label>
+          <input type="text" id="nominal" placeholder="Rp 0" required onkeyup="formatRupiahInput(this)" class="w-full custom-input rounded-xl px-3.5 py-2 text-xs font-medium">
+        </div>
+
+        <!-- Akun Bank -->
+        <div>
+          <label id="lblAkun" class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Akun Bank</label>
+          <select id="akun" required class="w-full custom-input rounded-xl px-3.5 py-2 text-xs">
+            <option value="" disabled selected>-- Pilih Akun --</option>
+            <option value="SEABANK">SEABANK</option>
+            <option value="BCA">BCA</option>
+            <option value="MANDIRI">MANDIRI</option>
+            <option value="DANA">DANA</option>
+            <option value="CASH">CASH</option>
+          </select>
+        </div>
+
+        <!-- Tombol Simpan -->
+        <button type="submit" id="btnSubmit" class="w-full mt-2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2.5 px-3 rounded-xl shadow-sm hover:shadow-md transition duration-200 text-xs sm:text-sm flex justify-center items-center gap-1.5 border border-pink-200/50">
+          <span>Simpan Transaksi</span> 🐘
+        </button>
+      </form>
+    </div>
+
+    <!-- ==================== TAB 2: LIVE DASHBOARD ==================== -->
+    <div id="viewDashboard" class="hidden transition-all duration-300">
       
-      <!-- Tanggal -->
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Tanggal</label>
-        <div class="relative">
-          <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required 
-            class="w-full custom-input rounded-xl px-3.5 py-2 text-sm cursor-pointer font-medium">
-          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400/80">
-            📅
+      <!-- Motivational Bar -->
+      <div class="glass-mini rounded-2xl p-3 mb-4 text-center border border-pink-200/60 shadow-sm">
+        <p class="text-[11px] italic font-medium text-pink-950/80 leading-relaxed">
+          "Masa depan cerah dimulai dari konsistensi mencatat pengeluaran sekecil apapun hari ini." 💕
+        </p>
+      </div>
+
+      <!-- Hero Card Total Aset -->
+      <div class="bg-gradient-to-br from-pink-500/80 to-rose-500/80 rounded-2xl p-4 text-white shadow-md mb-4 border border-white/40">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-pink-100">Total Aset Bersih</span>
+        <div class="text-2xl font-black tracking-tight mt-0.5">Rp 40.033.367</div>
+        <p class="text-[10px] text-pink-100/90 mt-1">Status: Finansial Aman & Terjaga 🌸</p>
+      </div>
+
+      <!-- Grid Ringkasan Rekening Bank -->
+      <div class="mb-4">
+        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Kas & Bank</h3>
+        <div class="grid grid-cols-3 gap-2">
+          <div class="glass-mini p-2 rounded-xl text-center">
+            <span class="block text-[9px] font-bold text-pink-900/60">SEABANK</span>
+            <span class="text-xs font-bold text-pink-950">4.67M</span>
+          </div>
+          <div class="glass-mini p-2 rounded-xl text-center">
+            <span class="block text-[9px] font-bold text-pink-900/60">BCA</span>
+            <span class="text-xs font-bold text-pink-950">20k</span>
+          </div>
+          <div class="glass-mini p-2 rounded-xl text-center">
+            <span class="block text-[9px] font-bold text-pink-900/60">MANDIRI</span>
+            <span class="text-xs font-bold text-pink-950">13.01M</span>
           </div>
         </div>
       </div>
 
-      <!-- Kategori -->
+      <!-- Cash Flow & Kategori Utama -->
+      <div class="mb-4">
+        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Cash Flow Bulan Ini</h3>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="bg-emerald-500/15 border border-emerald-300/60 p-2.5 rounded-xl">
+            <span class="block text-[10px] font-bold text-emerald-900">💵 PEMASUKAN</span>
+            <div class="flex items-baseline justify-between mt-0.5">
+              <span class="text-xs font-bold text-emerald-950">Rp 23.06M</span>
+              <span class="text-[9px] font-bold text-emerald-700">524%</span>
+            </div>
+          </div>
+          <div class="bg-rose-500/15 border border-rose-300/60 p-2.5 rounded-xl">
+            <span class="block text-[10px] font-bold text-rose-900">🍚 KEBUTUHAN POKOK</span>
+            <div class="flex items-baseline justify-between mt-0.5">
+              <span class="text-xs font-bold text-rose-950">Rp 1.35M</span>
+              <span class="text-[9px] font-bold text-rose-700">136%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Bar Top 5 Pengeluaran -->
       <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Kategori</label>
-        <select id="kategori" onchange="handleCategoryChange()" required class="w-full custom-input rounded-xl px-3.5 py-2 text-sm">
-          <option value="" disabled selected>-- Pilih Kategori --</option>
-          <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
-          <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
-          <option value="💰 TABUNGAN/ INVESTASI">💰 TABUNGAN/ INVESTASI</option>
-          <option value="🍚 KEBUTUHAN POKOK">🍚 KEBUTUHAN POKOK</option>
-          <option value="🏠 TEMPAT TINGGAL">🏠 TEMPAT TINGGAL</option>
-          <option value="🚌 TRANSPORTASI">🚌 TRANSPORTASI</option>
-          <option value="🩺 KESEHATAN">🩺 KESEHATAN</option>
-          <option value="💇 PERAWATAN DIRI">💇 PERAWATAN DIRI</option>
-          <option value="📚 PENGEMBANGAN DIRI">📚 PENGEMBANGAN DIRI</option>
-          <option value="🎉 GAYA HIDUP/ HIBURAN">🎉 GAYA HIDUP/ HIBURAN</option>
-          <option value="💳 HUTANG / CICILAN">💳 HUTANG / CICILAN</option>
-          <option value="⚠️ LAIN-LAIN">⚠️ LAIN-LAIN</option>
-        </select>
+        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Top 5 Pengeluaran (%)</h3>
+        <div class="space-y-2.5 glass-mini p-3 rounded-2xl border border-pink-200/60">
+          
+          <!-- Item 1 -->
+          <div>
+            <div class="flex justify-between text-[11px] font-medium mb-1">
+              <span class="text-pink-950">🍚 Kebutuhan Pokok</span>
+              <span class="font-bold text-pink-900">32% (Rp 1.35M)</span>
+            </div>
+            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
+              <div class="bg-pink-500 h-full rounded-full" style="width: 32%"></div>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div>
+            <div class="flex justify-between text-[11px] font-medium mb-1">
+              <span class="text-pink-950">🎉 Gaya Hidup / Hiburan</span>
+              <span class="font-bold text-pink-900">20% (Rp 836k)</span>
+            </div>
+            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
+              <div class="bg-pink-400 h-full rounded-full" style="width: 20%"></div>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div>
+            <div class="flex justify-between text-[11px] font-medium mb-1">
+              <span class="text-pink-950">🏠 Tempat Tinggal</span>
+              <span class="font-bold text-pink-900">16% (Rp 661k)</span>
+            </div>
+            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
+              <div class="bg-rose-400 h-full rounded-full" style="width: 16%"></div>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div>
+            <div class="flex justify-between text-[11px] font-medium mb-1">
+              <span class="text-pink-950">💳 Hutang / Cicilan</span>
+              <span class="font-bold text-pink-900">12% (Rp 500k)</span>
+            </div>
+            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
+              <div class="bg-purple-400 h-full rounded-full" style="width: 12%"></div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <!-- Sub Kategori -->
-      <div>
-        <label id="lblSubKategori" class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Sub Kategori</label>
-        <select id="subKategori" required class="w-full custom-input rounded-xl px-3.5 py-2 text-sm">
-          <option value="" disabled selected>-- Pilih Kategori Dulu --</option>
-        </select>
-      </div>
+      <!-- Link Buka Direct Spreadsheets -->
+      <a href="https://docs.google.com/spreadsheets/d/18yaNmMDGq5gFTse9IW_io5n3aaPiVYxpCSEQ5nNg2hY/edit?gid=1752606634#gid=1752606634" target="_blank" class="block text-center mt-3 text-[11px] text-pink-900/70 hover:text-pink-950 font-semibold underline">
+        Buka Full Google Sheets Master ↗
+      </a>
+    </div>
 
-      <!-- Nominal -->
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Nominal (Rp)</label>
-        <input type="text" id="nominal" placeholder="Rp 0" required onkeyup="formatRupiahInput(this)" class="w-full custom-input rounded-xl px-3.5 py-2 text-sm font-medium">
-      </div>
-
-      <!-- Akun Bank -->
-      <div>
-        <label id="lblAkun" class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Akun Bank</label>
-        <select id="akun" required class="w-full custom-input rounded-xl px-3.5 py-2 text-sm">
-          <option value="" disabled selected>-- Pilih Akun --</option>
-          <option value="SEABANK">SEABANK</option>
-          <option value="BCA">BCA</option>
-          <option value="MANDIRI">MANDIRI</option>
-          <option value="DANA">DANA</option>
-          <option value="CASH">CASH</option>
-        </select>
-      </div>
-
-      <!-- Tombol Aksi -->
-      <div class="grid grid-cols-2 gap-3 mt-4">
-        <!-- Simpan Transaksi -->
-        <button type="submit" id="btnSubmit" class="w-full bg-gradient-to-r from-pink-400/90 to-rose-400/90 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2.5 px-3 rounded-xl shadow-sm hover:shadow-md transition duration-200 text-xs sm:text-sm flex justify-center items-center gap-1.5 border border-pink-200/50">
-          <span>Simpan Transaksi</span> 🐘
-        </button>
-
-        <!-- Dashboard -->
-        <a href="https://docs.google.com/spreadsheets/d/18yaNmMDGq5gFTse9IW_io5n3aaPiVYxpCSEQ5nNg2hY/edit?gid=1752606634#gid=1752606634" target="_blank" class="w-full bg-gradient-to-r from-sky-400/80 to-indigo-400/80 hover:from-sky-500/90 hover:to-indigo-500/90 text-white font-semibold py-2.5 px-3 rounded-xl shadow-sm hover:shadow-md transition duration-200 text-xs sm:text-sm flex justify-center items-center gap-1.5 border border-sky-200/50 text-center">
-          <span>Dashboard</span> 📊
-        </a>
-      </div>
-
-    </form>
-    
     <!-- Footer -->
-    <div class="mt-4 text-center text-xs text-pink-800/60 font-semibold tracking-wide">
+    <div class="mt-4 pt-2 text-center text-[11px] text-pink-800/60 font-semibold border-t border-pink-200/40">
       <span>Elsa & Julyo</span>
     </div>
   </div>
 
-  <!-- Custom Cute Notification Modal -->
+  <!-- ==================== CUTE NOTIFICATION MODAL ==================== -->
   <div id="cuteModal" class="fixed inset-0 bg-pink-950/20 backdrop-blur-[4px] flex items-center justify-center p-4 z-50 hidden transition-opacity duration-200">
     <div class="bg-white/85 border border-white/80 backdrop-blur-md rounded-3xl p-5 max-w-xs w-full text-center shadow-xl animate-pop relative overflow-hidden">
-      
       <div id="modalIconBg" class="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl shadow-inner bg-pink-100 border border-pink-200">
         <span id="modalIcon">🐘</span>
       </div>
-
       <h3 id="modalTitle" class="text-sm font-bold text-pink-950 mb-1">Berhasil!</h3>
       <p id="modalMessage" class="text-xs text-pink-800/80 font-medium mb-4 leading-relaxed">Transaksi berhasil dicatat ke Google Sheets 💕</p>
-
       <button onclick="closeCuteModal()" id="modalBtn" class="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition duration-150 border border-pink-200/60">
         Oke, Makasih! 🐘
       </button>
@@ -234,6 +347,35 @@
 
   <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxKE6HQJGUPhK8yfcSjRF5LRVbsEhXMn9iuUrZtu-8oT842UohdGdeKtORGhdYBL6Pq8g/exec";
+
+    // Splash Screen Auto Hide
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const splash = document.getElementById('splashScreen');
+        splash.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => splash.remove(), 700);
+      }, 1400); // Tampil 1.4 detik
+    });
+
+    // Tab Switcher
+    function switchTab(tab) {
+      const inputView = document.getElementById('viewInput');
+      const dashView = document.getElementById('viewDashboard');
+      const inputBtn = document.getElementById('tabInputBtn');
+      const dashBtn = document.getElementById('tabDashBtn');
+
+      if (tab === 'input') {
+        inputView.classList.remove('hidden');
+        dashView.classList.add('hidden');
+        inputBtn.className = "py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm";
+        dashBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200";
+      } else {
+        inputView.classList.add('hidden');
+        dashView.classList.remove('hidden');
+        dashBtn.className = "py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm";
+        inputBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200";
+      }
+    }
 
     const fpInstance = flatpickr("#tanggal", {
       dateFormat: "Y-m-d",
@@ -362,7 +504,6 @@
         document.getElementById('akun').selectedIndex = 0;
         
         fpInstance.setDate("today");
-        
         handleCategoryChange();
 
       } catch (err) {
