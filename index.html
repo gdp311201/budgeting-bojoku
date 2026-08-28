@@ -634,7 +634,7 @@
       try {
         const response = await fetch(GAS_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'text/plain' }, // Pakai text/plain untuk bypass CORS preflight GAS
+          headers: { 'Content-Type': 'text/plain' }, // Gunakan text/plain untuk bypass CORS preflight
           body: JSON.stringify({
             action: 'updateFilter',
             bulan: selectedBulan,
@@ -650,65 +650,63 @@
     }
 
     function updateDashboardUI(data) {
-      if (!data || !data.selectedFilter) return;
+      if (!data) return;
 
-      // Update dropdown selection jika data datang dari awal
-      if (data.selectedFilter.bulan) document.getElementById('dashBulan').value = data.selectedFilter.bulan;
-      if (data.selectedFilter.tahun) document.getElementById('dashTahun').value = data.selectedFilter.tahun;
-
-      // Update Reminder Text
-      if (data.reminder) document.getElementById('dashReminder').innerText = `"${data.reminder}"`;
-
-      // Update Hero Card Total Aset
-      document.getElementById('dashTotalAset').innerText = formatRupiah(data.totalAset);
-
-      // Update Saldo Bank
-      document.getElementById('dashSeabank').innerText = formatCompactRupiah(data.saldoBank.seabank);
-      document.getElementById('dashBca').innerText = formatCompactRupiah(data.saldoBank.bca);
-      document.getElementById('dashMandiri').innerText = formatCompactRupiah(data.saldoBank.mandiri);
-      document.getElementById('dashDana').innerText = formatCompactRupiah(data.saldoBank.dana);
-      document.getElementById('dashCash').innerText = formatCompactRupiah(data.saldoBank.cash);
-
-      // Update Cash Flow
-      document.getElementById('dashPemasukan').innerText = formatRupiah(data.kategoriSummary.pemasukan.nominal);
-      document.getElementById('dashPemasukanPct').innerText = formatPercent(data.kategoriSummary.pemasukan.persen);
-
-      document.getElementById('dashKebutuhan').innerText = formatRupiah(data.kategoriSummary.kebutuhanPokok.nominal);
-      document.getElementById('dashKebutuhanPct').innerText = formatPercent(data.kategoriSummary.kebutuhanPokok.persen);
-
-      // Update Dynamic Top 5 Sub Kategori
-      renderTop5List(data.top5SubKategori);
-    }
-
-    function renderTop5List(items) {
-      const container = document.getElementById('dashTop5Container');
-      container.innerHTML = '';
-
-      if (!items || items.length === 0) {
-        container.innerHTML = '<p class="text-xs text-center text-pink-800/60">Tidak ada pengeluaran pada periode ini.</p>';
-        return;
+      // 1. Update filter pilihan jika dikirim dari server
+      if (data.selectedFilter) {
+        if (data.selectedFilter.bulan) document.getElementById('dashBulan').value = data.selectedFilter.bulan;
+        if (data.selectedFilter.tahun) document.getElementById('dashTahun').value = data.selectedFilter.tahun;
       }
 
-      const colors = ['bg-pink-500', 'bg-pink-400', 'bg-rose-400', 'bg-purple-400', 'bg-indigo-400'];
+      // 2. Update Reminder Text
+      if (data.reminder) {
+        document.getElementById('dashReminder').innerText = `"${data.reminder}"`;
+      }
 
-      items.forEach((item, index) => {
-        const pctFormatted = formatPercent(item.persen);
-        const widthPct = Math.min(Math.max((item.persen * 100), 5), 100); // Batas minimal visual 5%
-        const color = colors[index % colors.length];
+      // 3. Update Total Aset
+      if (data.totalAset !== undefined) {
+        document.getElementById('dashTotalAset').innerText = formatRupiah(data.totalAset);
+      }
 
-        const itemHtml = `
-          <div>
-            <div class="flex justify-between text-[11px] font-medium mb-1">
-              <span class="text-pink-950 font-semibold">${item.nama}</span>
-              <span class="font-bold text-pink-900">${pctFormatted} (${formatCompactRupiah(item.total)})</span>
+      // 4. Update Balance Bank / Kas
+      if (data.bank) {
+        document.getElementById('dashSeabank').innerText = formatCompactRupiah(data.bank.seabank);
+        document.getElementById('dashBca').innerText = formatCompactRupiah(data.bank.bca);
+        document.getElementById('dashMandiri').innerText = formatCompactRupiah(data.bank.mandiri);
+        document.getElementById('dashDana').innerText = formatCompactRupiah(data.bank.dana);
+        document.getElementById('dashCash').innerText = formatCompactRupiah(data.bank.cash);
+      }
+
+      // 5. Update Cash Flow & Pemasukan / Kebutuhan Pokok
+      if (data.cashflow) {
+        document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan || 0);
+        document.getElementById('dashPemasukanPct').innerText = formatPercent(data.cashflow.pemasukanPct || 0);
+        document.getElementById('dashKebutuhan').innerText = formatRupiah(data.cashflow.kebutuhan || 0);
+        document.getElementById('dashKebutuhanPct').innerText = formatPercent(data.cashflow.kebutuhanPct || 0);
+      }
+
+      // 6. Update Dynamic Top 5 Pengeluaran
+      const container = document.getElementById('dashTop5Container');
+      if (data.topExpenses && data.topExpenses.length > 0) {
+        let html = '';
+        data.topExpenses.forEach((item, index) => {
+          const pctVal = (item.pct || 0) * 100;
+          html += `
+            <div>
+              <div class="flex justify-between text-[11px] font-semibold text-pink-950 mb-1">
+                <span>${index + 1}. ${item.nama}</span>
+                <span>${formatRupiah(item.nominal)} (${pctVal.toFixed(0)}%)</span>
+              </div>
+              <div class="w-full bg-pink-100/80 rounded-full h-2 overflow-hidden border border-pink-200/50">
+                <div class="bg-gradient-to-r from-pink-400 to-rose-400 h-2 rounded-full transition-all duration-500" style="width: ${Math.min(pctVal, 100)}%"></div>
+              </div>
             </div>
-            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
-              <div class="${color} h-full rounded-full transition-all duration-500" style="width: ${widthPct}%"></div>
-            </div>
-          </div>
-        `;
-        container.insertAdjacentHTML('beforeend', itemHtml);
-      });
+          `;
+        });
+        container.innerHTML = html;
+      } else {
+        container.innerHTML = '<p class="text-xs text-center text-pink-800/60 italic py-2">Belum ada transaksi pengeluaran pada bulan ini ✨</p>';
+      }
     }
   </script>
 </body>
