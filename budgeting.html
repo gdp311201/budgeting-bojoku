@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budgeting - Input Transaksi</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Flatpickr CSS (Dark Theme Style) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+  
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <style>
+    body { background-color: #0b0f19; color: #e5e7eb; font-family: sans-serif; }
+    
+    /* Penyesuaian Custom Style Kalender Flatpickr agar mirip Lampiran */
+    .flatpickr-calendar {
+      background: #111827 !important;
+      border: 1px solid #374151 !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+    }
+    .flatpickr-day.selected {
+      background: #2563eb !important;
+      border-color: #2563eb !important;
+    }
+    .flatpickr-day:hover {
+      background: #1f2937 !important;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+  <div class="w-full max-w-md bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-2xl">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-800">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-wide">INPUT TRANSAKSI</h1>
+        <p class="text-xs text-gray-400 mt-0.5">Budgeting Master Sync</p>
+      </div>
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-950 text-emerald-400 border border-emerald-800">
+        ● Live Sync
+      </span>
+    </div>
+
+    <!-- Form -->
+    <form id="txForm" onsubmit="handleSubmit(event)" class="space-y-4">
+      
+      <!-- Tanggal (Dynamic Flatpickr Calendar Input) -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Tanggal</label>
+        <div class="relative">
+          <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required 
+            class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm cursor-pointer">
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+            📅
+          </div>
+        </div>
+      </div>
+
+      <!-- Kategori -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Kategori</label>
+        <select id="kategori" onchange="handleCategoryChange()" required class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm">
+          <option value="" disabled selected>-- Pilih Kategori --</option>
+          <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
+          <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
+          <option value="💰 TABUNGAN/ INVESTASI">💰 TABUNGAN/ INVESTASI</option>
+          <option value="🥩 KEBUTUHAN POKOK">🥩 KEBUTUHAN POKOK</option>
+          <option value="🏠 TEMPAT TINGGAL">🏠 TEMPAT TINGGAL</option>
+          <option value="🛺 TRANSPORTASI">🛺 TRANSPORTASI</option>
+          <option value="⚕️ KESEHATAN">⚕️ KESEHATAN</option>
+          <option value="💇 PERAWATAN DIRI">💇 PERAWATAN DIRI</option>
+          <option value="📚 PENGEMBANGAN DIRI">📚 PENGEMBANGAN DIRI</option>
+          <option value="🎉 GAYA HIDUP/ HIBURAN">🎉 GAYA HIDUP/ HIBURAN</option>
+          <option value="💳 HUTANG / CICILAN">💳 HUTANG / CICILAN</option>
+          <option value="⚠️ LAIN-LAIN">⚠️ LAIN-LAIN</option>
+        </select>
+      </div>
+
+      <!-- Sub Kategori -->
+      <div>
+        <label id="lblSubKategori" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Sub Kategori</label>
+        <select id="subKategori" required class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm">
+          <option value="" disabled selected>-- Pilih Kategori Dulu --</option>
+        </select>
+      </div>
+
+      <!-- Nominal -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Nominal (Rp)</label>
+        <input type="number" id="nominal" placeholder="0" min="1" required class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm">
+      </div>
+
+      <!-- Akun Bank -->
+      <div>
+        <label id="lblAkun" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">Akun Bank</label>
+        <select id="akun" required class="w-full bg-[#1f2937] border border-gray-700 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-blue-500 text-sm">
+          <option value="" disabled selected>-- Pilih Akun --</option>
+          <option value="SEABANK">SEABANK</option>
+          <option value="BCA">BCA</option>
+          <option value="MANDIRI">MANDIRI</option>
+          <option value="DANA">DANA</option>
+          <option value="CASH">CASH</option>
+        </select>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" id="btnSubmit" class="w-full mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-200 text-sm flex justify-center items-center">
+        Simpan Transaksi
+      </button>
+
+    </form>
+  </div>
+
+  <script>
+    // URL Web App Google Apps Script Anda
+    const GAS_URL = "PASTE_URL_WEB_APP_APPS_SCRIPT_LO_DISINI";
+
+    // Inisialisasi Datepicker Flatpickr (Tanggal Dinamis)
+    flatpickr("#tanggal", {
+      dateFormat: "Y-m-d",
+      defaultDate: "today",
+      allowInput: true,
+      clickOpens: true
+    });
+
+    // Data Helper Sub Kategori
+    const SUB_DATA = {
+      "💸 PINDAH DANA": ["SEABANK", "BCA", "MANDIRI", "DANA", "CASH"],
+      "💵 PEMASUKAN": ["Gaji / Salary", "Bonus & Komisi", "Dividen Saham", "Pendapatan Lain-Lain", "Penjualan Aset / Properti", "Hibah / Hadiah Uang", "THR / Tunjangan Tahunan"],
+      "🥩 KEBUTUHAN POKOK": ["Makanan", "Minuman", "Snack / Cemilan", "Kebutuhan Rumah Tangga", "Kebutuhan Dapur"],
+      "🏠 TEMPAT TINGGAL": ["Sewa / KPR Rumah", "Maintenance Rumah", "Listrik", "Air", "Internet"],
+      "🛺 TRANSPORTASI": ["BBM", "Ojek Online", "Transportasi Umum", "Maintenance Kendaraan"],
+      "⚕️ KESEHATAN": ["Vitamin & Obat", "Asuransi / BPJS", "Periksa ke Dokter"],
+      "💇 PERAWATAN DIRI": ["Skincare", "Barbershop / Salon", "Bodycare", "Gym", "IPL", "Pilates", "Treatment"],
+      "📚 PENGEMBANGAN DIRI": ["Pendidikan / Pelatihan", "Buku", "Kursus", "Aplikasi Belajar", "Webinar"],
+      "💰 TABUNGAN/ INVESTASI": ["Safety Money", "Deposito Bank", "Reksadana", "Arisan", "Logam Mulia", "Saham"],
+      "🎉 GAYA HIDUP/ HIBURAN": ["Makan di Luar", "Coffee Shop", "Subs (Nx, Spotify, dll.)", "Liburan / Traveling", "Hobi & Rekreasi", "Cash Out"],
+      "💳 HUTANG / CICILAN": ["Pinjaman Modal Usaha", "Cicilan Kredit / Pinjaman", "Sumbangan & Donasi Rutin", "KPR"],
+      "⚠️ LAIN-LAIN": ["Admin Bank", "Pengeluaran Tak Terduga", "Bantu Keluarga", "Barang Rusak", "Parkir"]
+    };
+
+    // Logika Dynamic Dropdown
+    function handleCategoryChange() {
+      const kat = document.getElementById('kategori').value;
+      const subSelect = document.getElementById('subKategori');
+      const lblSub = document.getElementById('lblSubKategori');
+      const lblAkun = document.getElementById('lblAkun');
+
+      // Adjustment Khusus PINDAH DANA
+      if (kat === "💸 PINDAH DANA") {
+        lblSub.innerText = "DARI REKENING (ASAL)";
+        lblAkun.innerText = "KE REKENING (TUJUAN)";
+      } else {
+        lblSub.innerText = "SUB KATEGORI";
+        lblAkun.innerText = "AKUN BANK";
+      }
+
+      // Render Opsi Sub Kategori
+      subSelect.innerHTML = '<option value="" disabled selected>-- Pilih Sub Kategori --</option>';
+      if (SUB_DATA[kat]) {
+        SUB_DATA[kat].forEach(sub => {
+          const opt = document.createElement('option');
+          opt.value = sub;
+          opt.innerText = sub;
+          subSelect.appendChild(opt);
+        });
+      }
+    }
+
+    // Submit Form Handler
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.innerText = "Memproses...";
+
+      const payload = {
+        tanggal: document.getElementById('tanggal').value,
+        kategori: document.getElementById('kategori').value,
+        subKategori: document.getElementById('subKategori').value,
+        nominal: document.getElementById('nominal').value,
+        akun: document.getElementById('akun').value
+      };
+
+      try {
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        alert("✅ Transaksi Berhasil Dicatat ke Google Sheets!");
+        
+        // Reset Input
+        document.getElementById('nominal').value = '';
+        document.getElementById('kategori').selectedIndex = 0;
+        document.getElementById('subKategori').innerHTML = '<option value="" disabled selected>-- Pilih Kategori Dulu --</option>';
+        document.getElementById('akun').selectedIndex = 0;
+        handleCategoryChange();
+
+      } catch (err) {
+        alert("❌ Gagal mencatat: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Simpan Transaksi";
+      }
+    }
+  </script>
+</body>
+</html>
