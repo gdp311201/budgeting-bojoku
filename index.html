@@ -16,50 +16,80 @@
 
   <style>
     body { 
-      background-color: #f7d6e0; 
-      background-image: radial-gradient(#f2b5d4 1px, transparent 1px);
-      background-size: 20px 20px;
-      color: #4a3e3d; 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      /* Latar belakang bernuansa pastel muted/dusty pink & purple soft sesuai gambar gajah */
+      background: linear-gradient(135deg, #7c889b 0%, #b89db0 50%, #d8b0c0 100%);
+      background-attachment: fixed;
+      color: #4a3e47; 
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
     }
     
-    /* Penyesuaian Custom Style Kalender Flatpickr Tema Soft Pink */
+    /* Penyesuaian Style Kalender Flatpickr Pastel Muted */
     .flatpickr-calendar {
-      background: #fff0f5 !important;
-      border: 2px solid #f2b5d4 !important;
-      box-shadow: 0 10px 25px -5px rgba(235, 133, 169, 0.3) !important;
+      background: rgba(255, 245, 248, 0.95) !important;
+      border: 1.5px solid #d8b0c0 !important;
+      box-shadow: 0 10px 25px -5px rgba(120, 90, 110, 0.2) !important;
       border-radius: 16px !important;
-      color: #5c3d46 !important;
+      color: #5c4353 !important;
+      backdrop-filter: blur(8px);
     }
     .flatpickr-day.selected {
-      background: #f08080 !important;
-      border-color: #f08080 !important;
+      background: #c88ea7 !important;
+      border-color: #c88ea7 !important;
       color: white !important;
     }
     .flatpickr-day:hover {
-      background: #fbe4e8 !important;
+      background: #f0d6e2 !important;
     }
 
-    /* Glassmorphism Soft Card */
+    /* Glassmorphism Card dengan blur 4px dan kontras rendah */
     .glass-card {
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 2px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 8px 32px 0 rgba(220, 150, 170, 0.25);
+      background: rgba(255, 255, 255, 0.42);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 30px rgba(70, 60, 80, 0.12);
     }
 
+    /* Styling Elemen Input */
     .custom-input {
-      background: rgba(255, 255, 255, 0.85);
-      border: 1.5px solid #f2b5d4;
-      color: #5c3d46;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(220, 180, 200, 0.7);
+      color: #52404d;
       transition: all 0.2s ease;
     }
 
     .custom-input:focus {
-      background: #ffffff;
-      border-color: #f08080;
-      box-shadow: 0 0 0 3px rgba(240, 128, 128, 0.2);
+      background: rgba(255, 255, 255, 0.9);
+      border-color: #c88ea7;
+      box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.2);
+    }
+
+    /* Efek pudar & miring (italic placeholder shadow effect) untuk select saat belum ada opsi terpilih */
+    select.custom-input:invalid {
+      color: rgba(92, 67, 83, 0.45);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    /* Styling opsi disabled di dalam dropdown */
+    select option[disabled] {
+      color: rgba(92, 67, 83, 0.45);
+      font-style: italic;
+    }
+
+    /* Styling opsi normal di dalam dropdown */
+    select option:not([disabled]) {
+      color: #52404d;
+      font-style: normal;
+      font-weight: 500;
+      background: #fdf8fa;
+    }
+
+    /* Style placeholder input text/number */
+    .custom-input::placeholder {
+      color: rgba(92, 67, 83, 0.45);
+      font-style: italic;
+      font-weight: 400;
     }
   </style>
 </head>
@@ -67,21 +97,21 @@
 
   <div class="w-full max-w-md glass-card rounded-3xl p-6 relative overflow-hidden">
     
-    <!-- Elemen Dekorasi Kartun Gajah -->
-    <div class="text-center mb-2">
-      <div class="inline-flex items-center justify-center bg-pink-100 p-3 rounded-full border-2 border-pink-200 shadow-sm">
-        <span class="text-4xl">🐘</span>
-        <span class="text-xs font-bold text-pink-600 bg-white px-2 py-0.5 rounded-full shadow-inner ml-1">🚩 Pinky Parade</span>
+    <!-- Elemen Dekorasi Kartun Gajah & Header Badge -->
+    <div class="text-center mb-3">
+      <div class="inline-flex items-center justify-center bg-white/50 px-3.5 py-1.5 rounded-full border border-pink-200/60 shadow-sm backdrop-blur-sm">
+        <span class="text-2xl mr-1.5">🐘</span>
+        <span class="text-xs font-semibold text-pink-900/80 tracking-wide">💕 With Love, Julyo Sechar</span>
       </div>
     </div>
 
     <!-- Header -->
-    <div class="flex items-center justify-between mb-5 pb-3 border-b border-pink-200/80">
+    <div class="flex items-center justify-between mb-5 pb-3 border-b border-pink-200/50">
       <div>
-        <h1 class="text-xl font-extrabold text-pink-900 tracking-wide">INPUT TRANSAKSI</h1>
-        <p class="text-xs text-pink-600 font-medium">Budgeting Master Sync 🐘💕</p>
+        <h1 class="text-lg font-bold text-pink-950/80 tracking-wide">INPUT TRANSAKSI</h1>
+        <p class="text-xs text-pink-800/60 font-medium">Budgeting Master Sync 🐘💕</p>
       </div>
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-300 shadow-sm">
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-pink-100/60 text-pink-800 border border-pink-200/70 shadow-sm">
         ● Live Sync
       </span>
     </div>
@@ -91,11 +121,11 @@
       
       <!-- Tanggal (Dynamic Flatpickr Calendar Input) -->
       <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Tanggal</label>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Tanggal</label>
         <div class="relative">
           <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required 
-            class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm cursor-pointer font-medium">
-          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400">
+            class="w-full custom-input rounded-xl px-3.5 py-2 text-sm cursor-pointer font-medium">
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400/80">
             📅
           </div>
         </div>
@@ -103,8 +133,8 @@
 
       <!-- Kategori -->
       <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Kategori</label>
-        <select id="kategori" onchange="handleCategoryChange()" required class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm font-medium">
+        <label class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Kategori</label>
+        <select id="kategori" onchange="handleCategoryChange()" required class="w-full custom-input rounded-xl px-3.5 py-2 text-sm">
           <option value="" disabled selected>-- Pilih Kategori --</option>
           <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
           <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
@@ -123,22 +153,22 @@
 
       <!-- Sub Kategori -->
       <div>
-        <label id="lblSubKategori" class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Sub Kategori</label>
-        <select id="subKategori" required class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm font-medium">
+        <label id="lblSubKategori" class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Sub Kategori</label>
+        <select id="subKategori" required class="w-full custom-input rounded-xl px-3.5 py-2 text-sm">
           <option value="" disabled selected>-- Pilih Kategori Dulu --</option>
         </select>
       </div>
 
       <!-- Nominal -->
       <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Nominal (Rp)</label>
-        <input type="number" id="nominal" placeholder="0" min="1" required class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm font-medium">
+        <label class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Nominal (Rp)</label>
+        <input type="number" id="nominal" placeholder="0" min="1" required class="w-full custom-input rounded-xl px-3.5 py-2 text-sm font-medium">
       </div>
 
       <!-- Akun Bank -->
       <div>
-        <label id="lblAkun" class="block text-xs font-bold uppercase tracking-wider text-pink-800 mb-1">Akun Bank</label>
-        <select id="akun" required class="w-full custom-input rounded-xl px-3.5 py-2.5 text-sm font-medium">
+        <label id="lblAkun" class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Akun Bank</label>
+        <select id="akun" required class="w-full custom-input rounded-xl px-3.5 py-2 text-sm">
           <option value="" disabled selected>-- Pilih Akun --</option>
           <option value="SEABANK">SEABANK</option>
           <option value="BCA">BCA</option>
@@ -149,15 +179,15 @@
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" id="btnSubmit" class="w-full mt-3 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold py-3 px-4 rounded-2xl shadow-md hover:shadow-lg transition duration-200 text-sm flex justify-center items-center gap-2 border border-pink-300">
+      <button type="submit" id="btnSubmit" class="w-full mt-3 bg-gradient-to-r from-pink-400/90 to-rose-400/90 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm hover:shadow-md transition duration-200 text-sm flex justify-center items-center gap-2 border border-pink-200/50">
         <span>Simpan Transaksi</span> 🐘
       </button>
 
     </form>
     
     <!-- Footer Lucu -->
-    <div class="mt-4 text-center text-xs text-pink-500 font-semibold">
-      <span>🐘 🐘 🐘 Kirab Gajah Kecil Siap Catat Keuangan 🚩</span>
+    <div class="mt-4 text-center text-xs text-pink-800/60 font-semibold tracking-wide">
+      <span>Elsa & Julyo</span>
     </div>
   </div>
 
@@ -165,7 +195,7 @@
     // URL Deployment Web App Google Apps Script Anda
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxKE6HQJGUPhK8yfcSjRF5LRVbsEhXMn9iuUrZtu-8oT842UohdGdeKtORGhdYBL6Pq8g/exec";
 
-    // Inisialisasi Datepicker Flatpickr dan simpan instance-nya
+    // Inisialisasi Datepicker Flatpickr
     const fpInstance = flatpickr("#tanggal", {
       dateFormat: "Y-m-d",
       defaultDate: "today",
@@ -217,14 +247,13 @@
       }
     }
 
-    // Submit Form Handler (Mengirim ke Sheet TRANSAKSI Kolom A - E)
+    // Submit Form Handler
     async function handleSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
       btn.disabled = true;
       btn.innerHTML = '<span>Memproses...</span> 🐘';
 
-      // Payload dipetakan berurutan ke Kolom A - E di Sheet "TRANSAKSI"
       const payload = {
         kolomA: document.getElementById('tanggal').value,      // Tanggal -> Kolom A
         kolomB: document.getElementById('kategori').value,     // Kategori -> Kolom B
