@@ -18,7 +18,7 @@
   <style>
     body { background-color: #0b0f19; color: #e5e7eb; font-family: sans-serif; }
     
-    /* Penyesuaian Custom Style Kalender Flatpickr agar mirip Lampiran */
+    /* Penyesuaian Custom Style Kalender Flatpickr */
     .flatpickr-calendar {
       background: #111827 !important;
       border: 1px solid #374151 !important;
@@ -119,10 +119,10 @@
   </div>
 
   <script>
-    // URL Web App Google Apps Script Anda
-    const GAS_URL = "PASTE_URL_WEB_APP_APPS_SCRIPT_LO_DISINI";
+    // URL Deployment Web App Google Apps Script Anda
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxUw8J9ZMsrhifyONaJjdiPR-QPzk0jcAU2x53NFaXEVVYFHUzGZcEcJEZJG99xzOlzcA/exec";
 
-    // Inisialisasi Datepicker Flatpickr (Tanggal Dinamis)
+    // Inisialisasi Datepicker Flatpickr
     flatpickr("#tanggal", {
       dateFormat: "Y-m-d",
       defaultDate: "today",
@@ -174,32 +174,36 @@
       }
     }
 
-    // Submit Form Handler
+    // Submit Form Handler (Mengirim ke Sheet TRANSAKSI Kolom A - E)
     async function handleSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmit');
       btn.disabled = true;
       btn.innerText = "Memproses...";
 
+      // Payload dipetakan berurutan ke Kolom A - E di Sheet "TRANSAKSI"
       const payload = {
-        tanggal: document.getElementById('tanggal').value,
-        kategori: document.getElementById('kategori').value,
-        subKategori: document.getElementById('subKategori').value,
-        nominal: document.getElementById('nominal').value,
-        akun: document.getElementById('akun').value
+        kolomA: document.getElementById('tanggal').value,      // Tanggal -> Kolom A
+        kolomB: document.getElementById('kategori').value,     // Kategori -> Kolom B
+        kolomC: document.getElementById('subKategori').value,  // Sub Kategori -> Kolom C
+        kolomD: document.getElementById('nominal').value,      // Nominal -> Kolom D
+        kolomE: document.getElementById('akun').value          // Akun Bank -> Kolom E
       };
 
       try {
+        // Menggunakan mode no-cors untuk kompatibilitas pengiriman lintas domain (Cross-Origin) ke Google Apps Script
         await fetch(GAS_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify(payload)
         });
 
         alert("✅ Transaksi Berhasil Dicatat ke Google Sheets!");
         
-        // Reset Input
+        // Reset Input Form
         document.getElementById('nominal').value = '';
         document.getElementById('kategori').selectedIndex = 0;
         document.getElementById('subKategori').innerHTML = '<option value="" disabled selected>-- Pilih Kategori Dulu --</option>';
