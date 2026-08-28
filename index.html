@@ -116,7 +116,7 @@
         <img src="https://i.ibb.co/dJDL0bzv/Untitled-design.png" alt="Elephant Logo" class="w-44 h-44 sm:w-52 sm:h-52 object-contain">
       </div>
       
-      <!-- Welcoming Title Elegat -->
+      <!-- Welcoming Title Elegant -->
       <span class="block text-xs font-semibold uppercase tracking-[0.25em] text-pink-200/90 mb-1">Welcome Back</span>
       <h2 class="text-white font-bold text-2xl sm:text-3xl tracking-tight">Budgeting Master Sync</h2>
       <p class="text-pink-100/80 text-xs font-normal mt-1.5 tracking-wide">Made with Love, Julyo Sechar ❤️</p>
@@ -254,114 +254,110 @@
     <!-- ==================== TAB 2: LIVE DASHBOARD ==================== -->
     <div id="viewDashboard" class="hidden transition-all duration-300">
       
-      <!-- Motivational Bar -->
+      <!-- Filter Bulan & Tahun -->
+      <div class="glass-mini rounded-2xl p-3 mb-3 border border-pink-200/60 shadow-sm flex gap-2">
+        <div class="w-1/2">
+          <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Bulan</label>
+          <select id="dashBulan" onchange="onFilterChange()" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
+            <option value="JANUARI">JANUARI</option>
+            <option value="FEBRUARI">FEBRUARI</option>
+            <option value="MARET">MARET</option>
+            <option value="APRIL">APRIL</option>
+            <option value="MEI">MEI</option>
+            <option value="JUNI">JUNI</option>
+            <option value="JULI">JULI</option>
+            <option value="AGUSTUS">AGUSTUS</option>
+            <option value="SEPTEMBER">SEPTEMBER</option>
+            <option value="OKTOBER">OKTOBER</option>
+            <option value="NOVEMBER">NOVEMBER</option>
+            <option value="DESEMBER">DESEMBER</option>
+          </select>
+        </div>
+        <div class="w-1/2">
+          <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Tahun</label>
+          <select id="dashTahun" onchange="onFilterChange()" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Motivational / Reminder Bar -->
       <div class="glass-mini rounded-2xl p-3 mb-4 text-center border border-pink-200/60 shadow-sm">
-        <p class="text-[11px] italic font-medium text-pink-950/80 leading-relaxed">
-          "Masa depan cerah dimulai dari konsistensi mencatat pengeluaran sekecil apapun hari ini."
+        <p id="dashReminder" class="text-[11px] italic font-medium text-pink-950/80 leading-relaxed">
+          Memuat data reminder...
         </p>
       </div>
 
       <!-- Hero Card Total Aset -->
       <div class="bg-gradient-to-br from-pink-500/80 to-rose-500/80 rounded-2xl p-4 text-white shadow-md mb-4 border border-white/40">
         <span class="text-[10px] font-bold uppercase tracking-wider text-pink-100">Total Aset Bersih</span>
-        <div class="text-2xl font-black tracking-tight mt-0.5">Rp 40.033.367</div>
+        <div id="dashTotalAset" class="text-2xl font-black tracking-tight mt-0.5">Rp 0</div>
         <p class="text-[10px] text-pink-100/90 mt-1">Status: Finansial Aman & Terjaga 🌸</p>
       </div>
 
       <!-- Grid Ringkasan Rekening Bank -->
       <div class="mb-4">
         <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Kas & Bank</h3>
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-3 gap-2 mb-2">
           <div class="glass-mini p-2 rounded-xl text-center">
             <span class="block text-[9px] font-bold text-pink-900/60">SEABANK</span>
-            <span class="text-xs font-bold text-pink-950">4.67M</span>
+            <span id="dashSeabank" class="text-xs font-bold text-pink-950">0</span>
           </div>
           <div class="glass-mini p-2 rounded-xl text-center">
             <span class="block text-[9px] font-bold text-pink-900/60">BCA</span>
-            <span class="text-xs font-bold text-pink-950">20k</span>
+            <span id="dashBca" class="text-xs font-bold text-pink-950">0</span>
           </div>
           <div class="glass-mini p-2 rounded-xl text-center">
             <span class="block text-[9px] font-bold text-pink-900/60">MANDIRI</span>
-            <span class="text-xs font-bold text-pink-950">13.01M</span>
+            <span id="dashMandiri" class="text-xs font-bold text-pink-950">0</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="glass-mini p-2 rounded-xl text-center">
+            <span class="block text-[9px] font-bold text-pink-900/60">DANA</span>
+            <span id="dashDana" class="text-xs font-bold text-pink-950">0</span>
+          </div>
+          <div class="glass-mini p-2 rounded-xl text-center">
+            <span class="block text-[9px] font-bold text-pink-900/60">CASH</span>
+            <span id="dashCash" class="text-xs font-bold text-pink-950">0</span>
           </div>
         </div>
       </div>
 
-      <!-- Cash Flow & Kategori Utama -->
+      <!-- Cash Flow & Pemasukan / Kebutuhan Pokok -->
       <div class="mb-4">
         <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Cash Flow Bulan Ini</h3>
         <div class="grid grid-cols-2 gap-2">
           <div class="bg-emerald-500/15 border border-emerald-300/60 p-2.5 rounded-xl">
             <span class="block text-[10px] font-bold text-emerald-900">💵 PEMASUKAN</span>
             <div class="flex items-baseline justify-between mt-0.5">
-              <span class="text-xs font-bold text-emerald-950">Rp 23.06M</span>
-              <span class="text-[9px] font-bold text-emerald-700">524%</span>
+              <span id="dashPemasukan" class="text-xs font-bold text-emerald-950">Rp 0</span>
+              <span id="dashPemasukanPct" class="text-[9px] font-bold text-emerald-700">0%</span>
             </div>
           </div>
           <div class="bg-rose-500/15 border border-rose-300/60 p-2.5 rounded-xl">
             <span class="block text-[10px] font-bold text-rose-900">🍚 KEBUTUHAN POKOK</span>
             <div class="flex items-baseline justify-between mt-0.5">
-              <span class="text-xs font-bold text-rose-950">Rp 1.35M</span>
-              <span class="text-[9px] font-bold text-rose-700">136%</span>
+              <span id="dashKebutuhan" class="text-xs font-bold text-rose-950">Rp 0</span>
+              <span id="dashKebutuhanPct" class="text-[9px] font-bold text-rose-700">0%</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Progress Bar Top 5 Pengeluaran -->
+      <!-- Dynamic Top 5 Pengeluaran -->
       <div>
-        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Top 5 Pengeluaran (%)</h3>
-        <div class="space-y-2.5 glass-mini p-3 rounded-2xl border border-pink-200/60">
-          
-          <!-- Item 1 -->
-          <div>
-            <div class="flex justify-between text-[11px] font-medium mb-1">
-              <span class="text-pink-950">🍚 Kebutuhan Pokok</span>
-              <span class="font-bold text-pink-900">32% (Rp 1.35M)</span>
-            </div>
-            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
-              <div class="bg-pink-500 h-full rounded-full" style="width: 32%"></div>
-            </div>
-          </div>
-
-          <!-- Item 2 -->
-          <div>
-            <div class="flex justify-between text-[11px] font-medium mb-1">
-              <span class="text-pink-950">🎉 Gaya Hidup / Hiburan</span>
-              <span class="font-bold text-pink-900">20% (Rp 836k)</span>
-            </div>
-            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
-              <div class="bg-pink-400 h-full rounded-full" style="width: 20%"></div>
-            </div>
-          </div>
-
-          <!-- Item 3 -->
-          <div>
-            <div class="flex justify-between text-[11px] font-medium mb-1">
-              <span class="text-pink-950">🏠 Tempat Tinggal</span>
-              <span class="font-bold text-pink-900">16% (Rp 661k)</span>
-            </div>
-            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
-              <div class="bg-rose-400 h-full rounded-full" style="width: 16%"></div>
-            </div>
-          </div>
-
-          <!-- Item 4 -->
-          <div>
-            <div class="flex justify-between text-[11px] font-medium mb-1">
-              <span class="text-pink-950">💳 Hutang / Cicilan</span>
-              <span class="font-bold text-pink-900">12% (Rp 500k)</span>
-            </div>
-            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
-              <div class="bg-purple-400 h-full rounded-full" style="width: 12%"></div>
-            </div>
-          </div>
-
+        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Top 5 Pengeluaran Sub-Kategori</h3>
+        <div id="dashTop5Container" class="space-y-2.5 glass-mini p-3 rounded-2xl border border-pink-200/60">
+          <p class="text-xs text-center text-pink-800/60">Memuat data top pengeluaran...</p>
         </div>
       </div>
 
       <!-- Link Buka Direct Spreadsheets -->
-      <a href="https://docs.google.com/spreadsheets/d/18yaNmMDGq5gFTse9IW_io5n3aaPiVYxpCSEQ5nNg2hY/edit?gid=1752606634#gid=1752606634" target="_blank" class="block text-center mt-3 text-[11px] text-pink-900/70 hover:text-pink-950 font-semibold underline">
+      <a href="https://docs.google.com/spreadsheets/d/18yaNmMDGq5gFTse9IW_io5n3aaPiVYxpCSEQ5nNg2hY/edit?gid=1752606634#gid=1752606634" target="_blank" class="block text-center mt-4 text-[11px] text-pink-900/70 hover:text-pink-950 font-semibold underline">
         Buka Full Google Sheets Master ↗
       </a>
     </div>
@@ -454,6 +450,9 @@
         dashView.classList.remove('hidden');
         dashBtn.className = "py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm";
         inputBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200";
+        
+        // Fetch Data Dashboard saat tab dashboard pertama dibuka
+        loadDashboardData();
       }
     }
 
@@ -516,6 +515,26 @@
       }
       let formatted = new Intl.NumberFormat('id-ID').format(value);
       el.value = 'Rp ' + formatted;
+    }
+
+    function formatRupiah(val) {
+      if (typeof val !== 'number') val = Number(val) || 0;
+      return 'Rp ' + new Intl.NumberFormat('id-ID').format(val);
+    }
+
+    function formatCompactRupiah(val) {
+      if (typeof val !== 'number') val = Number(val) || 0;
+      if (val >= 1000000) {
+        return (val / 1000000).toFixed(2) + 'M';
+      } else if (val >= 1000) {
+        return (val / 1000).toFixed(0) + 'k';
+      }
+      return val.toString();
+    }
+
+    function formatPercent(val) {
+      if (typeof val !== 'number') val = Number(val) || 0;
+      return (val * 100).toFixed(0) + '%';
     }
 
     function handleCategoryChange() {
@@ -592,6 +611,104 @@
         btn.disabled = false;
         btn.innerHTML = '<span>Simpan Transaksi</span>';
       }
+    }
+
+    // =========================================================================
+    // LOGIKA DASHBOARD LIVE SYNC WITH GOOGLE APPS SCRIPT
+    // =========================================================================
+
+    async function loadDashboardData() {
+      try {
+        const response = await fetch(GAS_URL);
+        const data = await response.json();
+        updateDashboardUI(data);
+      } catch (err) {
+        console.error("Gagal memuat data dashboard:", err);
+      }
+    }
+
+    async function onFilterChange() {
+      const selectedBulan = document.getElementById('dashBulan').value;
+      const selectedTahun = document.getElementById('dashTahun').value;
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' }, // Pakai text/plain untuk bypass CORS preflight GAS
+          body: JSON.stringify({
+            action: 'updateFilter',
+            bulan: selectedBulan,
+            tahun: selectedTahun
+          })
+        });
+
+        const data = await response.json();
+        updateDashboardUI(data);
+      } catch (err) {
+        console.error("Gagal memperbarui filter dashboard:", err);
+      }
+    }
+
+    function updateDashboardUI(data) {
+      if (!data || !data.selectedFilter) return;
+
+      // Update dropdown selection jika data datang dari awal
+      if (data.selectedFilter.bulan) document.getElementById('dashBulan').value = data.selectedFilter.bulan;
+      if (data.selectedFilter.tahun) document.getElementById('dashTahun').value = data.selectedFilter.tahun;
+
+      // Update Reminder Text
+      if (data.reminder) document.getElementById('dashReminder').innerText = `"${data.reminder}"`;
+
+      // Update Hero Card Total Aset
+      document.getElementById('dashTotalAset').innerText = formatRupiah(data.totalAset);
+
+      // Update Saldo Bank
+      document.getElementById('dashSeabank').innerText = formatCompactRupiah(data.saldoBank.seabank);
+      document.getElementById('dashBca').innerText = formatCompactRupiah(data.saldoBank.bca);
+      document.getElementById('dashMandiri').innerText = formatCompactRupiah(data.saldoBank.mandiri);
+      document.getElementById('dashDana').innerText = formatCompactRupiah(data.saldoBank.dana);
+      document.getElementById('dashCash').innerText = formatCompactRupiah(data.saldoBank.cash);
+
+      // Update Cash Flow
+      document.getElementById('dashPemasukan').innerText = formatRupiah(data.kategoriSummary.pemasukan.nominal);
+      document.getElementById('dashPemasukanPct').innerText = formatPercent(data.kategoriSummary.pemasukan.persen);
+
+      document.getElementById('dashKebutuhan').innerText = formatRupiah(data.kategoriSummary.kebutuhanPokok.nominal);
+      document.getElementById('dashKebutuhanPct').innerText = formatPercent(data.kategoriSummary.kebutuhanPokok.persen);
+
+      // Update Dynamic Top 5 Sub Kategori
+      renderTop5List(data.top5SubKategori);
+    }
+
+    function renderTop5List(items) {
+      const container = document.getElementById('dashTop5Container');
+      container.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p class="text-xs text-center text-pink-800/60">Tidak ada pengeluaran pada periode ini.</p>';
+        return;
+      }
+
+      const colors = ['bg-pink-500', 'bg-pink-400', 'bg-rose-400', 'bg-purple-400', 'bg-indigo-400'];
+
+      items.forEach((item, index) => {
+        const pctFormatted = formatPercent(item.persen);
+        const widthPct = Math.min(Math.max((item.persen * 100), 5), 100); // Batas minimal visual 5%
+        const color = colors[index % colors.length];
+
+        const itemHtml = `
+          <div>
+            <div class="flex justify-between text-[11px] font-medium mb-1">
+              <span class="text-pink-950 font-semibold">${item.nama}</span>
+              <span class="font-bold text-pink-900">${pctFormatted} (${formatCompactRupiah(item.total)})</span>
+            </div>
+            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
+              <div class="${color} h-full rounded-full transition-all duration-500" style="width: ${widthPct}%"></div>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', itemHtml);
+      });
     }
   </script>
 </body>
