@@ -92,22 +92,67 @@
     .animate-glow-elephant {
       animation: pulseGlow 2s ease-in-out infinite;
     }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shake 0.35s ease-in-out;
+    }
   </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-3 sm:p-4">
 
-  <!-- ==================== SPLASH SCREEN ANIMATION ==================== -->
-  <div id="splashScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#ca9bb2] transition-all duration-700 ease-in-out">
+  <!-- ==================== LOCK SCREEN / LOGIN PIN ==================== -->
+  <div id="lockScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#ca9bb2] transition-all duration-700 ease-in-out">
     <!-- Motif Watermark Overlay -->
     <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Cg fill=\'%23ffffff\'%3E%3Cpath d=\'M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z\'/%3E%3C/g%3E%3C/svg%3E');"></div>
     
-    <div class="relative z-10 text-center px-4">
-      <!-- Logo Tanpa Border & Ukuran 2x Lebih Besar -->
+    <div class="relative z-10 text-center px-4 w-full max-w-xs">
+      <!-- Logo Gajah 2x Lebih Besar + Animasi Pulse Glow -->
       <div class="animate-glow-elephant inline-block mb-2">
         <img src="https://i.ibb.co/dJDL0bzv/Untitled-design.png" alt="Elephant Logo" class="w-48 h-48 sm:w-56 sm:h-56 object-contain">
       </div>
       <h2 class="text-white font-bold text-xl sm:text-2xl tracking-wide">Budgeting Master Sync 🐘💕</h2>
-      <p class="text-pink-100/90 text-xs sm:text-sm font-medium mt-1 animate-pulse">Made with Love, Julyo Sechar 💕</p>
+      <p class="text-pink-100/90 text-xs sm:text-sm font-medium mt-1">Made with Love, Julyo Sechar 💕</p>
+
+      <!-- FORM INPUT PIN -->
+      <div id="pinBox" class="mt-6 glass-card p-4 rounded-2xl shadow-lg border border-white/60">
+        <label for="pinInput" class="block text-xs font-semibold text-pink-950/80 mb-2 tracking-wide">
+          🔒 MASUKKAN 6 DIGIT PIN
+        </label>
+        
+        <div class="relative flex items-center mb-2">
+          <input 
+            type="password" 
+            id="pinInput" 
+            maxlength="6" 
+            inputmode="numeric" 
+            pattern="[0-9]*"
+            placeholder="• • • • • •" 
+            oninput="checkPinAuto()" 
+            onkeydown="if(event.key==='Enter') verifyPin()"
+            class="w-full text-center text-lg font-bold tracking-[0.3em] py-2 px-3 rounded-xl bg-white/80 border border-pink-300/80 text-pink-950 focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-pink-300"
+          >
+          <button type="button" onclick="togglePinVisibility()" class="absolute right-3 text-pink-700/70 hover:text-pink-950 text-xs font-medium focus:outline-none">
+            <span id="eyeIcon">👁️</span>
+          </button>
+        </div>
+
+        <!-- Error Message Container -->
+        <p id="pinError" class="text-[11px] font-bold text-rose-800 hidden mt-1">
+          ❌ PIN Salah! Coba lagi.
+        </p>
+
+        <button 
+          onclick="verifyPin()" 
+          class="w-full mt-3 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold py-2 rounded-xl text-xs shadow-sm transition duration-200 border border-pink-200/50">
+          Buka Aplikasi 🔓
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -347,16 +392,55 @@
   </div>
 
   <script>
+    const CORRECT_PIN = "080798";
     const GAS_URL = "https://script.google.com/macros/s/AKfycbxKE6HQJGUPhK8yfcSjRF5LRVbsEhXMn9iuUrZtu-8oT842UohdGdeKtORGhdYBL6Pq8g/exec";
 
-    // Splash Screen Auto Hide
+    // Auto focus ke input PIN saat halaman dimuat
     window.addEventListener('load', () => {
-      setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
-        splash.classList.add('opacity-0', 'pointer-events-none');
-        setTimeout(() => splash.remove(), 700);
-      }, 1500);
+      document.getElementById('pinInput').focus();
     });
+
+    // Toggle Show/Hide PIN
+    function togglePinVisibility() {
+      const pinInput = document.getElementById('pinInput');
+      const eyeIcon = document.getElementById('eyeIcon');
+      if (pinInput.type === 'password') {
+        pinInput.type = 'text';
+        eyeIcon.innerText = '🙈';
+      } else {
+        pinInput.type = 'password';
+        eyeIcon.innerText = '👁️';
+      }
+    }
+
+    // Auto check PIN ketika 6 digit diketik
+    function checkPinAuto() {
+      const pinInput = document.getElementById('pinInput');
+      if (pinInput.value.length === 6) {
+        verifyPin();
+      }
+    }
+
+    // Verifikasi PIN Login
+    function verifyPin() {
+      const pinInput = document.getElementById('pinInput');
+      const pinBox = document.getElementById('pinBox');
+      const pinError = document.getElementById('pinError');
+      const lockScreen = document.getElementById('lockScreen');
+
+      if (pinInput.value === CORRECT_PIN) {
+        pinError.classList.add('hidden');
+        lockScreen.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => lockScreen.remove(), 700);
+      } else {
+        pinError.classList.remove('hidden');
+        pinBox.classList.remove('animate-shake');
+        void pinBox.offsetWidth; // Trigger reflow
+        pinBox.classList.add('animate-shake');
+        pinInput.value = '';
+        pinInput.focus();
+      }
+    }
 
     // Tab Switcher
     function switchTab(tab) {
