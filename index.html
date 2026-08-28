@@ -151,10 +151,10 @@
         </select>
       </div>
 
-      <!-- Nominal -->
+      <!-- Nominal (Format Rp Otomatis) -->
       <div>
         <label class="block text-xs font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Nominal (Rp)</label>
-        <input type="number" id="nominal" placeholder="0" min="1" required class="w-full custom-input rounded-xl px-3.5 py-2 text-sm font-medium">
+        <input type="text" id="nominal" placeholder="Rp 0" required onkeyup="formatRupiahInput(this)" class="w-full custom-input rounded-xl px-3.5 py-2 text-sm font-medium">
       </div>
 
       <!-- Akun Bank -->
@@ -216,6 +216,17 @@
       "⚠️ LAIN-LAIN": ["Admin Bank", "Pengeluaran Tak Terduga", "Bantu Keluarga", "Barang Rusak", "Parkir"]
     };
 
+    // Fungsi Format Input ke Rupiah
+    function formatRupiahInput(el) {
+      let value = el.value.replace(/[^0-9]/g, '');
+      if (value === '') {
+        el.value = '';
+        return;
+      }
+      let formatted = new Intl.NumberFormat('id-ID').format(value);
+      el.value = 'Rp ' + formatted;
+    }
+
     function handleCategoryChange() {
       const kat = document.getElementById('kategori').value;
       const subSelect = document.getElementById('subKategori');
@@ -247,11 +258,21 @@
       btn.disabled = true;
       btn.innerHTML = '<span>Memproses...</span> 🐘';
 
+      // Mengambil angka murni (menghapus "Rp " dan titik ".")
+      const rawNominal = document.getElementById('nominal').value.replace(/[^0-9]/g, '');
+
+      if (!rawNominal || parseInt(rawNominal) <= 0) {
+        alert("Silakan masukkan nominal transaksi yang valid!");
+        btn.disabled = false;
+        btn.innerHTML = '<span>Simpan Transaksi</span> 🐘';
+        return;
+      }
+
       const payload = {
         kolomA: document.getElementById('tanggal').value,
         kolomB: document.getElementById('kategori').value,
         kolomC: document.getElementById('subKategori').value,
-        kolomD: document.getElementById('nominal').value,
+        kolomD: rawNominal, // Mengirim angka murni ke Google Sheets
         kolomE: document.getElementById('akun').value
       };
 
