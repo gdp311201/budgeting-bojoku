@@ -3,8 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Budgeting - Input Transaksi Cute Elephant</title>
-  
+  <title>Budgeting Master Sync 🐘💕</title>
+
+  <!-- ==================== FAVICON & HOME SCREEN ICON ==================== -->
+  <!-- Favicon Tab Browser (PC/Laptop) -->
+  <link rel="icon" type="image/png" href="https://i.ibb.co/dJDL0bzv/Untitled-design.png">
+
+  <!-- Apple Touch Icon (Home Screen iOS/iPhone/iPad) -->
+  <link rel="apple-touch-icon" href="https://i.ibb.co/dJDL0bzv/Untitled-design.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://i.ibb.co/dJDL0bzv/Untitled-design.png">
+
+  <!-- Web App Title & Theme Status Bar -->
+  <meta name="apple-mobile-web-app-title" content="Budgeting 🐘">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#d8b0c0">
+  <!-- =================================================================== -->
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -84,7 +99,7 @@
       font-weight: 400;
     }
 
-    /* Animation Smooth Pop Modal */
+    /* Animation Pop Modal Cute */
     @keyframes popIn {
       0% { transform: scale(0.85); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
@@ -245,7 +260,7 @@
       "⚠️ LAIN-LAIN": ["Admin Bank", "Pengeluaran Tak Terduga", "Bantu Keluarga", "Barang Rusak", "Parkir"]
     };
 
-    // Fungsi Custom Modal Notifikasi Cute
+    // Custom Modal Notifikasi Cute
     function showCuteModal(isSuccess, title, message) {
       const modal = document.getElementById('cuteModal');
       const modalIcon = document.getElementById('modalIcon');
@@ -344,7 +359,6 @@
           body: JSON.stringify(payload)
         });
 
-        // Notifikasi Sukses Cute
         showCuteModal(true, "Yey, Berhasil!", "Transaksi kamu berhasil dicatat ke Google Sheets! 💕");
         
         document.getElementById('nominal').value = '';
@@ -357,7 +371,6 @@
         handleCategoryChange();
 
       } catch (err) {
-        // Notifikasi Gagal Cute
         showCuteModal(false, "Gagal Mencatat!", "Terjadi kesalahan: " + err.message);
       } finally {
         btn.disabled = false;
