@@ -1,5 +1,4 @@
 import { initTransaksi } from './transaksi.js';
-import { initDashboard, loadDashboardData } from './dashboard.js';
 
 // PIN Akses Aplikasi
 const CORRECT_PIN = "080798";
@@ -25,14 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Safe Load Modules
   if (typeof initTransaksi === 'function') initTransaksi();
-  if (typeof initDashboard === 'function') initDashboard();
 
   // Load Optional Modules jika sudah tersedia
   loadOptionalModules();
 });
 
 // Pemuatan Modul Tambahan Secara Aman
-let initMutasi, loadMutasiData, initReceipt, initSearch;
+let initMutasi, loadMutasiData, initDashboard, loadDashboardData, initReceipt, initSearch;
+
 async function loadOptionalModules() {
   try {
     const mutasiMod = await import('./mutasi.js').catch(() => null);
@@ -40,6 +39,13 @@ async function loadOptionalModules() {
       initMutasi = mutasiMod.initMutasi; 
       loadMutasiData = mutasiMod.loadMutasiData;
       initMutasi();
+    }
+
+    const dashMod = await import('./dashboard.js').catch(() => null);
+    if (dashMod && dashMod.initDashboard) {
+      initDashboard = dashMod.initDashboard;
+      loadDashboardData = dashMod.loadDashboardData;
+      initDashboard();
     }
 
     const receiptMod = await import('./receipt.js').catch(() => null);
