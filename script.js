@@ -1,5 +1,8 @@
 import { initTransaksi } from './transaksi.js';
 import { initDashboard, loadDashboardData } from './dashboard.js';
+import { initMutasi, loadMutasiData } from './mutasi.js';
+import { initReceipt } from './receipt.js';
+import { initSearch } from './search.js';
 
 const CORRECT_PIN = "080798";
 
@@ -7,21 +10,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const pinInput = document.getElementById('pinInput');
   if (pinInput) pinInput.focus();
 
-  // Attach System & Nav Listeners
+  // Attach PIN Listeners
   document.getElementById('pinInput')?.addEventListener('input', checkPinAuto);
   document.getElementById('btnTogglePin')?.addEventListener('click', togglePinVisibility);
-  document.getElementById('tabInputBtn')?.addEventListener('click', () => switchTab('input'));
-  document.getElementById('tabDashBtn')?.addEventListener('click', () => switchTab('dashboard'));
 
-  // Initialize Modules
+  // Attach Navigation Listeners (5 Navigation Tabs)
+  document.getElementById('navInputBtn')?.addEventListener('click', () => switchTab('input'));
+  document.getElementById('navMutasiBtn')?.addEventListener('click', () => switchTab('mutasi'));
+  document.getElementById('navDashBtn')?.addEventListener('click', () => switchTab('dashboard'));
+  document.getElementById('navReceiptBtn')?.addEventListener('click', () => switchTab('receipt'));
+  document.getElementById('navSearchBtn')?.addEventListener('click', () => switchTab('search'));
+
+  // Initialize All App Modules
   initTransaksi();
   initDashboard();
+  initMutasi();
+  initReceipt();
+  initSearch();
 });
 
 // Toggle Show/Hide PIN
 function togglePinVisibility() {
   const pinInput = document.getElementById('pinInput');
   const eyeIcon = document.getElementById('eyeIcon');
+  if (!pinInput || !eyeIcon) return;
+
   if (pinInput.type === 'password') {
     pinInput.type = 'text';
     eyeIcon.innerText = '🙈';
@@ -34,7 +47,7 @@ function togglePinVisibility() {
 // Auto check PIN
 function checkPinAuto() {
   const pinInput = document.getElementById('pinInput');
-  if (pinInput.value.length === 6) {
+  if (pinInput && pinInput.value.length === 6) {
     verifyPin();
   }
 }
@@ -46,38 +59,54 @@ function verifyPin() {
   const pinError = document.getElementById('pinError');
   const lockScreen = document.getElementById('lockScreen');
 
+  if (!pinInput) return;
+
   if (pinInput.value === CORRECT_PIN) {
-    pinError.classList.add('hidden');
-    lockScreen.classList.add('opacity-0', 'pointer-events-none');
-    setTimeout(() => lockScreen.remove(), 700);
+    if (pinError) pinError.classList.add('hidden');
+    if (lockScreen) {
+      lockScreen.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => lockScreen.remove(), 700);
+    }
   } else {
-    pinError.classList.remove('hidden');
-    pinBox.classList.remove('animate-shake');
-    void pinBox.offsetWidth; // Trigger reflow animasi shake
-    pinBox.classList.add('animate-shake');
+    if (pinError) pinError.classList.remove('hidden');
+    if (pinBox) {
+      pinBox.classList.remove('animate-shake');
+      void pinBox.offsetWidth; // Trigger reflow animasi shake
+      pinBox.classList.add('animate-shake');
+    }
     pinInput.value = '';
     pinInput.focus();
   }
 }
 
-// Tab Switcher Controller
-function switchTab(tab) {
-  const inputView = document.getElementById('viewInput');
-  const dashView = document.getElementById('viewDashboard');
-  const inputBtn = document.getElementById('tabInputBtn');
-  const dashBtn = document.getElementById('tabDashBtn');
+// Tab Switcher Controller (5 Tab Views & Dynamic Active States)
+function switchTab(targetTab) {
+  const tabs = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
 
-  if (tab === 'input') {
-    inputView.classList.remove('hidden');
-    dashView.classList.add('hidden');
-    inputBtn.className = "py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm";
-    dashBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200";
-  } else {
-    inputView.classList.add('hidden');
-    dashView.classList.remove('hidden');
-    dashBtn.className = "py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm";
-    inputBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200";
-    
+  tabs.forEach(tab => {
+    const view = document.getElementById(`view${capitalize(tab)}`);
+    const btn = document.getElementById(`nav${capitalize(tab)}Btn`);
+
+    if (tab === targetTab) {
+      // Tampilkan view aktif
+      if (view) view.classList.remove('hidden');
+      if (btn) btn.classList.add('active');
+    } else {
+      // Sembunyikan view non-aktif
+      if (view) view.classList.add('hidden');
+      if (btn) btn.classList.remove('active');
+    }
+  });
+
+  // Dynamic Trigger ketika Tab Berpindah
+  if (targetTab === 'dashboard') {
     loadDashboardData();
+  } else if (targetTab === 'mutasi') {
+    loadMutasiData();
   }
+}
+
+// Helper Function Kapitalisasi String (e.g. input -> Input)
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
