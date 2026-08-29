@@ -103,8 +103,8 @@
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Kategori</label>
-          <select id="kategori" required class="w-full custom-input rounded-xl px-3.5 py-2">
-            <option value="" disabled selected>-- Pilih Kategori --</option>
+          <select id="kategori" required class="w-full custom-input is-placeholder rounded-xl px-3.5 py-2">
+            <option value="" disabled selected hidden>-- Pilih Kategori --</option>
             <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
             <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
             <option value="💰 TABUNGAN/ INVESTASI">💰 TABUNGAN/ INVESTASI</option>
@@ -122,8 +122,8 @@
 
         <div>
           <label id="lblSubKategori" class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Sub Kategori</label>
-          <select id="subKategori" required class="w-full custom-input rounded-xl px-3.5 py-2">
-            <option value="" disabled selected>-- Pilih Kategori Dulu --</option>
+          <select id="subKategori" required class="w-full custom-input is-placeholder rounded-xl px-3.5 py-2">
+            <option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>
           </select>
         </div>
 
@@ -134,8 +134,8 @@
 
         <div>
           <label id="lblAkun" class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Akun Bank</label>
-          <select id="akun" required class="w-full custom-input rounded-xl px-3.5 py-2">
-            <option value="" disabled selected>-- Pilih Akun --</option>
+          <select id="akun" required class="w-full custom-input is-placeholder rounded-xl px-3.5 py-2">
+            <option value="" disabled selected hidden>-- Pilih Akun --</option>
             <option value="SEABANK">SEABANK</option>
             <option value="BCA">BCA</option>
             <option value="MANDIRI">MANDIRI</option>
@@ -155,7 +155,7 @@
       <div class="glass-mini rounded-2xl p-3 mb-3 border border-pink-200/60 shadow-sm flex gap-2">
         <div class="w-1/2">
           <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Bulan</label>
-          <select id="dashBulan" class="w-full custom-input rounded-xl px-2 py-1.5 font-semibold">
+          <select id="dashBulan" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
             <option value="JANUARI">JANUARI</option>
             <option value="FEBRUARI">FEBRUARI</option>
             <option value="MARET">MARET</option>
@@ -172,7 +172,7 @@
         </div>
         <div class="w-1/2">
           <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Tahun</label>
-          <select id="dashTahun" class="w-full custom-input rounded-xl px-2 py-1.5 font-semibold">
+          <select id="dashTahun" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
             <option value="2024">2024</option>
             <option value="2025">2025</option>
             <option value="2026" selected>2026</option>
@@ -261,12 +261,12 @@
         </span>
       </div>
 
-      <!-- Filter Controls (Akun, Bulan, Tahun) -->
-      <div class="glass-mini rounded-2xl p-3 border border-pink-200/60 shadow-sm">
-        <div class="grid grid-cols-3 gap-2">
+      <!-- Filter Controls (Akun, Bulan, Tahun) - Diperkecil Font visual & Tipe ringkas -->
+      <div class="glass-mini rounded-2xl p-2.5 border border-pink-200/60 shadow-sm overflow-hidden">
+        <div class="grid grid-cols-3 gap-1.5">
           <div>
-            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Akun</label>
-            <select id="mutasiAkun" class="w-full custom-input rounded-xl px-2 py-1.5 font-semibold">
+            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-0.5">Akun</label>
+            <select id="mutasiAkun" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
               <option value="SEABANK" selected>SEABANK</option>
               <option value="BCA">BCA</option>
               <option value="MANDIRI">MANDIRI</option>
@@ -275,8 +275,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Bulan</label>
-            <select id="mutasiBulan" class="w-full custom-input rounded-xl px-2 py-1.5 font-semibold">
+            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-0.5">Bulan</label>
+            <select id="mutasiBulan" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
               <option value="AGUSTUS" selected>AGUSTUS</option>
               <option value="JANUARI">JANUARI</option>
               <option value="FEBRUARI">FEBRUARI</option>
@@ -293,8 +293,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Tahun</label>
-            <select id="mutasiTahun" class="w-full custom-input rounded-xl px-2 py-1.5 font-semibold">
+            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-0.5">Tahun</label>
+            <select id="mutasiTahun" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
               <option value="2026" selected>2026</option>
               <option value="2025">2025</option>
               <option value="2024">2024</option>
