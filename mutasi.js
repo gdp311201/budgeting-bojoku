@@ -1,4 +1,4 @@
-// URL Google Apps Script Web App
+// URL Google Apps Script Web App Terbaru
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqrpR8qrDH3Mr_qN8j95sJhjwRds2TokRm3SBCnTZmUWw2jW_wf7OMVoAX4h2LcxHKzw/exec";
 
 export function initMutasi() {
@@ -13,7 +13,7 @@ export function initMutasi() {
 }
 
 export async function loadMutasiData() {
-  const akun = document.getElementById('mutasiAkun')?.value || 'SEABANK';
+  const akun = document.getElementById('mutasiAkun')?.value || 'BCA';
   const bulan = document.getElementById('mutasiBulan')?.value || 'AGUSTUS';
   const tahun = document.getElementById('mutasiTahun')?.value || '2026';
 
@@ -41,7 +41,7 @@ export async function loadMutasiData() {
       const response = await fetch(`${SCRIPT_URL}?${queryParams.toString()}`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
+          'Accept': 'application/json'
         }
       });
 
@@ -59,7 +59,7 @@ export async function loadMutasiData() {
 
 function renderMutasiUI(res) {
   if (!res || (res.status && res.status === 'error')) {
-    handleMutasiError(res?.message || 'Gagal memuat data mutasi.');
+    handleMutasiError(new Error(res?.message || 'Gagal memuat data mutasi.'));
     return;
   }
 
