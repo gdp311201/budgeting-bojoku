@@ -155,7 +155,7 @@ export function renderEReceipt(data) {
 }
 
 /**
- * FUNGSI DOWNLOAD STRUK DALAM BENTUK GAMBAR (PNG)
+ * FUNGSI DOWNLOAD STRUK DALAM BENTUK GAMBAR (AMAN DI HP & LAPTOP)
  */
 async function downloadReceiptAsImage() {
   const receiptPaper = document.getElementById('receiptPaper');
@@ -167,53 +167,89 @@ async function downloadReceiptAsImage() {
     return;
   }
 
-  // Efek Loading pada Tombol
   const originalBtnText = btnPrint ? btnPrint.innerHTML : '';
   if (btnPrint) {
     btnPrint.disabled = true;
-    btnPrint.innerHTML = '⏳ Menyiapkan Gambar...';
+    btnPrint.innerHTML = '⏳ Memproses Gambar...';
   }
 
   try {
-    // Ambil nama periode untuk nama file
     const bulanEl = document.getElementById('receiptBulan');
     const tahunEl = document.getElementById('receiptTahun');
     const bulan = bulanEl ? bulanEl.value : 'E-Receipt';
     const tahun = tahunEl ? tahunEl.value : '2026';
     const fileName = `E-Receipt_${bulan}_${tahun}.png`;
 
-    // Ambil gaya asli agar bisa dikembalikan setelah capture
     const originalMaxHeight = receiptPaper.style.maxHeight;
     const originalOverflow = receiptPaper.style.overflowY;
 
-    // Buka max-height agar seluruh struk ter-render memanjang utuh ke bawah
     receiptPaper.style.maxHeight = 'none';
     receiptPaper.style.overflowY = 'visible';
 
-    // Konversi element ke Canvas dengan Resolusi Tinggi (Scale 2x)
+    // Menggunakan scale 1.5 agar memori HP tidak crash saat merender struk panjang
     const canvas = await html2canvas(receiptPaper, {
-      scale: 2, // Kualitas HD
+      scale: 1.5, 
       useCORS: true,
-      backgroundColor: '#FEF9E7', // Warna krem/kuning struk agar presisi
+      backgroundColor: '#FEF9E7',
       logging: false
     });
 
-    // Kembalikan gaya tampilan semula di screen
     receiptPaper.style.maxHeight = originalMaxHeight;
     receiptPaper.style.overflowY = originalOverflow;
 
-    // Buat tautan unduh otomatis
     const imageURI = canvas.toDataURL('image/png');
-    const link = document.createElement('a');
-    link.download = fileName;
-    link.href = imageURI;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+    // Deteksi perangkat mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      // Coba gunakan Web Share API jika didukung perangkat
+      if (navigator.share && navigator.canShare) {
+        try {
+          const blob = await (await fetch(imageURI)).blob();
+          const file = new File([blob], fileName, { type: 'image/png' });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: fileName,
+              text: 'E-Receipt Keuangan Bulanan'
+            });
+            return;
+          }
+        } catch (shareErr) {
+          console.log("Web share dibatalkan/tidak diizinkan, membuka tab baru.");
+        }
+      }
+
+      // Fallback Mobile: Buka di jendela baru agar user bisa long-press -> simpan gambar
+      const newWindow = window.open();
+      if (newWindow) {
+        newWindow.document.write(`
+          <html>
+            <head><title>${fileName}</title></head>
+            <body style="margin:0;background:#333;text-align:center;padding:20px;">
+              <p style="color:#fff;font-family:sans-serif;font-size:14px;margin-bottom:15px;">👉 Tekan lama (long-press) gambar di bawah ini, lalu pilih <b>"Simpan ke Foto"</b></p>
+              <img src="${imageURI}" style="max-width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.5);" />
+            </body>
+          </html>
+        `);
+      } else {
+        alert("Pop-up diblokir browser. Silakan buka lewat browser utama (Chrome/Safari).");
+      }
+
+    } else {
+      // Untuk Laptop / Desktop
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = imageURI;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
   } catch (err) {
     console.error("Gagal mengunduh gambar:", err);
-    alert("Terjadi kesalahan saat menyimpan gambar E-Receipt.");
+    alert("Terjadi kesalahan atau memori HP tidak cukup untuk merender struk yang panjang.");
   } finally {
     if (btnPrint) {
       btnPrint.disabled = false;
