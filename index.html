@@ -301,31 +301,31 @@
     <div class="bg-white/70 backdrop-blur-md rounded-2xl border border-white/80 p-1.5 shadow-2xl flex items-center justify-around">
       
       <!-- Button 1: Input -->
-      <button data-target="viewInput" class="nav-btn active flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-950">
+      <button id="navInputBtn" class="nav-btn active flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
         </svg>
         <span class="text-[9px] font-bold tracking-tight">Input</span>
       </button>
 
-      <!-- Button 2: Dashboard -->
-      <button data-target="viewDashboard" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-        </svg>
-        <span class="text-[9px] font-semibold tracking-tight">Dashboard</span>
-      </button>
-
-      <!-- Button 3: Mutasi -->
-      <button data-target="viewMutasi" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
+      <!-- Button 2: Mutasi -->
+      <button id="navMutasiBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
         </svg>
         <span class="text-[9px] font-semibold tracking-tight">Mutasi</span>
       </button>
 
+      <!-- Button 3: Dashboard -->
+      <button id="navDashBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        <span class="text-[9px] font-semibold tracking-tight">Dashboard</span>
+      </button>
+
       <!-- Button 4: E-Receipt -->
-      <button data-target="viewReceipt" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
+      <button id="navReceiptBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
@@ -333,7 +333,7 @@
       </button>
 
       <!-- Button 5: Cari -->
-      <button data-target="viewSearch" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
+      <button id="navSearchBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
