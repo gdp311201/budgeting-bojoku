@@ -105,21 +105,21 @@ function renderMutasiUI(res) {
     let nominalText = '';
     let nominalClass = '';
 
-    // Penentuan Kategori Nominal & Warna
-    if (item.income !== null && item.income !== undefined && item.income > 0) {
+    // Penentuan Kategori Nominal & Warna (Mengandalkan nilai positif dari backend)
+    if (item.income) {
       nominalText = `+${formatRupiah(item.income)}`;
       nominalClass = 'text-emerald-600 font-bold';
-    } else if (item.expense !== null && item.expense !== undefined && item.expense > 0) {
+    } else if (item.expense) {
       nominalText = `-${formatRupiah(item.expense)}`;
       nominalClass = 'text-rose-600 font-bold';
-    } else if (item.mutasiIn !== null && item.mutasiIn !== undefined && item.mutasiIn > 0) {
+    } else if (item.mutasiIn) {
       nominalText = `+${formatRupiah(item.mutasiIn)}`;
       nominalClass = 'text-blue-600 font-bold';
-    } else if (item.mutasiOut !== null && item.mutasiOut !== undefined && item.mutasiOut > 0) {
+    } else if (item.mutasiOut) {
       nominalText = `-${formatRupiah(item.mutasiOut)}`;
       nominalClass = 'text-purple-600 font-bold';
     } else {
-      nominalText = formatRupiah(item.nominal || 0);
+      nominalText = formatRupiah(0);
       nominalClass = 'text-pink-950 font-bold';
     }
 
