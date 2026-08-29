@@ -1,116 +1,120 @@
 import { GAS_URL } from './transaksi.js';
 
 export function initDashboard() {
-  const dashBulan = document.getElementById('dashBulan');
-  const dashTahun = document.getElementById('dashTahun');
+  const selBulan = document.getElementById('dashBulan');
+  const selTahun = document.getElementById('dashTahun');
+  const btnRefresh = document.getElementById('btnRefreshDash');
 
-  if (dashBulan) dashBulan.addEventListener('change', onFilterChange);
-  if (dashTahun) dashTahun.addEventListener('change', onFilterChange);
+  if (selBulan) selBulan.addEventListener('change', loadDashboardData);
+  if (selTahun) selTahun.addEventListener('change', loadDashboardData);
+  if (btnRefresh) btnRefresh.addEventListener('click', loadDashboardData);
+
+  loadDashboardData();
 }
 
 export async function loadDashboardData() {
+  const bulanEl = document.getElementById('dashBulan');
+  const tahunEl = document.getElementById('dashTahun');
+
+  const bulan = bulanEl ? bulanEl.value : "AGUSTUS";
+  const tahun = tahunEl ? tahunEl.value : "2026";
+
+  setDashLoadingState(true);
+
   try {
-    const response = await fetch(GAS_URL);
-    const data = await response.json();
-    updateDashboardUI(data);
+    const res = await fetch(`${GAS_URL}?action=getDashboardData&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`);
+    const data = await res.json();
+
+    if (data.status === "success") {
+      renderDashboardUI(data);
+    } else {
+      console.error("Gagal memuat dashboard:", data.message);
+    }
   } catch (err) {
-    console.error("Gagal memuat data dashboard:", err);
+    console.error("Error fetching Dashboard Data:", err);
+  } finally {
+    setDashLoadingState(false);
   }
 }
 
-export async function onFilterChange() {
-  const selectedBulan = document.getElementById('dashBulan').value;
-  const selectedTahun = document.getElementById('dashTahun').value;
-
-  try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: 'updateFilter',
-        bulan: selectedBulan,
-        tahun: selectedTahun
-      })
-    });
-
-    const data = await response.json();
-    updateDashboardUI(data);
-  } catch (err) {
-    console.error("Gagal memperbarui filter dashboard:", err);
+function setDashLoadingState(isLoading) {
+  const container = document.getElementById('dashboardContainer');
+  if (container) {
+    container.style.opacity = isLoading ? "0.5" : "1";
+    container.style.pointerEvents = isLoading ? "none" : "auto";
   }
 }
 
-export function updateDashboardUI(data) {
-  if (!data) return;
+function formatRupiah(num) {
+  return 'Rp ' + (Number(num) || 0).toLocaleString('id-ID');
+}
 
-  if (data.selectedFilter) {
-    if (data.selectedFilter.bulan) document.getElementById('dashBulan').value = data.selectedFilter.bulan;
-    if (data.selectedFilter.tahun) document.getElementById('dashTahun').value = data.selectedFilter.tahun;
-  }
+function renderDashboardUI(data) {
+  const s = data.summary;
 
-  if (data.reminder) {
-    document.getElementById('dashReminder').innerText = `"${data.reminder}"`;
-  }
+  // 1. Update Kas & Bank
+  document.getElementById('valTotalAset').innerText = formatRupiah(s.totalAset);
+  document.getElementById('valSeabank').innerText = formatRupiah(s.seabank);
+  document.getElementById('valBCA').innerText = formatRupiah(s.bca);
+  document.getElementById('valMandiri').innerText = formatRupiah(s.mandiri);
+  document.getElementById('valDana').innerText = formatRupiah(s.dana);
+  document.getElementById('valCash').innerText = formatRupiah(s.cash);
 
-  if (data.totalAset !== undefined) {
-    document.getElementById('dashTotalAset').innerText = formatRupiah(data.totalAset);
-  }
+  // 2. Update Category Summaries
+  document.getElementById('valCashflow').innerText = formatRupiah(s.cashflow);
+  document.getElementById('valPemasukan').innerText = formatRupiah(s.pemasukan);
+  document.getElementById('valKebutuhanPokok').innerText = formatRupiah(s.kebutuhanPokok);
+  document.getElementById('valTempatTinggal').innerText = formatRupiah(s.tempatTinggal);
+  document.getElementById('valTransportasi').innerText = formatRupiah(s.transportasi);
+  document.getElementById('valKesehatan').innerText = formatRupiah(s.kesehatan);
+  document.getElementById('valPerawatanDiri').innerText = formatRupiah(s.perawatanDiri);
+  document.getElementById('valPengembanganDiri').innerText = formatRupiah(s.pengembanganDiri);
+  document.getElementById('valGayaHidup').innerText = formatRupiah(s.gayaHidup);
+  document.getElementById('valLainLain').innerText = formatRupiah(s.lainLain);
 
-  if (data.bank) {
-    document.getElementById('dashSeabank').innerText = formatCompactRupiah(data.bank.seabank);
-    document.getElementById('dashBca').innerText = formatCompactRupiah(data.bank.bca);
-    document.getElementById('dashMandiri').innerText = formatCompactRupiah(data.bank.mandiri);
-    document.getElementById('dashDana').innerText = formatCompactRupiah(data.bank.dana);
-    document.getElementById('dashCash').innerText = formatCompactRupiah(data.bank.cash);
-  }
+  // 3. Update Reminder Text (Quotes Gajah)
+  const remEl = document.getElementById('dashReminderText');
+  if (remEl) remEl.innerText = s.reminderText || "Keuangan Aman & Terjaga 👍";
 
-  if (data.cashflow) {
-    document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan || 0);
-    document.getElementById('dashPemasukanPct').innerText = formatPercent(data.cashflow.pemasukanPct || 0);
-    document.getElementById('dashKebutuhan').innerText = formatRupiah(data.cashflow.kebutuhan || 0);
-    document.getElementById('dashKebutuhanPct').innerText = formatPercent(data.cashflow.kebutuhanPct || 0);
-  }
-
-  const container = document.getElementById('dashTop5Container');
-  if (data.topExpenses && data.topExpenses.length > 0) {
-    let html = '';
-    data.topExpenses.forEach((item, index) => {
-      const pctVal = (item.pct || 0) * 100;
-      html += `
-        <div>
-          <div class="flex justify-between text-[11px] font-semibold text-pink-950 mb-1">
-            <span>${index + 1}. ${item.nama}</span>
-            <span>${formatRupiah(item.nominal)} (${pctVal.toFixed(0)}%)</span>
+  // 4. Render Table TOP 5 Sub-Kategori
+  const topSubContainer = document.getElementById('listTopSubKategori');
+  if (topSubContainer) {
+    if (data.topSubKategori.length === 0) {
+      topSubContainer.innerHTML = `<div class="text-center text-xs text-gray-400 py-4">Belum ada transaksi pengeluaran pada bulan ini ✨</div>`;
+    } else {
+      topSubContainer.innerHTML = data.topSubKategori.map(item => `
+        <div class="flex justify-between items-center text-xs py-1.5 border-b border-gray-100">
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-rose-500 w-4">${item.no}</span>
+            <span class="font-medium text-gray-700">${item.nama}</span>
           </div>
-          <div class="w-full bg-pink-100/80 rounded-full h-2 overflow-hidden border border-pink-200/50">
-            <div class="bg-gradient-to-r from-pink-400 to-rose-400 h-2 rounded-full transition-all duration-500" style="width: ${Math.min(pctVal, 100)}%"></div>
+          <div class="text-right">
+            <span class="font-mono font-bold text-gray-800">${formatRupiah(item.nominal)}</span>
+            <span class="text-[10px] text-gray-400 ml-1">(${(item.persen * 100).toFixed(0)}%)</span>
           </div>
         </div>
-      `;
-    });
-    container.innerHTML = html;
-  } else {
-    container.innerHTML = '<p class="text-xs text-center text-pink-800/60 italic py-2">Belum ada transaksi pengeluaran pada bulan ini ✨</p>';
+      `).join('');
+    }
   }
-}
 
-// Helper Formatters
-function formatRupiah(val) {
-  if (typeof val !== 'number') val = Number(val) || 0;
-  return 'Rp ' + new Intl.NumberFormat('id-ID').format(val);
-}
-
-function formatCompactRupiah(val) {
-  if (typeof val !== 'number') val = Number(val) || 0;
-  if (val >= 1000000) {
-    return (val / 1000000).toFixed(2) + 'M';
-  } else if (val >= 1000) {
-    return (val / 1000).toFixed(0) + 'k';
+  // 5. Render Table TOP 5 Kategori
+  const topKatContainer = document.getElementById('listTopKategori');
+  if (topKatContainer) {
+    if (data.topKategori.length === 0) {
+      topKatContainer.innerHTML = `<div class="text-center text-xs text-gray-400 py-4">Tidak ada data kategori ✨</div>`;
+    } else {
+      topKatContainer.innerHTML = data.topKategori.map(item => `
+        <div class="flex justify-between items-center text-xs py-1.5 border-b border-gray-100">
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-rose-500 w-4">${item.no}</span>
+            <span class="font-medium text-gray-700">${item.nama}</span>
+          </div>
+          <div class="text-right">
+            <span class="font-mono font-bold text-gray-800">${formatRupiah(item.nominal)}</span>
+            <span class="text-[10px] text-gray-400 ml-1">(${(item.persen * 100).toFixed(0)}%)</span>
+          </div>
+        </div>
+      `).join('');
+    }
   }
-  return val.toString();
-}
-
-function formatPercent(val) {
-  if (typeof val !== 'number') val = Number(val) || 0;
-  return (val * 100).toFixed(0) + '%';
 }
