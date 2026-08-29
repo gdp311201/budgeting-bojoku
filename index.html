@@ -2,7 +2,6 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport dikunci agar tidak bisa di-zoom namun tetap responsif -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Budgeting Master Sync</title>
 
@@ -23,7 +22,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-  <!-- html2canvas Library (Untuk Cetak/Simpan Struk sebagai Foto) -->
+  <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <!-- Custom CSS -->
@@ -166,7 +165,7 @@
             <option value="MEI">MEI</option>
             <option value="JUNI">JUNI</option>
             <option value="JULI">JULI</option>
-            <option value="AGUSTUS">AGUSTUS</option>
+            <option value="AGUSTUS" selected>AGUSTUS</option>
             <option value="SEPTEMBER">SEPTEMBER</option>
             <option value="OKTOBER">OKTOBER</option>
             <option value="NOVEMBER">NOVEMBER</option>
@@ -184,7 +183,8 @@
         </div>
       </div>
 
-      <div class="glass-mini rounded-2xl p-3 mb-4 text-center border border-pink-200/60 shadow-sm">
+      <div class="glass-mini rounded-2xl p-3 mb-4 text-center border border-pink-200/60 shadow-sm flex items-center justify-center gap-2">
+        <span class="text-xl">🐘</span>
         <p id="dashReminder" class="text-[11px] italic font-medium text-pink-950/80 leading-relaxed">
           Memuat data reminder...
         </p>
@@ -201,25 +201,25 @@
         <div class="grid grid-cols-3 gap-2 mb-2">
           <div class="glass-mini p-2 rounded-xl text-center">
             <span class="block text-[9px] font-bold text-pink-900/60">SEABANK</span>
-            <span id="dashSeabank" class="text-xs font-bold text-pink-950">0</span>
+            <span id="dashSeabank" class="text-xs font-bold text-pink-950">Rp 0</span>
           </div>
           <div class="glass-mini p-2 rounded-xl text-center">
             <span class="block text-[9px] font-bold text-pink-900/60">BCA</span>
-            <span id="dashBca" class="text-xs font-bold text-pink-950">0</span>
+            <span id="dashBca" class="text-xs font-bold text-pink-950">Rp 0</span>
           </div>
           <div class="glass-mini p-2 rounded-xl text-center">
             <span class="block text-[9px] font-bold text-pink-900/60">MANDIRI</span>
-            <span id="dashMandiri" class="text-xs font-bold text-pink-950">0</span>
+            <span id="dashMandiri" class="text-xs font-bold text-pink-950">Rp 0</span>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div class="glass-mini p-2 rounded-xl text-center">
             <span class="block text-[9px] font-bold text-pink-900/60">DANA</span>
-            <span id="dashDana" class="text-xs font-bold text-pink-950">0</span>
+            <span id="dashDana" class="text-xs font-bold text-pink-950">Rp 0</span>
           </div>
           <div class="glass-mini p-2 rounded-xl text-center">
             <span class="block text-[9px] font-bold text-pink-900/60">CASH</span>
-            <span id="dashCash" class="text-xs font-bold text-pink-950">0</span>
+            <span id="dashCash" class="text-xs font-bold text-pink-950">Rp 0</span>
           </div>
         </div>
       </div>
@@ -264,7 +264,6 @@
         </span>
       </div>
 
-      <!-- Filter Controls (Akun, Bulan, Tahun) -->
       <div class="glass-mini rounded-2xl p-2.5 border border-pink-200/60 shadow-sm overflow-hidden">
         <div class="grid grid-cols-3 gap-1.5">
           <div>
@@ -306,7 +305,6 @@
         </div>
       </div>
 
-      <!-- Cards Saldo Awal & Saldo Akhir -->
       <div class="grid grid-cols-2 gap-2.5">
         <div class="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-300/60 p-3 rounded-2xl shadow-sm">
           <span class="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Saldo Awal</span>
@@ -318,7 +316,6 @@
         </div>
       </div>
 
-      <!-- Ringkasan Mutasi -->
       <div class="grid grid-cols-4 gap-1 text-center glass-mini p-2 rounded-xl border border-pink-200/50">
         <div>
           <span class="text-[9px] text-pink-900/60 block font-semibold">INCOME</span>
@@ -338,7 +335,6 @@
         </div>
       </div>
 
-      <!-- List Transaksi Mutasi -->
       <div class="glass-mini rounded-2xl p-3.5 border border-pink-200/60 shadow-sm">
         <h4 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2.5">Riwayat Mutasi</h4>
         <div id="mutasiListContainer" class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
@@ -347,7 +343,7 @@
       </div>
     </div>
 
-    <!-- MODUL 4: E-RECEIPT BULANAN (INTEGRATED UI) -->
+    <!-- MODUL 4: E-RECEIPT BULANAN -->
     <div id="viewReceipt" class="app-module hidden transition-all duration-300 space-y-3.5">
       <div class="flex items-center justify-between pb-2 border-b border-pink-200/50">
         <div>
@@ -359,7 +355,6 @@
         </span>
       </div>
 
-      <!-- Filter Receipt (Bulan & Tahun) -->
       <div class="glass-mini rounded-2xl p-2.5 border border-pink-200/60 shadow-sm overflow-hidden">
         <div class="grid grid-cols-2 gap-2">
           <div>
@@ -390,9 +385,7 @@
         </div>
       </div>
 
-      <!-- Thermal Paper Receipt Card Container -->
       <div id="receiptPaper" class="bg-amber-50/90 rounded-2xl p-4 sm:p-5 border border-amber-200/80 shadow-inner relative overflow-hidden font-mono text-pink-950">
-        <!-- Thermal Receipt Header -->
         <div class="text-center pb-3 border-b-2 border-dashed border-amber-300/80">
           <div class="text-base font-extrabold tracking-wider uppercase text-pink-950">BUDGETING MASTER</div>
           <div class="text-[10px] text-pink-900/70 tracking-tight mt-0.5">OFFICIAL MONTHLY FINANCIAL RECEIPT</div>
@@ -401,7 +394,6 @@
           </div>
         </div>
 
-        <!-- Receipt Details Breakdown -->
         <div class="py-3 space-y-2 border-b-2 border-dashed border-amber-300/80 text-xs">
           <div class="flex justify-between items-center">
             <span class="text-pink-900/70">TOTAL PEMASUKAN</span>
@@ -417,20 +409,17 @@
           </div>
         </div>
 
-        <!-- Net Balance Section -->
         <div class="pt-3 pb-2 text-center">
           <span class="text-[10px] font-bold text-pink-900/60 uppercase tracking-widest block">SISA CASHFLOW (NET)</span>
           <span id="receiptNetBalance" class="text-lg font-black text-pink-950 block mt-0.5">Rp 0</span>
         </div>
 
-        <!-- Receipt Footer Note -->
         <div class="text-center pt-2 border-t border-dashed border-amber-200 text-[9px] text-pink-900/60">
           *** THANK YOU & KEEP SAVING ***<br>
           <span class="text-[8px] opacity-75">Verified System Sync - Elsa & Julyo</span>
         </div>
       </div>
 
-      <!-- Action Buttons -->
       <div class="flex gap-2">
         <button id="btnRefreshReceipt" class="w-1/2 bg-white/80 hover:bg-white text-pink-950 font-semibold py-2 px-3 rounded-xl border border-pink-200/80 shadow-sm text-xs flex justify-center items-center gap-1.5 transition duration-150">
           🔄 Reload Data
@@ -463,11 +452,10 @@
     </div>
   </div>
 
-  <!-- FLOATING APP STORE STYLE BOTTOM NAVIGATION BAR -->
+  <!-- FLOATING BOTTOM NAVIGATION BAR -->
   <nav class="fixed bottom-4 inset-x-4 max-w-md mx-auto z-40">
     <div class="bg-white/70 backdrop-blur-md rounded-2xl border border-white/80 p-1.5 shadow-2xl flex items-center justify-around">
       
-      <!-- Button 1: Input -->
       <button id="navInputBtn" class="nav-btn active flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -475,7 +463,6 @@
         <span class="text-[9px] font-bold tracking-tight">Input</span>
       </button>
 
-      <!-- Button 2: Mutasi -->
       <button id="navMutasiBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -483,7 +470,6 @@
         <span class="text-[9px] font-semibold tracking-tight">Mutasi</span>
       </button>
 
-      <!-- Button 3: Dashboard -->
       <button id="navDashBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
@@ -491,7 +477,6 @@
         <span class="text-[9px] font-semibold tracking-tight">Dashboard</span>
       </button>
 
-      <!-- Button 4: E-Receipt -->
       <button id="navReceiptBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -499,7 +484,6 @@
         <span class="text-[9px] font-semibold tracking-tight">Receipt</span>
       </button>
 
-      <!-- Button 5: Cari -->
       <button id="navSearchBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
         <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -524,7 +508,6 @@
     </div>
   </div>
 
-  <!-- Script Pencegah Gesture Zoom Tambahan di iOS Safari -->
   <script>
     document.addEventListener('gesturestart', function (e) {
       e.preventDefault();
