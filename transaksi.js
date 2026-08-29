@@ -105,36 +105,42 @@ export async function handleSubmit(e) {
   };
 
   try {
-    await fetch(GAS_URL, {
+    // Pengiriman tanpa mode: 'no-cors' dengan payload text/plain agar tidak terkena hambatan CORS preflight
+    const response = await fetch(GAS_URL, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
     });
 
-    showCuteModal(true, "Berhasil!", "Transaksi kamu berhasil dicatat ke Google Sheets!");
-    
-    document.getElementById('nominal').value = '';
-    
-    // Reset Select Input ke Placeholder State
-    const katEl = document.getElementById('kategori');
-    const subSelect = document.getElementById('subKategori');
-    const akunEl = document.getElementById('akun');
+    const result = await response.json();
 
-    katEl.selectedIndex = 0;
-    katEl.classList.add('is-placeholder');
+    if (result.result === "success") {
+      showCuteModal(true, "Berhasil!", "Transaksi kamu berhasil dicatat ke Google Sheets!");
+      
+      document.getElementById('nominal').value = '';
+      
+      // Reset Select Input ke Placeholder State
+      const katEl = document.getElementById('kategori');
+      const subSelect = document.getElementById('subKategori');
+      const akunEl = document.getElementById('akun');
 
-    subSelect.innerHTML = '<option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>';
-    subSelect.classList.add('is-placeholder');
+      katEl.selectedIndex = 0;
+      katEl.classList.add('is-placeholder');
 
-    akunEl.selectedIndex = 0;
-    akunEl.classList.add('is-placeholder');
-    
-    if (fpInstance) fpInstance.setDate("today");
-    handleCategoryChange();
+      subSelect.innerHTML = '<option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>';
+      subSelect.classList.add('is-placeholder');
+
+      akunEl.selectedIndex = 0;
+      akunEl.classList.add('is-placeholder');
+      
+      if (fpInstance) fpInstance.setDate("today");
+      handleCategoryChange();
+    } else {
+      showCuteModal(false, "Gagal Mencatat!", "Pesan dari Server: " + (result.message || "Gagal menyimpan data"));
+    }
 
   } catch (err) {
-    showCuteModal(false, "Gagal Mencatat!", "Terjadi kesalahan: " + err.message);
+    showCuteModal(false, "Gagal Mencatat!", "Terjadi kesalahan jaringan/sistem: " + err.message);
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<span>Simpan Transaksi</span>';
