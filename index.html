@@ -261,7 +261,7 @@
         </span>
       </div>
 
-      <!-- Filter Controls (Akun, Bulan, Tahun) - Diperkecil Font visual & Tipe ringkas -->
+      <!-- Filter Controls (Akun, Bulan, Tahun) -->
       <div class="glass-mini rounded-2xl p-2.5 border border-pink-200/60 shadow-sm overflow-hidden">
         <div class="grid grid-cols-3 gap-1.5">
           <div>
@@ -315,7 +315,7 @@
         </div>
       </div>
 
-      <!-- Ringkasan Mutasi (Income, Expense, Mutasi In, Mutasi Out) -->
+      <!-- Ringkasan Mutasi -->
       <div class="grid grid-cols-4 gap-1 text-center glass-mini p-2 rounded-xl border border-pink-200/50">
         <div>
           <span class="text-[9px] text-pink-900/60 block font-semibold">INCOME</span>
@@ -344,16 +344,97 @@
       </div>
     </div>
 
-    <!-- MODUL 4: E-RECEIPT BULANAN -->
-    <div id="viewReceipt" class="app-module hidden transition-all duration-300">
-      <div class="flex items-center justify-between mb-4 pb-2 border-b border-pink-200/50">
+    <!-- MODUL 4: E-RECEIPT BULANAN (INTEGRATED UI) -->
+    <div id="viewReceipt" class="app-module hidden transition-all duration-300 space-y-3.5">
+      <div class="flex items-center justify-between pb-2 border-b border-pink-200/50">
         <div>
           <h1 class="text-base font-bold text-pink-950/80 tracking-wide">E-RECEIPT BULANAN</h1>
           <p class="text-[11px] text-pink-800/60 font-medium">Ringkasan & bukti kuitansi bulanan</p>
         </div>
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium bg-rose-100/80 text-rose-800 border border-rose-200 shadow-sm">
+          🧾 Digital Struk
+        </span>
       </div>
-      <div class="glass-mini rounded-2xl p-4 text-center border border-pink-200/60 shadow-sm">
-        <p class="text-xs text-pink-950/80 font-medium">Modul E-Receipt Siap Diintegrasikan 🧾</p>
+
+      <!-- Filter Receipt (Bulan & Tahun) -->
+      <div class="glass-mini rounded-2xl p-2.5 border border-pink-200/60 shadow-sm overflow-hidden">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-0.5">Bulan</label>
+            <select id="receiptBulan" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
+              <option value="JANUARI">JANUARI</option>
+              <option value="FEBRUARI">FEBRUARI</option>
+              <option value="MARET">MARET</option>
+              <option value="APRIL">APRIL</option>
+              <option value="MEI">MEI</option>
+              <option value="JUNI">JUNI</option>
+              <option value="JULI">JULI</option>
+              <option value="AGUSTUS" selected>AGUSTUS</option>
+              <option value="SEPTEMBER">SEPTEMBER</option>
+              <option value="OKTOBER">OKTOBER</option>
+              <option value="NOVEMBER">NOVEMBER</option>
+              <option value="DESEMBER">DESEMBER</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-0.5">Tahun</label>
+            <select id="receiptTahun" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thermal Paper Receipt Card Container -->
+      <div id="receiptPaper" class="bg-amber-50/90 rounded-2xl p-4 sm:p-5 border border-amber-200/80 shadow-inner relative overflow-hidden font-mono text-pink-950">
+        <!-- Thermal Receipt Header -->
+        <div class="text-center pb-3 border-b-2 border-dashed border-amber-300/80">
+          <div class="text-base font-extrabold tracking-wider uppercase text-pink-950">BUDGETING MASTER</div>
+          <div class="text-[10px] text-pink-900/70 tracking-tight mt-0.5">OFFICIAL MONTHLY FINANCIAL RECEIPT</div>
+          <div class="mt-2 text-[10px] font-semibold bg-amber-200/60 inline-block px-2.5 py-0.5 rounded-full border border-amber-300">
+            PERIODE: <span id="receiptPeriod">AGUSTUS 2026</span>
+          </div>
+        </div>
+
+        <!-- Receipt Details Breakdown -->
+        <div class="py-3 space-y-2 border-b-2 border-dashed border-amber-300/80 text-xs">
+          <div class="flex justify-between items-center">
+            <span class="text-pink-900/70">TOTAL PEMASUKAN</span>
+            <span id="receiptIncome" class="font-bold text-emerald-700">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-pink-900/70">TOTAL PENGELUARAN</span>
+            <span id="receiptExpense" class="font-bold text-rose-700">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-pink-900/70">TABUNGAN / INVESTASI</span>
+            <span id="receiptSaving" class="font-bold text-blue-700">Rp 0</span>
+          </div>
+        </div>
+
+        <!-- Net Balance Section -->
+        <div class="pt-3 pb-2 text-center">
+          <span class="text-[10px] font-bold text-pink-900/60 uppercase tracking-widest block">SISA CASHFLOW (NET)</span>
+          <span id="receiptNetBalance" class="text-lg font-black text-pink-950 block mt-0.5">Rp 0</span>
+        </div>
+
+        <!-- Receipt Footer Note -->
+        <div class="text-center pt-2 border-t border-dashed border-amber-200 text-[9px] text-pink-900/60">
+          *** THANK YOU & KEEP SAVING ***<br>
+          <span class="text-[8px] opacity-75">Verified System Sync - Elsa & Julyo</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2">
+        <button id="btnRefreshReceipt" class="w-1/2 bg-white/80 hover:bg-white text-pink-950 font-semibold py-2 px-3 rounded-xl border border-pink-200/80 shadow-sm text-xs flex justify-center items-center gap-1.5 transition duration-150">
+          🔄 Reload Data
+        </button>
+        <button id="btnPrintReceipt" class="w-1/2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2 px-3 rounded-xl shadow-sm text-xs flex justify-center items-center gap-1.5 border border-pink-200/50 transition duration-150">
+          📥 Cetak / Simpan
+        </button>
       </div>
     </div>
 
