@@ -1,22 +1,7 @@
-// Import modul (pastikan file-file ini sudah ada di repo GitHub)
 import { initTransaksi } from './transaksi.js';
 import { initDashboard, loadDashboardData } from './dashboard.js';
 
-// Opsional: Import modul baru dengan safety check
-let initMutasi, loadMutasiData, initReceipt, initSearch;
-try {
-  const mutasiMod = await import('./mutasi.js').catch(() => null);
-  if (mutasiMod) { initMutasi = mutasiMod.initMutasi; loadMutasiData = mutasiMod.loadMutasiData; }
-  
-  const receiptMod = await import('./receipt.js').catch(() => null);
-  if (receiptMod) initReceipt = receiptMod.initReceipt;
-
-  const searchMod = await import('./search.js').catch(() => null);
-  if (searchMod) initSearch = searchMod.initSearch;
-} catch (e) {
-  console.warn("Modul tambahan belum sepenuhnya dimuat:", e);
-}
-
+// PIN Akses Aplikasi
 const CORRECT_PIN = "080798";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,20 +16,47 @@ document.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('btnTogglePin')?.addEventListener('click', togglePinVisibility);
 
-  // Attach Navigation Listeners (Safety with optional chaining)
+  // Attach Navigation Listeners
   document.getElementById('navInputBtn')?.addEventListener('click', () => switchTab('input'));
   document.getElementById('navMutasiBtn')?.addEventListener('click', () => switchTab('mutasi'));
   document.getElementById('navDashBtn')?.addEventListener('click', () => switchTab('dashboard'));
   document.getElementById('navReceiptBtn')?.addEventListener('click', () => switchTab('receipt'));
   document.getElementById('navSearchBtn')?.addEventListener('click', () => switchTab('search'));
 
-  // Initialize Modules safely
+  // Safe Load Modules
   if (typeof initTransaksi === 'function') initTransaksi();
   if (typeof initDashboard === 'function') initDashboard();
-  if (typeof initMutasi === 'function') initMutasi();
-  if (typeof initReceipt === 'function') initReceipt();
-  if (typeof initSearch === 'function') initSearch();
+
+  // Load Optional Modules jika sudah tersedia
+  loadOptionalModules();
 });
+
+// Pemuatan Modul Tambahan Secara Aman
+let initMutasi, loadMutasiData, initReceipt, initSearch;
+async function loadOptionalModules() {
+  try {
+    const mutasiMod = await import('./mutasi.js').catch(() => null);
+    if (mutasiMod && mutasiMod.initMutasi) { 
+      initMutasi = mutasiMod.initMutasi; 
+      loadMutasiData = mutasiMod.loadMutasiData;
+      initMutasi();
+    }
+
+    const receiptMod = await import('./receipt.js').catch(() => null);
+    if (receiptMod && receiptMod.initReceipt) { 
+      initReceipt = receiptMod.initReceipt;
+      initReceipt();
+    }
+
+    const searchMod = await import('./search.js').catch(() => null);
+    if (searchMod && searchMod.initSearch) { 
+      initSearch = searchMod.initSearch;
+      initSearch();
+    }
+  } catch (e) {
+    console.warn("Modul belum lengkap/masih kosong, dikondisikan aman:", e);
+  }
+}
 
 // Toggle Show/Hide PIN
 function togglePinVisibility() {
@@ -61,7 +73,7 @@ function togglePinVisibility() {
   }
 }
 
-// Auto check PIN
+// Auto check PIN saat 6 digit
 function checkPinAuto() {
   const pinInput = document.getElementById('pinInput');
   if (pinInput && pinInput.value.length === 6) {
@@ -69,7 +81,7 @@ function checkPinAuto() {
   }
 }
 
-// Verifikasi PIN
+// Verifikasi PIN Login
 function verifyPin() {
   const pinInput = document.getElementById('pinInput');
   const pinBox = document.getElementById('pinBox');
