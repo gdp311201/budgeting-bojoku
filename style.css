@@ -1,3 +1,10 @@
+html, body {
+  /* Mengunci touch action & mencegah pinch/double-tap zoom secara global */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
 body { 
   background-color: #d8b0c0;
   background-image: 
@@ -6,6 +13,12 @@ body {
   background-attachment: fixed;
   color: #4a3e47; 
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+}
+
+/* Wajib font-size minimal 16px pada seluruh elemen input & select */
+/* Mencegah iOS Safari otomatis melakukan 'zoom-in' saat input diklik */
+input, select, textarea {
+  font-size: 16px !important;
 }
 
 .watermark-bg {
