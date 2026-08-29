@@ -31,7 +31,7 @@ export async function loadDashboardData() {
     }
   } catch (err) {
     console.error("Error fetching dashboard data:", err);
-  } font-medium {
+  } finally { // <--- SUDAH DIPERBAIKI DARI "font-medium" KE "finally"
     setDashboardLoading(false);
   }
 }
