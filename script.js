@@ -34,11 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
   loadOptionalModules();
 });
 
-// Mengelola Tampilan Dropdown Placeholder (Hilangkan efek pudar jika opsi dipilih)
+// Mengelola Tampilan Dropdown Placeholder
 function initPlaceholderDropdowns() {
   const dropdowns = document.querySelectorAll('select.is-placeholder');
   dropdowns.forEach((select) => {
-    // Cek status awal
     if (select.value !== "") {
       select.classList.remove('is-placeholder');
     }
@@ -123,7 +122,7 @@ function verifyPin() {
     if (pinError) pinError.classList.remove('hidden');
     if (pinBox) {
       pinBox.classList.remove('animate-shake');
-      void pinBox.offsetWidth; // Trigger reflow animasi shake
+      void pinBox.offsetWidth;
       pinBox.classList.add('animate-shake');
     }
     pinInput.value = '';
