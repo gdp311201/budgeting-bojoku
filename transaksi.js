@@ -86,23 +86,26 @@ export async function handleSubmit(e) {
   btn.disabled = true;
   btn.innerHTML = '<span>Memproses...</span>';
 
-  const rawNominal = document.getElementById('nominal').value.replace(/[^0-9]/g, '');
+  const tglVal = document.getElementById('tanggal').value;
+  const katVal = document.getElementById('kategori').value;
+  const subVal = document.getElementById('subKategori').value;
+  const nomVal = document.getElementById('nominal').value.replace(/[^0-9]/g, '');
+  const akunVal = document.getElementById('akun').value;
 
-  if (!rawNominal || parseInt(rawNominal) <= 0) {
+  if (!nomVal || parseInt(nomVal) <= 0) {
     showCuteModal(false, "Opps!", "Silakan masukkan nominal transaksi yang valid dulu ya!");
     btn.disabled = false;
     btn.innerHTML = '<span>Simpan Transaksi</span>';
     return;
   }
 
-  // Menambahkan properti action agar lolos pengecekan di Apps Script versi manapun
   const payload = {
     action: "simpanTransaksi",
-    kolomA: document.getElementById('tanggal').value,
-    kolomB: document.getElementById('kategori').value,
-    kolomC: document.getElementById('subKategori').value,
-    kolomD: rawNominal,
-    kolomE: document.getElementById('akun').value
+    kolomA: tglVal,
+    kolomB: katVal,
+    kolomC: subVal,
+    kolomD: nomVal,
+    kolomE: akunVal
   };
 
   try {
