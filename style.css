@@ -16,7 +16,7 @@ body {
 }
 
 /* Wajib font-size minimal 16px pada seluruh elemen input & select */
-/* Mencegah iOS Safari otomatis melakukan 'zoom-in' saat input diklik */
+/* Mencegah iOS Safari otomatis melakukan 'zoom-in' saat input/select diklik */
 input, select, textarea {
   font-size: 16px !important;
 }
@@ -67,6 +67,68 @@ input, select, textarea {
   box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.2);
 }
 
+/* =========================================================
+   PENYESUAIAN DROPDOWN & PLACEHOLDER MULTI-SELECT
+   ========================================================= */
+
+/* Trik Scaling Visual Font Dropdown tanpa memicu Auto-Zoom iOS */
+.select-compact {
+  font-size: 16px !important; /* Lolos dari auto-zoom iOS Safari */
+  padding-left: 0.35rem !important;
+  padding-right: 1.2rem !important;
+  letter-spacing: -0.02em;
+  transform: scale(0.88); /* Mengecilkan teks secara visual ke ~13px */
+  transform-origin: center left;
+  width: 113.6% !important; /* Menyeimbangkan area akibat scaling down */
+  margin-right: -13.6%;
+}
+
+/* Style Placeholder Dropdown Miring, Pudar, dan Bergaya Instruksi */
+select.is-placeholder {
+  color: rgba(131, 24, 67, 0.45) !important; /* Warna pudar */
+  font-style: italic !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+}
+
+select.is-placeholder option {
+  color: #4a3e47;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+select option[disabled] {
+  color: rgba(131, 24, 67, 0.4) !important;
+  font-style: italic !important;
+}
+
+/* =========================================================
+   PERBAIKAN TAMPILAN MUTASI (KATEGORI SEJAJAR TANGGAL)
+   ========================================================= */
+
+.mutasi-header-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important; /* Melarang kategori turun ke bawah */
+  gap: 6px;
+  width: 100%;
+}
+
+.mutasi-date {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.mutasi-badge {
+  max-width: 160px; /* Membatasi panjang badge kategori */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
 /* Animations */
 @keyframes popIn {
   0% { transform: scale(0.85); opacity: 0; }
@@ -96,7 +158,10 @@ input, select, textarea {
   animation: shake 0.35s ease-in-out;
 }
 
-/* Floating Bottom Navigation Bar */
+/* =========================================================
+   FLOATING BOTTOM NAVIGATION BAR (APP STORE STYLE)
+   ========================================================= */
+
 .nav-btn {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -110,7 +175,7 @@ input, select, textarea {
 /* State ketika Tab Aktif */
 .nav-btn.active {
   background-color: rgba(255, 255, 255, 0.9);
-  color: #831843;
+  color: #831843; /* text-pink-950 */
   box-shadow: 0 4px 12px -2px rgba(219, 112, 147, 0.3);
 }
 
