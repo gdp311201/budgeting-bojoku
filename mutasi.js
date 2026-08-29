@@ -123,22 +123,23 @@ function renderMutasiUI(res) {
       nominalClass = 'text-pink-950 font-bold';
     }
 
-    // Format Tanggal Display
+    // Format Tanggal & Kategori Display
     const tglDisplay = item.tgl || item.tanggal || '-';
     const katDisplay = item.kategori || 'TRANSAKSI';
     const subKatDisplay = item.subKategori || item.keterangan || 'Tanpa Sub Kategori';
 
+    // Pengaplikasian Flexbox mutasi-header-row dan mutasi-badge agar Kategori Sejajar Kanan Tanggal
     html += `
-      <div class="flex items-center justify-between p-2.5 bg-white/60 rounded-xl border border-pink-100/80 hover:bg-white/80 transition-all shadow-sm">
-        <div class="space-y-0.5 max-w-[65%]">
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="text-[10px] text-pink-900/50 font-semibold">${tglDisplay}</span>
-            <span class="text-[9px] bg-pink-100/80 text-pink-800 px-1.5 py-0.5 rounded-full font-medium border border-pink-200/50 truncate max-w-[120px]">${katDisplay}</span>
-          </div>
-          <p class="text-xs font-bold text-pink-950 truncate">${subKatDisplay}</p>
+      <div class="p-2.5 bg-white/60 rounded-xl border border-pink-100/80 hover:bg-white/80 transition-all shadow-sm flex flex-col gap-1">
+        <div class="mutasi-header-row">
+          <span class="mutasi-date text-[10px] text-pink-900/60 font-semibold">${tglDisplay}</span>
+          <span class="mutasi-badge text-[9px] bg-pink-100/80 text-pink-800 px-2 py-0.5 rounded-full font-medium border border-pink-200/50">${katDisplay}</span>
         </div>
-        <div class="text-right">
-          <span class="text-xs ${nominalClass}">${nominalText}</span>
+        <div class="flex items-center justify-between mt-0.5">
+          <p class="text-xs font-bold text-pink-950 truncate max-w-[60%]">${subKatDisplay}</p>
+          <div class="text-right">
+            <span class="text-xs ${nominalClass}">${nominalText}</span>
+          </div>
         </div>
       </div>
     `;
