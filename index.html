@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Budgeting Master Sync</title>
 
-  <!-- ==================== FAVICON & HOME SCREEN ICON ==================== -->
+  <!-- FAVICON & HOME SCREEN ICON -->
   <link rel="icon" type="image/png" href="https://i.ibb.co/dJDL0bzv/Untitled-design.png">
   <link rel="apple-touch-icon" href="https://i.ibb.co/dJDL0bzv/Untitled-design.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://i.ibb.co/dJDL0bzv/Untitled-design.png">
@@ -14,114 +14,32 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#d8b0c0">
-  <!-- =================================================================== -->
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Flatpickr CSS & Theme Light/Pink -->
+  <!-- Flatpickr CSS & Library -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-  <style>
-    body { 
-      /* Background Gradient + Watermark Gajah Seamless Pattern */
-      background-color: #d8b0c0;
-      background-image: 
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.18'%3E%3Cpath d='M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z M13 30 c0-2.8 2.2-5 5-5 h1 v8 h-1 c-2.8 0-5-2.2-5-5 z M25 18 c2.8 0 5 2.2 5 5 s-2.2 5-5 5 s-5-2.2-5-5 s2.2-5 5-5 z'/%3E%3Ccircle cx='27' cy='15' r='1.5' fill='%23d8b0c0' fill-opacity='0.5'/%3E%3Cpath d='M75 58 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C53.2 62.4 50 65.8 50 70 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C73.8 75.1 75 71.7 75 68 v-10 z M53 70 c0-2.8 2.2-5 5-5 h1 v8 h-1 c-2.8 0-5-2.2-5-5 z M65 58 c2.8 0 5 2.2 5 5 s-2.2 5-5 5 s-5-2.2-5-5 s2.2-5 5-5 z'/%3E%3Ccircle cx='67' cy='55' r='1.5' fill='%23d8b0c0' fill-opacity='0.5'/%3E%3C/g%3E%3C/svg%3E"),
-        linear-gradient(135deg, #8a96a8 0%, #ba9eb1 50%, #e3b9ca 100%);
-      background-attachment: fixed;
-      color: #4a3e47; 
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-    }
-    
-    .flatpickr-calendar {
-      background: rgba(255, 245, 248, 0.95) !important;
-      border: 1.5px solid #d8b0c0 !important;
-      box-shadow: 0 10px 25px -5px rgba(120, 90, 110, 0.2) !important;
-      border-radius: 16px !important;
-      color: #5c4353 !important;
-      backdrop-filter: blur(8px);
-    }
-    .flatpickr-day.selected {
-      background: #c88ea7 !important;
-      border-color: #c88ea7 !important;
-      color: white !important;
-    }
-
-    .glass-card {
-      background: rgba(255, 255, 255, 0.52);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.75);
-      box-shadow: 0 12px 35px rgba(70, 60, 80, 0.15);
-    }
-
-    .glass-mini {
-      background: rgba(255, 255, 255, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(4px);
-    }
-
-    .custom-input {
-      background: rgba(255, 255, 255, 0.75);
-      border: 1px solid rgba(220, 180, 200, 0.7);
-      color: #52404d;
-      transition: all 0.2s ease;
-    }
-
-    .custom-input:focus {
-      background: rgba(255, 255, 255, 0.95);
-      border-color: #c88ea7;
-      box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.2);
-    }
-
-    /* Animation Pop Modal & Splash Screen */
-    @keyframes popIn {
-      0% { transform: scale(0.85); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .animate-pop {
-      animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255,255,255,0.7)); }
-      50% { transform: scale(1.06); filter: drop-shadow(0 0 25px rgba(255,192,203,0.9)); }
-    }
-    .animate-glow-elephant {
-      animation: pulseGlow 2s ease-in-out infinite;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-8px); }
-      40%, 80% { transform: translateX(8px); }
-    }
-    .animate-shake {
-      animation: shake 0.35s ease-in-out;
-    }
-  </style>
+  <!-- External Custom CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-3 sm:p-4">
 
-  <!-- ==================== LOCK SCREEN / LOGIN PIN ==================== -->
+  <!-- LOCK SCREEN / LOGIN PIN -->
   <div id="lockScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#ca9bb2] transition-all duration-700 ease-in-out">
-    <!-- Motif Watermark Overlay -->
-    <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Cg fill=\'%23ffffff\'%3E%3Cpath d=\'M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z\'/%3E%3C/g%3E%3C/svg%3E');"></div>
+    <div class="absolute inset-0 opacity-20 pointer-events-none watermark-bg"></div>
     
     <div class="relative z-10 text-center px-4 w-full max-w-xs">
-      <!-- Logo Gajah -->
       <div class="animate-glow-elephant inline-block mb-3">
         <img src="https://i.ibb.co/dJDL0bzv/Untitled-design.png" alt="Elephant Logo" class="w-44 h-44 sm:w-52 sm:h-52 object-contain">
       </div>
       
-      <!-- Welcoming Title Elegant -->
       <span class="block text-xs font-semibold uppercase tracking-[0.25em] text-pink-200/90 mb-1">Welcome Back</span>
       <h2 class="text-white font-bold text-2xl sm:text-3xl tracking-tight">Budgeting Master Sync</h2>
       <p class="text-pink-100/80 text-xs font-normal mt-1.5 tracking-wide">Made with Love, Julyo Sechar ❤️</p>
 
-      <!-- FORM INPUT PIN -->
       <div id="pinBox" class="mt-6 glass-card p-4 rounded-2xl shadow-lg border border-white/60">
         <label for="pinInput" class="block text-xs font-semibold text-pink-950/80 mb-2 tracking-wide">
           🔒 MASUKKAN 6 DIGIT PIN
@@ -135,27 +53,24 @@
             inputmode="numeric" 
             pattern="[0-9]*"
             placeholder="• • • • • •" 
-            oninput="checkPinAuto()" 
+            id="pinInput"
             class="w-full text-center text-lg font-bold tracking-[0.3em] py-2 px-3 rounded-xl bg-white/80 border border-pink-300/80 text-pink-950 focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-pink-300"
           >
-          <button type="button" onclick="togglePinVisibility()" class="absolute right-3 text-pink-700/70 hover:text-pink-950 text-xs font-medium focus:outline-none">
+          <button type="button" id="btnTogglePin" class="absolute right-3 text-pink-700/70 hover:text-pink-950 text-xs font-medium focus:outline-none">
             <span id="eyeIcon">👁️</span>
           </button>
         </div>
 
-        <!-- Error Message Container -->
         <p id="pinError" class="text-[11px] font-bold text-rose-800 hidden mt-2">
           ❌ PIN Salah! Coba lagi.
         </p>
       </div>
-
     </div>
   </div>
 
-  <!-- ==================== MAIN CONTAINER ==================== -->
+  <!-- MAIN CONTAINER -->
   <div class="w-full max-w-md glass-card rounded-3xl p-5 sm:p-6 relative overflow-hidden my-auto">
     
-    <!-- Header Badge -->
     <div class="text-center mb-3">
       <div class="inline-flex items-center justify-center bg-white/60 px-3.5 py-1.5 rounded-full border border-pink-200/70 shadow-sm backdrop-blur-sm">
         <span class="text-xs font-semibold text-pink-950/80 tracking-wide">With Love, Julyo Sechar</span>
@@ -164,15 +79,15 @@
 
     <!-- Navigation Tab Switcher -->
     <div class="grid grid-cols-2 gap-1.5 p-1 bg-white/40 rounded-2xl border border-pink-200/60 mb-5 shadow-inner">
-      <button id="tabInputBtn" onclick="switchTab('input')" class="py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm">
+      <button id="tabInputBtn" class="py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm">
         📝 Form Input
       </button>
-      <button id="tabDashBtn" onclick="switchTab('dashboard')" class="py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200">
+      <button id="tabDashBtn" class="py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200">
         📊 Live Dashboard
       </button>
     </div>
 
-    <!-- ==================== TAB 1: FORM INPUT ==================== -->
+    <!-- TAB 1: FORM INPUT -->
     <div id="viewInput" class="block transition-all duration-300">
       <div class="flex items-center justify-between mb-4 pb-2 border-b border-pink-200/50">
         <div>
@@ -184,8 +99,7 @@
         </span>
       </div>
 
-      <form id="txForm" onsubmit="handleSubmit(event)" class="space-y-3.5">
-        <!-- Tanggal -->
+      <form id="txForm" class="space-y-3.5">
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Tanggal</label>
           <div class="relative">
@@ -197,10 +111,9 @@
           </div>
         </div>
 
-        <!-- Kategori -->
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Kategori</label>
-          <select id="kategori" onchange="handleCategoryChange()" required class="w-full custom-input rounded-xl px-3.5 py-2 text-xs">
+          <select id="kategori" required class="w-full custom-input rounded-xl px-3.5 py-2 text-xs">
             <option value="" disabled selected>-- Pilih Kategori --</option>
             <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
             <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
@@ -217,7 +130,6 @@
           </select>
         </div>
 
-        <!-- Sub Kategori -->
         <div>
           <label id="lblSubKategori" class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Sub Kategori</label>
           <select id="subKategori" required class="w-full custom-input rounded-xl px-3.5 py-2 text-xs">
@@ -225,13 +137,11 @@
           </select>
         </div>
 
-        <!-- Nominal -->
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Nominal (Rp)</label>
-          <input type="text" id="nominal" placeholder="Rp 0" required onkeyup="formatRupiahInput(this)" class="w-full custom-input rounded-xl px-3.5 py-2 text-xs font-medium">
+          <input type="text" id="nominal" placeholder="Rp 0" required class="w-full custom-input rounded-xl px-3.5 py-2 text-xs font-medium">
         </div>
 
-        <!-- Akun Bank -->
         <div>
           <label id="lblAkun" class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Akun Bank</label>
           <select id="akun" required class="w-full custom-input rounded-xl px-3.5 py-2 text-xs">
@@ -244,21 +154,18 @@
           </select>
         </div>
 
-        <!-- Tombol Simpan -->
         <button type="submit" id="btnSubmit" class="w-full mt-2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2.5 px-3 rounded-xl shadow-sm hover:shadow-md transition duration-200 text-xs sm:text-sm flex justify-center items-center gap-1.5 border border-pink-200/50">
           <span>Simpan Transaksi</span>
         </button>
       </form>
     </div>
 
-    <!-- ==================== TAB 2: LIVE DASHBOARD ==================== -->
+    <!-- TAB 2: LIVE DASHBOARD -->
     <div id="viewDashboard" class="hidden transition-all duration-300">
-      
-      <!-- Filter Bulan & Tahun -->
       <div class="glass-mini rounded-2xl p-3 mb-3 border border-pink-200/60 shadow-sm flex gap-2">
         <div class="w-1/2">
           <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Bulan</label>
-          <select id="dashBulan" onchange="onFilterChange()" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
+          <select id="dashBulan" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
             <option value="JANUARI">JANUARI</option>
             <option value="FEBRUARI">FEBRUARI</option>
             <option value="MARET">MARET</option>
@@ -275,7 +182,7 @@
         </div>
         <div class="w-1/2">
           <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Tahun</label>
-          <select id="dashTahun" onchange="onFilterChange()" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
+          <select id="dashTahun" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
             <option value="2024">2024</option>
             <option value="2025">2025</option>
             <option value="2026" selected>2026</option>
@@ -284,21 +191,18 @@
         </div>
       </div>
 
-      <!-- Motivational / Reminder Bar -->
       <div class="glass-mini rounded-2xl p-3 mb-4 text-center border border-pink-200/60 shadow-sm">
         <p id="dashReminder" class="text-[11px] italic font-medium text-pink-950/80 leading-relaxed">
           Memuat data reminder...
         </p>
       </div>
 
-      <!-- Hero Card Total Aset -->
       <div class="bg-gradient-to-br from-pink-500/80 to-rose-500/80 rounded-2xl p-4 text-white shadow-md mb-4 border border-white/40">
         <span class="text-[10px] font-bold uppercase tracking-wider text-pink-100">Total Aset Bersih</span>
         <div id="dashTotalAset" class="text-2xl font-black tracking-tight mt-0.5">Rp 0</div>
         <p class="text-[10px] text-pink-100/90 mt-1">Status: Finansial Aman & Terjaga 🌸</p>
       </div>
 
-      <!-- Grid Ringkasan Rekening Bank -->
       <div class="mb-4">
         <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Kas & Bank</h3>
         <div class="grid grid-cols-3 gap-2 mb-2">
@@ -327,7 +231,6 @@
         </div>
       </div>
 
-      <!-- Cash Flow & Pemasukan / Kebutuhan Pokok -->
       <div class="mb-4">
         <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Cash Flow Bulan Ini</h3>
         <div class="grid grid-cols-2 gap-2">
@@ -348,7 +251,6 @@
         </div>
       </div>
 
-      <!-- Dynamic Top 5 Pengeluaran -->
       <div>
         <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Top 5 Pengeluaran Sub-Kategori</h3>
         <div id="dashTop5Container" class="space-y-2.5 glass-mini p-3 rounded-2xl border border-pink-200/60">
@@ -356,19 +258,17 @@
         </div>
       </div>
 
-      <!-- Link Buka Direct Spreadsheets -->
       <a href="https://docs.google.com/spreadsheets/d/18yaNmMDGq5gFTse9IW_io5n3aaPiVYxpCSEQ5nNg2hY/edit?gid=1752606634#gid=1752606634" target="_blank" class="block text-center mt-4 text-[11px] text-pink-900/70 hover:text-pink-950 font-semibold underline">
         Buka Full Google Sheets Master ↗
       </a>
     </div>
 
-    <!-- Footer -->
     <div class="mt-4 pt-2 text-center text-[11px] text-pink-800/60 font-semibold border-t border-pink-200/40">
       <span>Elsa & Julyo</span>
     </div>
   </div>
 
-  <!-- ==================== CUTE NOTIFICATION MODAL ==================== -->
+  <!-- NOTIFICATION MODAL -->
   <div id="cuteModal" class="fixed inset-0 bg-pink-950/20 backdrop-blur-[4px] flex items-center justify-center p-4 z-50 hidden transition-opacity duration-200">
     <div class="bg-white/85 border border-white/80 backdrop-blur-md rounded-3xl p-5 max-w-xs w-full text-center shadow-xl animate-pop relative overflow-hidden">
       <div id="modalIconBg" class="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl shadow-inner bg-pink-100 border border-pink-200">
@@ -376,339 +276,13 @@
       </div>
       <h3 id="modalTitle" class="text-sm font-bold text-pink-950 mb-1">Berhasil!</h3>
       <p id="modalMessage" class="text-xs text-pink-800/80 font-medium mb-4 leading-relaxed">Transaksi berhasil dicatat ke Google Sheets</p>
-      <button onclick="closeCuteModal()" id="modalBtn" class="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition duration-150 border border-pink-200/60">
+      <button id="modalBtn" class="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition duration-150 border border-pink-200/60">
         Oke, Baik
       </button>
     </div>
   </div>
 
-  <script>
-    const CORRECT_PIN = "080798";
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbz0SGvFRKp6IKlj39gPul9y2DSvK3kJRLkW_VMDytHFovpxnS4hK595Q38n70XtPlQLDA/exec
-";
-
-    // Auto focus ke input PIN saat halaman dimuat
-    window.addEventListener('load', () => {
-      document.getElementById('pinInput').focus();
-    });
-
-    // Toggle Show/Hide PIN
-    function togglePinVisibility() {
-      const pinInput = document.getElementById('pinInput');
-      const eyeIcon = document.getElementById('eyeIcon');
-      if (pinInput.type === 'password') {
-        pinInput.type = 'text';
-        eyeIcon.innerText = '🙈';
-      } else {
-        pinInput.type = 'password';
-        eyeIcon.innerText = '👁️';
-      }
-    }
-
-    // Auto check & verify PIN ketika 6 digit diketik
-    function checkPinAuto() {
-      const pinInput = document.getElementById('pinInput');
-      if (pinInput.value.length === 6) {
-        verifyPin();
-      }
-    }
-
-    // Verifikasi PIN Login
-    function verifyPin() {
-      const pinInput = document.getElementById('pinInput');
-      const pinBox = document.getElementById('pinBox');
-      const pinError = document.getElementById('pinError');
-      const lockScreen = document.getElementById('lockScreen');
-
-      if (pinInput.value === CORRECT_PIN) {
-        pinError.classList.add('hidden');
-        lockScreen.classList.add('opacity-0', 'pointer-events-none');
-        setTimeout(() => lockScreen.remove(), 700);
-      } else {
-        pinError.classList.remove('hidden');
-        pinBox.classList.remove('animate-shake');
-        void pinBox.offsetWidth; // Trigger reflow untuk animasi shake
-        pinBox.classList.add('animate-shake');
-        pinInput.value = '';
-        pinInput.focus();
-      }
-    }
-
-    // Tab Switcher
-    function switchTab(tab) {
-      const inputView = document.getElementById('viewInput');
-      const dashView = document.getElementById('viewDashboard');
-      const inputBtn = document.getElementById('tabInputBtn');
-      const dashBtn = document.getElementById('tabDashBtn');
-
-      if (tab === 'input') {
-        inputView.classList.remove('hidden');
-        dashView.classList.add('hidden');
-        inputBtn.className = "py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm";
-        dashBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200";
-      } else {
-        inputView.classList.add('hidden');
-        dashView.classList.remove('hidden');
-        dashBtn.className = "py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm";
-        inputBtn.className = "py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200";
-        
-        // Fetch Data Dashboard saat tab dashboard pertama dibuka
-        loadDashboardData();
-      }
-    }
-
-    const fpInstance = flatpickr("#tanggal", {
-      dateFormat: "Y-m-d",
-      defaultDate: "today",
-      allowInput: true,
-      clickOpens: true
-    });
-
-    const SUB_DATA = {
-      "💸 PINDAH DANA": ["SEABANK", "BCA", "MANDIRI", "DANA", "CASH"],
-      "💵 PEMASUKAN": ["Gaji / Salary", "Bonus & Komisi", "Dividen Saham", "Pendapatan Lain-Lain", "Penjualan Aset / Properti", "Hibah / Hadiah Uang", "THR / Tunjangan Tahunan"],
-      "🍚 KEBUTUHAN POKOK": ["Makanan", "Minuman", "Snack / Cemilan", "Kebutuhan Rumah Tangga", "Kebutuhan Dapur"],
-      "🏠 TEMPAT TINGGAL": ["Sewa / KPR Rumah", "Maintenance Rumah", "Listrik", "Air", "Internet"],
-      "🚌 TRANSPORTASI": ["BBM", "Ojek Online", "Transportasi Umum", "Maintenance Kendaraan"],
-      "🩺 KESEHATAN": ["Vitamin & Obat", "Asuransi / BPJS", "Periksa ke Dokter"],
-      "💇 PERAWATAN DIRI": ["Skincare", "Barbershop / Salon", "Bodycare", "Gym", "IPL", "Pilates", "Treatment"],
-      "📚 PENGEMBANGAN DIRI": ["Pendidikan / Pelatihan", "Buku", "Kursus", "Aplikasi Belajar", "Webinar"],
-      "💰 TABUNGAN/ INVESTASI": ["Safety Money", "Deposito Bank", "Reksadana", "Arisan", "Logam Mulia", "Saham"],
-      "🎉 GAYA HIDUP/ HIBURAN": ["Makan di Luar", "Coffee Shop", "Subs (Nx, Spotify, dll.)", "Liburan / Traveling", "Hobi & Rekreasi", "Cash Out"],
-      "💳 HUTANG / CICILAN": ["Pinjaman Modal Usaha", "Cicilan Kredit / Pinjaman", "Sumbangan & Donasi Rutin", "KPR"],
-      "⚠️ LAIN-LAIN": ["Admin Bank", "Pengeluaran Tak Terduga", "Bantu Keluarga", "Barang Rusak", "Parkir"]
-    };
-
-    function showCuteModal(isSuccess, title, message) {
-      const modal = document.getElementById('cuteModal');
-      const modalIcon = document.getElementById('modalIcon');
-      const modalIconBg = document.getElementById('modalIconBg');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalMessage = document.getElementById('modalMessage');
-      const modalBtn = document.getElementById('modalBtn');
-
-      if (isSuccess) {
-        modalIcon.innerText = "✨";
-        modalIconBg.className = "w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center text-2xl shadow-inner bg-pink-100/80 border border-pink-200/80";
-        modalTitle.className = "text-sm font-bold text-pink-950 mb-1";
-        modalBtn.className = "w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition duration-150 border border-pink-200/60";
-      } else {
-        modalIcon.innerText = "⚠️";
-        modalIconBg.className = "w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center text-2xl shadow-inner bg-rose-100/80 border border-rose-200/80";
-        modalTitle.className = "text-sm font-bold text-rose-950 mb-1";
-        modalBtn.className = "w-full bg-gradient-to-r from-rose-400 to-red-400 hover:from-rose-500 hover:to-red-500 text-white text-xs font-semibold py-2 px-4 rounded-xl shadow-sm transition duration-150 border border-rose-200/60";
-      }
-
-      modalTitle.innerText = title;
-      modalMessage.innerText = message;
-      modal.classList.remove('hidden');
-    }
-
-    function closeCuteModal() {
-      document.getElementById('cuteModal').classList.add('hidden');
-    }
-
-    function formatRupiahInput(el) {
-      let value = el.value.replace(/[^0-9]/g, '');
-      if (value === '') {
-        el.value = '';
-        return;
-      }
-      let formatted = new Intl.NumberFormat('id-ID').format(value);
-      el.value = 'Rp ' + formatted;
-    }
-
-    function formatRupiah(val) {
-      if (typeof val !== 'number') val = Number(val) || 0;
-      return 'Rp ' + new Intl.NumberFormat('id-ID').format(val);
-    }
-
-    function formatCompactRupiah(val) {
-      if (typeof val !== 'number') val = Number(val) || 0;
-      if (val >= 1000000) {
-        return (val / 1000000).toFixed(2) + 'M';
-      } else if (val >= 1000) {
-        return (val / 1000).toFixed(0) + 'k';
-      }
-      return val.toString();
-    }
-
-    function formatPercent(val) {
-      if (typeof val !== 'number') val = Number(val) || 0;
-      return (val * 100).toFixed(0) + '%';
-    }
-
-    function handleCategoryChange() {
-      const kat = document.getElementById('kategori').value;
-      const subSelect = document.getElementById('subKategori');
-      const lblSub = document.getElementById('lblSubKategori');
-      const lblAkun = document.getElementById('lblAkun');
-
-      if (kat === "💸 PINDAH DANA") {
-        lblSub.innerText = "DARI REKENING (ASAL)";
-        lblAkun.innerText = "KE REKENING (TUJUAN)";
-      } else {
-        lblSub.innerText = "SUB KATEGORI";
-        lblAkun.innerText = "AKUN BANK";
-      }
-
-      subSelect.innerHTML = '<option value="" disabled selected>-- Pilih Sub Kategori --</option>';
-      if (SUB_DATA[kat]) {
-        SUB_DATA[kat].forEach(sub => {
-          const opt = document.createElement('option');
-          opt.value = sub;
-          opt.innerText = sub;
-          subSelect.appendChild(opt);
-        });
-      }
-    }
-
-    async function handleSubmit(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btnSubmit');
-      btn.disabled = true;
-      btn.innerHTML = '<span>Memproses...</span>';
-
-      const rawNominal = document.getElementById('nominal').value.replace(/[^0-9]/g, '');
-
-      if (!rawNominal || parseInt(rawNominal) <= 0) {
-        showCuteModal(false, "Opps!", "Silakan masukkan nominal transaksi yang valid dulu ya!");
-        btn.disabled = false;
-        btn.innerHTML = '<span>Simpan Transaksi</span>';
-        return;
-      }
-
-      const payload = {
-        kolomA: document.getElementById('tanggal').value,
-        kolomB: document.getElementById('kategori').value,
-        kolomC: document.getElementById('subKategori').value,
-        kolomD: rawNominal,
-        kolomE: document.getElementById('akun').value
-      };
-
-      try {
-        await fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        showCuteModal(true, "Berhasil!", "Transaksi kamu berhasil dicatat ke Google Sheets!");
-        
-        document.getElementById('nominal').value = '';
-        document.getElementById('kategori').selectedIndex = 0;
-        document.getElementById('subKategori').innerHTML = '<option value="" disabled selected>-- Pilih Kategori Dulu --</option>';
-        document.getElementById('akun').selectedIndex = 0;
-        
-        fpInstance.setDate("today");
-        handleCategoryChange();
-
-      } catch (err) {
-        showCuteModal(false, "Gagal Mencatat!", "Terjadi kesalahan: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span>Simpan Transaksi</span>';
-      }
-    }
-
-    // =========================================================================
-    // LOGIKA DASHBOARD LIVE SYNC WITH GOOGLE APPS SCRIPT
-    // =========================================================================
-
-    async function loadDashboardData() {
-      try {
-        const response = await fetch(GAS_URL);
-        const data = await response.json();
-        updateDashboardUI(data);
-      } catch (err) {
-        console.error("Gagal memuat data dashboard:", err);
-      }
-    }
-
-    async function onFilterChange() {
-      const selectedBulan = document.getElementById('dashBulan').value;
-      const selectedTahun = document.getElementById('dashTahun').value;
-
-      try {
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain' }, // Gunakan text/plain untuk bypass CORS preflight
-          body: JSON.stringify({
-            action: 'updateFilter',
-            bulan: selectedBulan,
-            tahun: selectedTahun
-          })
-        });
-
-        const data = await response.json();
-        updateDashboardUI(data);
-      } catch (err) {
-        console.error("Gagal memperbarui filter dashboard:", err);
-      }
-    }
-
-    function updateDashboardUI(data) {
-      if (!data) return;
-
-      // 1. Update filter pilihan jika dikirim dari server
-      if (data.selectedFilter) {
-        if (data.selectedFilter.bulan) document.getElementById('dashBulan').value = data.selectedFilter.bulan;
-        if (data.selectedFilter.tahun) document.getElementById('dashTahun').value = data.selectedFilter.tahun;
-      }
-
-      // 2. Update Reminder Text
-      if (data.reminder) {
-        document.getElementById('dashReminder').innerText = `"${data.reminder}"`;
-      }
-
-      // 3. Update Total Aset
-      if (data.totalAset !== undefined) {
-        document.getElementById('dashTotalAset').innerText = formatRupiah(data.totalAset);
-      }
-
-      // 4. Update Balance Bank / Kas
-      if (data.bank) {
-        document.getElementById('dashSeabank').innerText = formatCompactRupiah(data.bank.seabank);
-        document.getElementById('dashBca').innerText = formatCompactRupiah(data.bank.bca);
-        document.getElementById('dashMandiri').innerText = formatCompactRupiah(data.bank.mandiri);
-        document.getElementById('dashDana').innerText = formatCompactRupiah(data.bank.dana);
-        document.getElementById('dashCash').innerText = formatCompactRupiah(data.bank.cash);
-      }
-
-      // 5. Update Cash Flow & Pemasukan / Kebutuhan Pokok
-      if (data.cashflow) {
-        document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan || 0);
-        document.getElementById('dashPemasukanPct').innerText = formatPercent(data.cashflow.pemasukanPct || 0);
-        document.getElementById('dashKebutuhan').innerText = formatRupiah(data.cashflow.kebutuhan || 0);
-        document.getElementById('dashKebutuhanPct').innerText = formatPercent(data.cashflow.kebutuhanPct || 0);
-      }
-
-      // 6. Update Dynamic Top 5 Pengeluaran
-      const container = document.getElementById('dashTop5Container');
-      if (data.topExpenses && data.topExpenses.length > 0) {
-        let html = '';
-        data.topExpenses.forEach((item, index) => {
-          const pctVal = (item.pct || 0) * 100;
-          html += `
-            <div>
-              <div class="flex justify-between text-[11px] font-semibold text-pink-950 mb-1">
-                <span>${index + 1}. ${item.nama}</span>
-                <span>${formatRupiah(item.nominal)} (${pctVal.toFixed(0)}%)</span>
-              </div>
-              <div class="w-full bg-pink-100/80 rounded-full h-2 overflow-hidden border border-pink-200/50">
-                <div class="bg-gradient-to-r from-pink-400 to-rose-400 h-2 rounded-full transition-all duration-500" style="width: ${Math.min(pctVal, 100)}%"></div>
-              </div>
-            </div>
-          `;
-        });
-        container.innerHTML = html;
-      } else {
-        container.innerHTML = '<p class="text-xs text-center text-pink-800/60 italic py-2">Belum ada transaksi pengeluaran pada bulan ini ✨</p>';
-      }
-    }
-  </script>
+  <!-- External Custom JavaScript -->
+  <script src="script.js"></script>
 </body>
 </html>
