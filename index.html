@@ -248,16 +248,98 @@
       </div>
     </div>
 
-    <!-- MODUL 3: MUTASI BANK CHECKER -->
-    <div id="viewMutasi" class="app-module hidden transition-all duration-300">
-      <div class="flex items-center justify-between mb-4 pb-2 border-b border-pink-200/50">
+    <!-- MODUL 3: MUTASI BANK CHECKER (UPDATED) -->
+    <div id="viewMutasi" class="app-module hidden transition-all duration-300 space-y-3.5">
+      <div class="flex items-center justify-between pb-2 border-b border-pink-200/50">
         <div>
           <h1 class="text-base font-bold text-pink-950/80 tracking-wide">MUTASI BANK CHECKER</h1>
           <p class="text-[11px] text-pink-800/60 font-medium">Cek rekonsiliasi & transaksi bank</p>
         </div>
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium bg-pink-100/80 text-pink-800 border border-pink-200 shadow-sm">
+          🏦 Live Sync
+        </span>
       </div>
-      <div class="glass-mini rounded-2xl p-4 text-center border border-pink-200/60 shadow-sm">
-        <p class="text-xs text-pink-950/80 font-medium">Modul Mutasi Bank Siap Diintegrasikan 🏦</p>
+
+      <!-- Filter Controls (Akun, Bulan, Tahun) -->
+      <div class="glass-mini rounded-2xl p-3 border border-pink-200/60 shadow-sm">
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Akun</label>
+            <select id="mutasiAkun" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
+              <option value="SEABANK" selected>SEABANK</option>
+              <option value="BCA">BCA</option>
+              <option value="MANDIRI">MANDIRI</option>
+              <option value="DANA">DANA</option>
+              <option value="CASH">CASH</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Bulan</label>
+            <select id="mutasiBulan" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
+              <option value="AGUSTUS" selected>AGUSTUS</option>
+              <option value="JANUARI">JANUARI</option>
+              <option value="FEBRUARI">FEBRUARI</option>
+              <option value="MARET">MARET</option>
+              <option value="APRIL">APRIL</option>
+              <option value="MEI">MEI</option>
+              <option value="JUNI">JUNI</option>
+              <option value="JULI">JULI</option>
+              <option value="SEPTEMBER">SEPTEMBER</option>
+              <option value="OKTOBER">OKTOBER</option>
+              <option value="NOVEMBER">NOVEMBER</option>
+              <option value="DESEMBER">DESEMBER</option>
+              <option value="ALL">SEMUA BULAN</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Tahun</label>
+            <select id="mutasiTahun" class="w-full custom-input rounded-xl px-2 py-1.5 text-xs font-semibold">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cards Saldo Awal & Saldo Akhir -->
+      <div class="grid grid-cols-2 gap-2.5">
+        <div class="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-300/60 p-3 rounded-2xl shadow-sm">
+          <span class="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Saldo Awal</span>
+          <span id="mutasiSaldoAwal" class="text-sm sm:text-base font-extrabold text-amber-950 block mt-0.5">Rp 0</span>
+        </div>
+        <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-300/60 p-3 rounded-2xl shadow-sm">
+          <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Saldo Akhir</span>
+          <span id="mutasiSaldoAkhir" class="text-sm sm:text-base font-extrabold text-emerald-950 block mt-0.5">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- Ringkasan Mutasi (Income, Expense, Mutasi In, Mutasi Out) -->
+      <div class="grid grid-cols-4 gap-1 text-center glass-mini p-2 rounded-xl border border-pink-200/50">
+        <div>
+          <span class="text-[9px] text-pink-900/60 block font-semibold">INCOME</span>
+          <span id="sumIncome" class="text-[10px] font-bold text-emerald-600 block mt-0.5">Rp 0</span>
+        </div>
+        <div>
+          <span class="text-[9px] text-pink-900/60 block font-semibold">EXPENSE</span>
+          <span id="sumExpense" class="text-[10px] font-bold text-rose-600 block mt-0.5">Rp 0</span>
+        </div>
+        <div>
+          <span class="text-[9px] text-pink-900/60 block font-semibold">MUTASI IN</span>
+          <span id="sumMutasiIn" class="text-[10px] font-bold text-blue-600 block mt-0.5">Rp 0</span>
+        </div>
+        <div>
+          <span class="text-[9px] text-pink-900/60 block font-semibold">MUTASI OUT</span>
+          <span id="sumMutasiOut" class="text-[10px] font-bold text-purple-600 block mt-0.5">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- List Transaksi Mutasi -->
+      <div class="glass-mini rounded-2xl p-3.5 border border-pink-200/60 shadow-sm">
+        <h4 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2.5">Riwayat Mutasi</h4>
+        <div id="mutasiListContainer" class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+          <p class="text-center text-xs text-pink-800/60 py-6">Memuat data mutasi...</p>
+        </div>
       </div>
     </div>
 
