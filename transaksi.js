@@ -1,4 +1,10 @@
-export const GAS_URL = "https://script.google.com/macros/s/AKfycbxKE6HQJGUPhK8yfcSjRF5LRVbsEhXMn9iuUrZtu-8oT842UohdGdeKtORGhdYBL6Pq8g/exec";
+// ==========================================
+// SEBELUM (URL LAMA - DARI SCRIPT KAMU):
+// export const GAS_URL = "https://script.google.com/macros/s/AKfycbxKE6HQJGUPhK8yfcSjRF5LRVbsEhXMn9iuUrZtu-8oT842UohdGdeKtORGhdYBL6Pq8g/exec";
+// ==========================================
+
+// SESUDAH (URL GAS TERBARU):
+export const GAS_URL = "https://script.google.com/macros/s/AKfycbzqrpR8qrDH3Mr_qN8j95sJhjwRds2TokRm3SBCnTZmUWw2jW_wf7OMVoAX4h2LcxHKzw/exec";
 
 export const SUB_DATA = {
   "💸 PINDAH DANA": ["SEABANK", "BCA", "MANDIRI", "DANA", "CASH"],
