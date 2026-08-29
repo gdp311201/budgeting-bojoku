@@ -47,7 +47,6 @@ export function handleCategoryChange() {
   const lblSub = document.getElementById('lblSubKategori');
   const lblAkun = document.getElementById('lblAkun');
 
-  // Hilangkan status placeholder pada kategori
   katEl.classList.remove('is-placeholder');
 
   if (kat === "💸 PINDAH DANA") {
@@ -96,7 +95,9 @@ export async function handleSubmit(e) {
     return;
   }
 
+  // Menambahkan properti action agar lolos pengecekan di Apps Script versi manapun
   const payload = {
+    action: "simpanTransaksi",
     kolomA: document.getElementById('tanggal').value,
     kolomB: document.getElementById('kategori').value,
     kolomC: document.getElementById('subKategori').value,
@@ -105,7 +106,6 @@ export async function handleSubmit(e) {
   };
 
   try {
-    // Pengiriman tanpa mode: 'no-cors' dengan payload text/plain agar tidak terkena hambatan CORS preflight
     const response = await fetch(GAS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -114,12 +114,11 @@ export async function handleSubmit(e) {
 
     const result = await response.json();
 
-    if (result.result === "success") {
+    if (result.result === "success" || result.status === "success") {
       showCuteModal(true, "Berhasil!", "Transaksi kamu berhasil dicatat ke Google Sheets!");
       
       document.getElementById('nominal').value = '';
       
-      // Reset Select Input ke Placeholder State
       const katEl = document.getElementById('kategori');
       const subSelect = document.getElementById('subKategori');
       const akunEl = document.getElementById('akun');
