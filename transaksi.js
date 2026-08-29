@@ -1,4 +1,3 @@
-// URL Google Apps Script Web App Terbaru
 export const GAS_URL = "https://script.google.com/macros/s/AKfycbzqrpR8qrDH3Mr_qN8j95sJhjwRds2TokRm3SBCnTZmUWw2jW_wf7OMVoAX4h2LcxHKzw/exec";
 
 export const SUB_DATA = {
@@ -27,21 +26,29 @@ export function initTransaksi() {
   });
 
   const katEl = document.getElementById('kategori');
+  const subEl = document.getElementById('subKategori');
+  const akunEl = document.getElementById('akun');
   const nomEl = document.getElementById('nominal');
   const formEl = document.getElementById('txForm');
   const modalBtn = document.getElementById('modalBtn');
 
   if (katEl) katEl.addEventListener('change', handleCategoryChange);
+  if (subEl) subEl.addEventListener('change', () => subEl.classList.remove('is-placeholder'));
+  if (akunEl) akunEl.addEventListener('change', () => akunEl.classList.remove('is-placeholder'));
   if (nomEl) nomEl.addEventListener('keyup', (e) => formatRupiahInput(e.target));
   if (formEl) formEl.addEventListener('submit', handleSubmit);
   if (modalBtn) modalBtn.addEventListener('click', closeCuteModal);
 }
 
 export function handleCategoryChange() {
-  const kat = document.getElementById('kategori').value;
+  const katEl = document.getElementById('kategori');
+  const kat = katEl.value;
   const subSelect = document.getElementById('subKategori');
   const lblSub = document.getElementById('lblSubKategori');
   const lblAkun = document.getElementById('lblAkun');
+
+  // Hilangkan status placeholder pada kategori
+  katEl.classList.remove('is-placeholder');
 
   if (kat === "💸 PINDAH DANA") {
     lblSub.innerText = "DARI REKENING (ASAL)";
@@ -51,7 +58,9 @@ export function handleCategoryChange() {
     lblAkun.innerText = "AKUN BANK";
   }
 
-  subSelect.innerHTML = '<option value="" disabled selected>-- Pilih Sub Kategori --</option>';
+  subSelect.innerHTML = '<option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>';
+  subSelect.classList.add('is-placeholder');
+
   if (SUB_DATA[kat]) {
     SUB_DATA[kat].forEach(sub => {
       const opt = document.createElement('option');
@@ -106,9 +115,20 @@ export async function handleSubmit(e) {
     showCuteModal(true, "Berhasil!", "Transaksi kamu berhasil dicatat ke Google Sheets!");
     
     document.getElementById('nominal').value = '';
-    document.getElementById('kategori').selectedIndex = 0;
-    document.getElementById('subKategori').innerHTML = '<option value="" disabled selected>-- Pilih Kategori Dulu --</option>';
-    document.getElementById('akun').selectedIndex = 0;
+    
+    // Reset Select Input ke Placeholder State
+    const katEl = document.getElementById('kategori');
+    const subSelect = document.getElementById('subKategori');
+    const akunEl = document.getElementById('akun');
+
+    katEl.selectedIndex = 0;
+    katEl.classList.add('is-placeholder');
+
+    subSelect.innerHTML = '<option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>';
+    subSelect.classList.add('is-placeholder');
+
+    akunEl.selectedIndex = 0;
+    akunEl.classList.add('is-placeholder');
     
     if (fpInstance) fpInstance.setDate("today");
     handleCategoryChange();
