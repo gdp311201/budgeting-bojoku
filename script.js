@@ -1,8 +1,21 @@
+// Import modul (pastikan file-file ini sudah ada di repo GitHub)
 import { initTransaksi } from './transaksi.js';
 import { initDashboard, loadDashboardData } from './dashboard.js';
-import { initMutasi, loadMutasiData } from './mutasi.js';
-import { initReceipt } from './receipt.js';
-import { initSearch } from './search.js';
+
+// Opsional: Import modul baru dengan safety check
+let initMutasi, loadMutasiData, initReceipt, initSearch;
+try {
+  const mutasiMod = await import('./mutasi.js').catch(() => null);
+  if (mutasiMod) { initMutasi = mutasiMod.initMutasi; loadMutasiData = mutasiMod.loadMutasiData; }
+  
+  const receiptMod = await import('./receipt.js').catch(() => null);
+  if (receiptMod) initReceipt = receiptMod.initReceipt;
+
+  const searchMod = await import('./search.js').catch(() => null);
+  if (searchMod) initSearch = searchMod.initSearch;
+} catch (e) {
+  console.warn("Modul tambahan belum sepenuhnya dimuat:", e);
+}
 
 const CORRECT_PIN = "080798";
 
@@ -11,22 +24,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (pinInput) pinInput.focus();
 
   // Attach PIN Listeners
-  document.getElementById('pinInput')?.addEventListener('input', checkPinAuto);
+  pinInput?.addEventListener('input', checkPinAuto);
+  pinInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') verifyPin();
+  });
+  
   document.getElementById('btnTogglePin')?.addEventListener('click', togglePinVisibility);
 
-  // Attach Navigation Listeners (5 Navigation Tabs)
+  // Attach Navigation Listeners (Safety with optional chaining)
   document.getElementById('navInputBtn')?.addEventListener('click', () => switchTab('input'));
   document.getElementById('navMutasiBtn')?.addEventListener('click', () => switchTab('mutasi'));
   document.getElementById('navDashBtn')?.addEventListener('click', () => switchTab('dashboard'));
   document.getElementById('navReceiptBtn')?.addEventListener('click', () => switchTab('receipt'));
   document.getElementById('navSearchBtn')?.addEventListener('click', () => switchTab('search'));
 
-  // Initialize All App Modules
-  initTransaksi();
-  initDashboard();
-  initMutasi();
-  initReceipt();
-  initSearch();
+  // Initialize Modules safely
+  if (typeof initTransaksi === 'function') initTransaksi();
+  if (typeof initDashboard === 'function') initDashboard();
+  if (typeof initMutasi === 'function') initMutasi();
+  if (typeof initReceipt === 'function') initReceipt();
+  if (typeof initSearch === 'function') initSearch();
 });
 
 // Toggle Show/Hide PIN
@@ -79,7 +96,7 @@ function verifyPin() {
   }
 }
 
-// Tab Switcher Controller (5 Tab Views & Dynamic Active States)
+// Tab Switcher Controller
 function switchTab(targetTab) {
   const tabs = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
 
@@ -88,25 +105,21 @@ function switchTab(targetTab) {
     const btn = document.getElementById(`nav${capitalize(tab)}Btn`);
 
     if (tab === targetTab) {
-      // Tampilkan view aktif
       if (view) view.classList.remove('hidden');
       if (btn) btn.classList.add('active');
     } else {
-      // Sembunyikan view non-aktif
       if (view) view.classList.add('hidden');
       if (btn) btn.classList.remove('active');
     }
   });
 
-  // Dynamic Trigger ketika Tab Berpindah
-  if (targetTab === 'dashboard') {
+  if (targetTab === 'dashboard' && typeof loadDashboardData === 'function') {
     loadDashboardData();
-  } else if (targetTab === 'mutasi') {
+  } else if (targetTab === 'mutasi' && typeof loadMutasiData === 'function') {
     loadMutasiData();
   }
 }
 
-// Helper Function Kapitalisasi String (e.g. input -> Input)
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
