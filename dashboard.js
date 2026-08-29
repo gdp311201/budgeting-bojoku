@@ -3,11 +3,9 @@ import { GAS_URL } from './transaksi.js';
 export function initDashboard() {
   const selBulan = document.getElementById('dashBulan');
   const selTahun = document.getElementById('dashTahun');
-  const btnRefresh = document.getElementById('btnRefreshDash');
 
   if (selBulan) selBulan.addEventListener('change', loadDashboardData);
   if (selTahun) selTahun.addEventListener('change', loadDashboardData);
-  if (btnRefresh) btnRefresh.addEventListener('click', loadDashboardData);
 
   loadDashboardData();
 }
@@ -19,29 +17,17 @@ export async function loadDashboardData() {
   const bulan = bulanEl ? bulanEl.value : "AGUSTUS";
   const tahun = tahunEl ? tahunEl.value : "2026";
 
-  setDashLoadingState(true);
-
   try {
     const res = await fetch(`${GAS_URL}?action=getDashboardData&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`);
     const data = await res.json();
 
-    if (data.status === "success") {
+    if (data.status === "success" || data.result === "success") {
       renderDashboardUI(data);
     } else {
       console.error("Gagal memuat dashboard:", data.message);
     }
   } catch (err) {
     console.error("Error fetching Dashboard Data:", err);
-  } finally {
-    setDashLoadingState(false);
-  }
-}
-
-function setDashLoadingState(isLoading) {
-  const container = document.getElementById('dashboardContainer');
-  if (container) {
-    container.style.opacity = isLoading ? "0.5" : "1";
-    container.style.pointerEvents = isLoading ? "none" : "auto";
   }
 }
 
@@ -50,68 +36,49 @@ function formatRupiah(num) {
 }
 
 function renderDashboardUI(data) {
-  const s = data.summary;
+  const s = data.summary || data.data?.summary || {};
 
-  // 1. Update Kas & Bank
-  document.getElementById('valTotalAset').innerText = formatRupiah(s.totalAset);
-  document.getElementById('valSeabank').innerText = formatRupiah(s.seabank);
-  document.getElementById('valBCA').innerText = formatRupiah(s.bca);
-  document.getElementById('valMandiri').innerText = formatRupiah(s.mandiri);
-  document.getElementById('valDana').innerText = formatRupiah(s.dana);
-  document.getElementById('valCash').innerText = formatRupiah(s.cash);
+  // Update Total Aset & Rekening Bank (Sesuai ID di index.html)
+  const elTotalAset = document.getElementById('dashTotalAset');
+  const elSeabank = document.getElementById('dashSeabank');
+  const elBca = document.getElementById('dashBca');
+  const elMandiri = document.getElementById('dashMandiri');
+  const elDana = document.getElementById('dashDana');
+  const elCash = document.getElementById('dashCash');
 
-  // 2. Update Category Summaries
-  document.getElementById('valCashflow').innerText = formatRupiah(s.cashflow);
-  document.getElementById('valPemasukan').innerText = formatRupiah(s.pemasukan);
-  document.getElementById('valKebutuhanPokok').innerText = formatRupiah(s.kebutuhanPokok);
-  document.getElementById('valTempatTinggal').innerText = formatRupiah(s.tempatTinggal);
-  document.getElementById('valTransportasi').innerText = formatRupiah(s.transportasi);
-  document.getElementById('valKesehatan').innerText = formatRupiah(s.kesehatan);
-  document.getElementById('valPerawatanDiri').innerText = formatRupiah(s.perawatanDiri);
-  document.getElementById('valPengembanganDiri').innerText = formatRupiah(s.pengembanganDiri);
-  document.getElementById('valGayaHidup').innerText = formatRupiah(s.gayaHidup);
-  document.getElementById('valLainLain').innerText = formatRupiah(s.lainLain);
+  if (elTotalAset) elTotalAset.innerText = formatRupiah(s.totalAset || s.totalAsetBersih || 0);
+  if (elSeabank) elSeabank.innerText = formatRupiah(s.seabank || s.SEABANK || 0);
+  if (elBca) elBca.innerText = formatRupiah(s.bca || s.BCA || 0);
+  if (elMandiri) elMandiri.innerText = formatRupiah(s.mandiri || s.MANDIRI || 0);
+  if (elDana) elDana.innerText = formatRupiah(s.dana || s.DANA || 0);
+  if (elCash) elCash.innerText = formatRupiah(s.cash || s.CASH || 0);
 
-  // 3. Update Reminder Text (Quotes Gajah)
-  const remEl = document.getElementById('dashReminderText');
-  if (remEl) remEl.innerText = s.reminderText || "Keuangan Aman & Terjaga 👍";
+  // Update Cashflow
+  const elPemasukan = document.getElementById('dashPemasukan');
+  const elKebutuhan = document.getElementById('dashKebutuhan');
+  if (elPemasukan) elPemasukan.innerText = formatRupiah(s.pemasukan || s.totalPemasukan || 0);
+  if (elKebutuhan) elKebutuhan.innerText = formatRupiah(s.kebutuhanPokok || s.totalPengeluaran || 0);
 
-  // 4. Render Table TOP 5 Sub-Kategori
-  const topSubContainer = document.getElementById('listTopSubKategori');
-  if (topSubContainer) {
-    if (data.topSubKategori.length === 0) {
-      topSubContainer.innerHTML = `<div class="text-center text-xs text-gray-400 py-4">Belum ada transaksi pengeluaran pada bulan ini ✨</div>`;
+  // Reminder Text
+  const remEl = document.getElementById('dashReminder');
+  if (remEl) remEl.innerText = s.reminderText || data.reminderText || "Keuangan Aman & Terjaga 🌸";
+
+  // Render Top 5 Sub-Kategori
+  const topContainer = document.getElementById('dashTop5Container');
+  const listTop = data.topSubKategori || data.data?.topSubKategori || [];
+  
+  if (topContainer) {
+    if (!listTop || listTop.length === 0) {
+      topContainer.innerHTML = `<p class="text-xs text-center text-pink-800/60 py-2">Belum ada pengeluaran pada periode ini ✨</p>`;
     } else {
-      topSubContainer.innerHTML = data.topSubKategori.map(item => `
-        <div class="flex justify-between items-center text-xs py-1.5 border-b border-gray-100">
+      topContainer.innerHTML = listTop.map((item, idx) => `
+        <div class="flex justify-between items-center text-xs py-1 border-b border-pink-100/60 last:border-0">
           <div class="flex items-center space-x-2">
-            <span class="font-bold text-rose-500 w-4">${item.no}</span>
-            <span class="font-medium text-gray-700">${item.nama}</span>
+            <span class="font-bold text-rose-500 w-4">${item.no || idx + 1}</span>
+            <span class="font-medium text-pink-950">${item.nama || item.subKategori}</span>
           </div>
-          <div class="text-right">
-            <span class="font-mono font-bold text-gray-800">${formatRupiah(item.nominal)}</span>
-            <span class="text-[10px] text-gray-400 ml-1">(${(item.persen * 100).toFixed(0)}%)</span>
-          </div>
-        </div>
-      `).join('');
-    }
-  }
-
-  // 5. Render Table TOP 5 Kategori
-  const topKatContainer = document.getElementById('listTopKategori');
-  if (topKatContainer) {
-    if (data.topKategori.length === 0) {
-      topKatContainer.innerHTML = `<div class="text-center text-xs text-gray-400 py-4">Tidak ada data kategori ✨</div>`;
-    } else {
-      topKatContainer.innerHTML = data.topKategori.map(item => `
-        <div class="flex justify-between items-center text-xs py-1.5 border-b border-gray-100">
-          <div class="flex items-center space-x-2">
-            <span class="font-bold text-rose-500 w-4">${item.no}</span>
-            <span class="font-medium text-gray-700">${item.nama}</span>
-          </div>
-          <div class="text-right">
-            <span class="font-mono font-bold text-gray-800">${formatRupiah(item.nominal)}</span>
-            <span class="text-[10px] text-gray-400 ml-1">(${(item.persen * 100).toFixed(0)}%)</span>
+          <div class="text-right font-mono font-bold text-pink-900">
+            ${formatRupiah(item.nominal)}
           </div>
         </div>
       `).join('');
