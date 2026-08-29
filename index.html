@@ -22,10 +22,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-  <!-- External Custom CSS -->
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-3 sm:p-4">
+<body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-28">
 
   <!-- LOCK SCREEN / LOGIN PIN -->
   <div id="lockScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#ca9bb2] transition-all duration-700 ease-in-out">
@@ -70,24 +70,14 @@
   <!-- MAIN CONTAINER -->
   <div class="w-full max-w-md glass-card rounded-3xl p-5 sm:p-6 relative overflow-hidden my-auto">
     
-    <div class="text-center mb-3">
+    <div class="text-center mb-4">
       <div class="inline-flex items-center justify-center bg-white/60 px-3.5 py-1.5 rounded-full border border-pink-200/70 shadow-sm backdrop-blur-sm">
         <span class="text-xs font-semibold text-pink-950/80 tracking-wide">With Love, Julyo Sechar</span>
       </div>
     </div>
 
-    <!-- Navigation Tab Switcher -->
-    <div class="grid grid-cols-2 gap-1.5 p-1 bg-white/40 rounded-2xl border border-pink-200/60 mb-5 shadow-inner">
-      <button id="tabInputBtn" class="py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 bg-white text-pink-950 shadow-sm">
-        📝 Form Input
-      </button>
-      <button id="tabDashBtn" class="py-2 px-3 rounded-xl text-xs font-semibold text-pink-800/80 hover:text-pink-950 transition-all duration-200">
-        📊 Live Dashboard
-      </button>
-    </div>
-
-    <!-- TAB 1: FORM INPUT -->
-    <div id="viewInput" class="block transition-all duration-300">
+    <!-- MODUL 1: INPUT TRANSAKSI -->
+    <div id="viewInput" class="app-module block transition-all duration-300">
       <div class="flex items-center justify-between mb-4 pb-2 border-b border-pink-200/50">
         <div>
           <h1 class="text-base font-bold text-pink-950/80 tracking-wide">INPUT TRANSAKSI</h1>
@@ -159,8 +149,8 @@
       </form>
     </div>
 
-    <!-- TAB 2: LIVE DASHBOARD -->
-    <div id="viewDashboard" class="hidden transition-all duration-300">
+    <!-- MODUL 2: LIVE DASHBOARD -->
+    <div id="viewDashboard" class="app-module hidden transition-all duration-300">
       <div class="glass-mini rounded-2xl p-3 mb-3 border border-pink-200/60 shadow-sm flex gap-2">
         <div class="w-1/2">
           <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-1">Bulan</label>
@@ -256,16 +246,102 @@
           <p class="text-xs text-center text-pink-800/60">Memuat data top pengeluaran...</p>
         </div>
       </div>
-
-      <a href="https://docs.google.com/spreadsheets/d/18yaNmMDGq5gFTse9IW_io5n3aaPiVYxpCSEQ5nNg2hY/edit?gid=1752606634#gid=1752606634" target="_blank" class="block text-center mt-4 text-[11px] text-pink-900/70 hover:text-pink-950 font-semibold underline">
-        Buka Full Google Sheets Master ↗
-      </a>
     </div>
+
+    <!-- MODUL 3: MUTASI BANK CHECKER -->
+    <div id="viewMutasi" class="app-module hidden transition-all duration-300">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-pink-200/50">
+        <div>
+          <h1 class="text-base font-bold text-pink-950/80 tracking-wide">MUTASI BANK CHECKER</h1>
+          <p class="text-[11px] text-pink-800/60 font-medium">Cek rekonsiliasi & transaksi bank</p>
+        </div>
+      </div>
+      <div class="glass-mini rounded-2xl p-4 text-center border border-pink-200/60 shadow-sm">
+        <p class="text-xs text-pink-950/80 font-medium">Modul Mutasi Bank Siap Diintegrasikan 🏦</p>
+      </div>
+    </div>
+
+    <!-- MODUL 4: E-RECEIPT BULANAN -->
+    <div id="viewReceipt" class="app-module hidden transition-all duration-300">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-pink-200/50">
+        <div>
+          <h1 class="text-base font-bold text-pink-950/80 tracking-wide">E-RECEIPT BULANAN</h1>
+          <p class="text-[11px] text-pink-800/60 font-medium">Ringkasan & bukti kuitansi bulanan</p>
+        </div>
+      </div>
+      <div class="glass-mini rounded-2xl p-4 text-center border border-pink-200/60 shadow-sm">
+        <p class="text-xs text-pink-950/80 font-medium">Modul E-Receipt Siap Diintegrasikan 🧾</p>
+      </div>
+    </div>
+
+    <!-- MODUL 5: PENCARIAN BIAYA -->
+    <div id="viewSearch" class="app-module hidden transition-all duration-300">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-pink-200/50">
+        <div>
+          <h1 class="text-base font-bold text-pink-950/80 tracking-wide">PENCARIAN BIAYA</h1>
+          <p class="text-[11px] text-pink-800/60 font-medium">Cari histori riwayat pengeluaran</p>
+        </div>
+      </div>
+      <div class="glass-mini rounded-2xl p-4 text-center border border-pink-200/60 shadow-sm">
+        <p class="text-xs text-pink-950/80 font-medium">Modul Pencarian Biaya Siap Diintegrasikan 🔍</p>
+      </div>
+    </div>
+
+    <a href="https://docs.google.com/spreadsheets/d/18yaNmMDGq5gFTse9IW_io5n3aaPiVYxpCSEQ5nNg2hY/edit?gid=1752606634#gid=1752606634" target="_blank" class="block text-center mt-5 text-[11px] text-pink-900/70 hover:text-pink-950 font-semibold underline">
+      Buka Full Google Sheets Master ↗
+    </a>
 
     <div class="mt-4 pt-2 text-center text-[11px] text-pink-800/60 font-semibold border-t border-pink-200/40">
       <span>Elsa & Julyo</span>
     </div>
   </div>
+
+  <!-- FLOATING APP STORE STYLE BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-4 inset-x-4 max-w-md mx-auto z-40">
+    <div class="bg-white/70 backdrop-blur-md rounded-2xl border border-white/80 p-1.5 shadow-2xl flex items-center justify-around">
+      
+      <!-- Button 1: Input -->
+      <button data-target="viewInput" class="nav-btn active flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-950">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+        <span class="text-[9px] font-bold tracking-tight">Input</span>
+      </button>
+
+      <!-- Button 2: Dashboard -->
+      <button data-target="viewDashboard" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        <span class="text-[9px] font-semibold tracking-tight">Dashboard</span>
+      </button>
+
+      <!-- Button 3: Mutasi -->
+      <button data-target="viewMutasi" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        <span class="text-[9px] font-semibold tracking-tight">Mutasi</span>
+      </button>
+
+      <!-- Button 4: E-Receipt -->
+      <button data-target="viewReceipt" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span class="text-[9px] font-semibold tracking-tight">Receipt</span>
+      </button>
+
+      <!-- Button 5: Cari -->
+      <button data-target="viewSearch" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <span class="text-[9px] font-semibold tracking-tight">Cari</span>
+      </button>
+
+    </div>
+  </nav>
 
   <!-- NOTIFICATION MODAL -->
   <div id="cuteModal" class="fixed inset-0 bg-pink-950/20 backdrop-blur-[4px] flex items-center justify-center p-4 z-50 hidden transition-opacity duration-200">
