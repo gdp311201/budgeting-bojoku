@@ -42,31 +42,35 @@ export function initTransaksi() {
 
 export function handleCategoryChange() {
   const katEl = document.getElementById('kategori');
-  const kat = katEl.value;
+  const kat = katEl ? katEl.value : "";
   const subSelect = document.getElementById('subKategori');
   const lblSub = document.getElementById('lblSubKategori');
   const lblAkun = document.getElementById('lblAkun');
 
-  katEl.classList.remove('is-placeholder');
+  if (katEl) katEl.classList.remove('is-placeholder');
 
-  if (kat === "💸 PINDAH DANA") {
-    lblSub.innerText = "DARI REKENING (ASAL)";
-    lblAkun.innerText = "KE REKENING (TUJUAN)";
-  } else {
-    lblSub.innerText = "SUB KATEGORI";
-    lblAkun.innerText = "AKUN BANK";
+  if (lblSub && lblAkun) {
+    if (kat === "💸 PINDAH DANA") {
+      lblSub.innerText = "DARI REKENING (ASAL)";
+      lblAkun.innerText = "KE REKENING (TUJUAN)";
+    } else {
+      lblSub.innerText = "SUB KATEGORI";
+      lblAkun.innerText = "AKUN BANK";
+    }
   }
 
-  subSelect.innerHTML = '<option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>';
-  subSelect.classList.add('is-placeholder');
+  if (subSelect) {
+    subSelect.innerHTML = '<option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>';
+    subSelect.classList.add('is-placeholder');
 
-  if (SUB_DATA[kat]) {
-    SUB_DATA[kat].forEach(sub => {
-      const opt = document.createElement('option');
-      opt.value = sub;
-      opt.innerText = sub;
-      subSelect.appendChild(opt);
-    });
+    if (SUB_DATA[kat]) {
+      SUB_DATA[kat].forEach(sub => {
+        const opt = document.createElement('option');
+        opt.value = sub;
+        opt.innerText = sub;
+        subSelect.appendChild(opt);
+      });
+    }
   }
 }
 
@@ -86,26 +90,34 @@ export async function handleSubmit(e) {
   btn.disabled = true;
   btn.innerHTML = '<span>Memproses...</span>';
 
-  const tglVal = document.getElementById('tanggal').value;
-  const katVal = document.getElementById('kategori').value;
-  const subVal = document.getElementById('subKategori').value;
-  const nomVal = document.getElementById('nominal').value.replace(/[^0-9]/g, '');
-  const akunVal = document.getElementById('akun').value;
+  const tglVal = document.getElementById('tanggal') ? document.getElementById('tanggal').value : '';
+  const katVal = document.getElementById('kategori') ? document.getElementById('kategori').value : '';
+  const subVal = document.getElementById('subKategori') ? document.getElementById('subKategori').value : '';
+  const nomRaw = document.getElementById('nominal') ? document.getElementById('nominal').value : '';
+  const akunVal = document.getElementById('akun') ? document.getElementById('akun').value : '';
 
-  if (!nomVal || parseInt(nomVal) <= 0) {
+  const cleanNominal = nomRaw.replace(/[^0-9]/g, '');
+
+  if (!cleanNominal || parseInt(cleanNominal) <= 0) {
     showCuteModal(false, "Opps!", "Silakan masukkan nominal transaksi yang valid dulu ya!");
     btn.disabled = false;
     btn.innerHTML = '<span>Simpan Transaksi</span>';
     return;
   }
 
+  // Kirimkan semua variasi nama field agar terbaca sempurna di Apps Script
   const payload = {
     action: "simpanTransaksi",
     kolomA: tglVal,
     kolomB: katVal,
     kolomC: subVal,
-    kolomD: nomVal,
-    kolomE: akunVal
+    kolomD: cleanNominal,
+    kolomE: akunVal,
+    tanggal: tglVal,
+    kategori: katVal,
+    subKategori: subVal,
+    nominal: cleanNominal,
+    akun: akunVal
   };
 
   try {
@@ -126,14 +138,20 @@ export async function handleSubmit(e) {
       const subSelect = document.getElementById('subKategori');
       const akunEl = document.getElementById('akun');
 
-      katEl.selectedIndex = 0;
-      katEl.classList.add('is-placeholder');
+      if (katEl) {
+        katEl.selectedIndex = 0;
+        katEl.classList.add('is-placeholder');
+      }
 
-      subSelect.innerHTML = '<option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>';
-      subSelect.classList.add('is-placeholder');
+      if (subSelect) {
+        subSelect.innerHTML = '<option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>';
+        subSelect.classList.add('is-placeholder');
+      }
 
-      akunEl.selectedIndex = 0;
-      akunEl.classList.add('is-placeholder');
+      if (akunEl) {
+        akunEl.selectedIndex = 0;
+        akunEl.classList.add('is-placeholder');
+      }
       
       if (fpInstance) fpInstance.setDate("today");
       handleCategoryChange();
