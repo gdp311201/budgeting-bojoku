@@ -1,4 +1,5 @@
 import { initTransaksi } from './transaksi.js';
+import { initDashboard, loadDashboardData } from './dashboard.js';
 
 // PIN Akses Aplikasi
 const CORRECT_PIN = "080798";
@@ -22,16 +23,38 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('navReceiptBtn')?.addEventListener('click', () => switchTab('receipt'));
   document.getElementById('navSearchBtn')?.addEventListener('click', () => switchTab('search'));
 
+  // Handler Event Listener untuk Dropdown Placeholder Style (Miring & Pudar)
+  initPlaceholderDropdowns();
+
   // Safe Load Modules
   if (typeof initTransaksi === 'function') initTransaksi();
+  if (typeof initDashboard === 'function') initDashboard();
 
   // Load Optional Modules jika sudah tersedia
   loadOptionalModules();
 });
 
-// Pemuatan Modul Tambahan Secara Aman
-let initMutasi, loadMutasiData, initDashboard, loadDashboardData, initReceipt, initSearch;
+// Mengelola Tampilan Dropdown Placeholder (Hilangkan efek pudar jika opsi dipilih)
+function initPlaceholderDropdowns() {
+  const dropdowns = document.querySelectorAll('select.is-placeholder');
+  dropdowns.forEach((select) => {
+    // Cek status awal
+    if (select.value !== "") {
+      select.classList.remove('is-placeholder');
+    }
 
+    select.addEventListener('change', function () {
+      if (this.value === "" || this.value === null) {
+        this.classList.add('is-placeholder');
+      } else {
+        this.classList.remove('is-placeholder');
+      }
+    });
+  });
+}
+
+// Pemuatan Modul Tambahan Secara Aman
+let initMutasi, loadMutasiData, initReceipt, initSearch;
 async function loadOptionalModules() {
   try {
     const mutasiMod = await import('./mutasi.js').catch(() => null);
@@ -39,13 +62,6 @@ async function loadOptionalModules() {
       initMutasi = mutasiMod.initMutasi; 
       loadMutasiData = mutasiMod.loadMutasiData;
       initMutasi();
-    }
-
-    const dashMod = await import('./dashboard.js').catch(() => null);
-    if (dashMod && dashMod.initDashboard) {
-      initDashboard = dashMod.initDashboard;
-      loadDashboardData = dashMod.loadDashboardData;
-      initDashboard();
     }
 
     const receiptMod = await import('./receipt.js').catch(() => null);
