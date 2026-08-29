@@ -82,3 +82,32 @@ body {
 .animate-shake {
   animation: shake 0.35s ease-in-out;
 }
+
+/* =========================================================
+   FLOATING BOTTOM NAVIGATION BAR (APP STORE STYLE)
+   ========================================================= */
+
+.nav-btn {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-btn:active {
+  transform: scale(0.92);
+}
+
+/* State ketika Tab Aktif */
+.nav-btn.active {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #831843; /* text-pink-950 */
+  box-shadow: 0 4px 12px -2px rgba(219, 112, 147, 0.3);
+}
+
+.nav-btn.active span {
+  font-weight: 700;
+}
+
+.nav-btn.active svg {
+  stroke-width: 2.5;
+}
