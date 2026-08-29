@@ -54,7 +54,7 @@ function initPlaceholderDropdowns() {
 }
 
 // Pemuatan Modul Tambahan Secara Aman
-let initMutasi, loadMutasiData, initReceipt, initSearch;
+let initMutasi, loadMutasiData, initReceipt, loadEReceiptData, initSearch;
 async function loadOptionalModules() {
   try {
     const mutasiMod = await import('./mutasi.js').catch(() => null);
@@ -67,6 +67,7 @@ async function loadOptionalModules() {
     const receiptMod = await import('./receipt.js').catch(() => null);
     if (receiptMod && receiptMod.initReceipt) { 
       initReceipt = receiptMod.initReceipt;
+      loadEReceiptData = receiptMod.loadEReceiptData;
       initReceipt();
     }
 
@@ -151,6 +152,8 @@ function switchTab(targetTab) {
     loadDashboardData();
   } else if (targetTab === 'mutasi' && typeof loadMutasiData === 'function') {
     loadMutasiData();
+  } else if (targetTab === 'receipt' && typeof loadEReceiptData === 'function') {
+    loadEReceiptData();
   }
 }
 
