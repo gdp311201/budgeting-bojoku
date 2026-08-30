@@ -20,22 +20,19 @@ export async function loadDashboardData() {
   setDashboardLoading(true);
 
   try {
-    const payload = {
-      action: 'getDashboard',
-      bulan: bulan,
-      tahun: tahun
-    };
+    // Sisipkan parameter langsung di URL agar Google Apps Script pasti menerimanya
+    const targetUrl = `${GAS_URL}?action=getDashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
 
-    // Kirim POST dengan text/plain (bebas dari CORS preflight browser)
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify(payload)
+    console.log("Fetching Dashboard URL:", targetUrl);
+
+    const response = await fetch(targetUrl, {
+      method: 'GET',
+      mode: 'cors'
     });
 
     const res = await response.json();
+
+    console.log("Response Data Dashboard:", res);
 
     if (res.status === 'success') {
       renderDashboardUI(res);
@@ -157,6 +154,6 @@ function setDashboardLoading(isLoading) {
   const container = document.getElementById('viewDashboard');
   if (container) {
     container.style.opacity = isLoading ? "0.5" : "1";
-    container.style.pointerEvents = isLoading ? "none" : "auto";
+    container.style.pointerEvents = isLoading ? "none" :="auto";
   }
 }
