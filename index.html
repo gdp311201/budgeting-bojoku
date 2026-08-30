@@ -30,8 +30,8 @@
   <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Custom CSS (?v=3 = cache buster, paksa browser ambil file baru) -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <!-- Custom CSS (?v=4 = cache buster) -->
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-32">
 
@@ -141,6 +141,8 @@
 
           <div>
             <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Nominal (Rp)</label>
+            <!-- FIX: pattern dihapus — biar format "150.000" / "Rp" dari transaksi.js lolos validasi.
+                 Keyboard angka tetap muncul karena inputmode="numeric". -->
             <input type="text" id="nominal" inputmode="numeric" autocomplete="off" placeholder="Rp 0" required class="w-full custom-input rounded-xl px-3.5 py-2 font-medium">
           </div>
 
@@ -951,7 +953,7 @@
   })();
   </script>
 
-  <!-- Enhancement layer: swipe carousel, module loader, dll (?v=3 = cache buster) -->
-  <script type="module" src="script.js?v=3"></script>
+  <!-- Enhancement layer: swipe carousel, module loader, dll (?v=4 = cache buster) -->
+  <script type="module" src="script.js?v=4"></script>
 </body>
 </html>
