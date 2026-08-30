@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Budgeting Master Sync</title>
 
   <!-- FAVICON & HOME SCREEN ICON -->
@@ -21,6 +21,16 @@
   <!-- Flatpickr CSS & Library -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    /*
+     * FIX MOBILE: paksa flatpickr memakai kalender custom di semua device.
+     * Tanpa ini, di HP input tanggal diubah jadi native date picker bawaan HP
+     * yang bikin bar input TANGGAL beda ukuran (lebih panjang) dari field lain.
+     */
+    if (window.flatpickr && typeof window.flatpickr.setDefaults === 'function') {
+      window.flatpickr.setDefaults({ disableMobile: true });
+    }
+  </script>
 
   <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -73,9 +83,11 @@
   <!-- MAIN CONTAINER -->
   <div class="w-full max-w-md glass-card rounded-3xl p-5 sm:p-6 relative overflow-hidden my-auto">
     
+    <!-- LIVE TIMESTAMP (JAM, HARI & TANGGAL REAL-TIME) -->
     <div class="text-center mb-4">
       <div class="inline-flex items-center justify-center bg-white/60 px-3.5 py-1.5 rounded-full border border-pink-200/70 shadow-sm backdrop-blur-sm">
-        <span class="text-xs font-semibold text-pink-950/80 tracking-wide">With Love, Julyo Sechar</span>
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="liveClockTop" class="live-clock text-[11px] font-semibold text-pink-950/80 tracking-tight">--:--:-- WIB | -</span>
       </div>
     </div>
 
@@ -96,7 +108,7 @@
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Tanggal</label>
           <div class="relative">
             <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required 
-              class="w-full custom-input rounded-xl px-3.5 py-2 font-medium cursor-pointer">
+              class="w-full custom-input rounded-xl pl-3.5 pr-10 py-2 font-medium cursor-pointer">
             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400">
               📅
             </div>
@@ -131,7 +143,7 @@
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Nominal (Rp)</label>
-          <input type="text" id="nominal" placeholder="Rp 0" required class="w-full custom-input rounded-xl px-3.5 py-2 font-medium">
+          <input type="text" id="nominal" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Rp 0" required class="w-full custom-input rounded-xl px-3.5 py-2 font-medium">
         </div>
 
         <div>
@@ -179,6 +191,9 @@
             <option value="2025">2025</option>
             <option value="2026" selected>2026</option>
             <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
           </select>
         </div>
       </div>
@@ -413,9 +428,13 @@
           <div>
             <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-0.5">Tahun</label>
             <select id="mutasiTahun" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
-              <option value="2026" selected>2026</option>
-              <option value="2025">2025</option>
               <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
             </select>
           </div>
         </div>
@@ -493,9 +512,13 @@
           <div>
             <label class="block text-[10px] font-bold uppercase text-pink-900/70 mb-0.5">Tahun</label>
             <select id="receiptTahun" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold">
-              <option value="2026" selected>2026</option>
-              <option value="2025">2025</option>
               <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
             </select>
           </div>
         </div>
@@ -532,7 +555,7 @@
 
         <div class="text-center pt-2 border-t border-dashed border-amber-200 text-[9px] text-pink-900/60">
           *** THANK YOU & KEEP SAVING ***<br>
-          <span class="text-[8px] opacity-75">Verified System Sync - Elsa & Julyo</span>
+          <span class="text-[8px] opacity-75">Verified System Sync - <span id="liveClockReceipt" class="live-clock">--:--:-- WIB</span></span>
         </div>
       </div>
 
@@ -592,9 +615,13 @@
           <div>
             <label class="block text-[9px] font-bold uppercase text-pink-900/70 mb-0.5">Tahun</label>
             <select id="searchTahun" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold text-xs">
-              <option value="2026" selected>2026</option>
-              <option value="2025">2025</option>
               <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+              <option value="2028">2028</option>
+              <option value="2029">2029</option>
+              <option value="2030">2030</option>
               <option value="ALL">SEMUA</option>
             </select>
           </div>
@@ -632,50 +659,61 @@
       Buka Full Google Sheets Master ↗
     </a>
 
-    <div class="mt-4 pt-2 text-center text-[11px] text-pink-800/60 font-semibold border-t border-pink-200/40">
-      <span>Elsa & Julyo</span>
+    <!-- LIVE TIMESTAMP (FOOTER) -->
+    <div class="mt-4 pt-2 text-center border-t border-pink-200/40">
+      <div class="inline-flex items-center justify-center">
+        <span class="live-dot live-dot-sm" aria-hidden="true"></span>
+        <span id="liveClockFooter" class="live-clock text-[11px] font-semibold text-pink-800/60 tracking-tight">--:--:-- WIB | -</span>
+      </div>
     </div>
   </div>
 
-  <!-- FLOATING BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-4 inset-x-4 max-w-md mx-auto z-40">
-    <div class="bg-white/70 backdrop-blur-md rounded-2xl border border-white/80 p-1.5 shadow-2xl flex items-center justify-around">
-      
-      <button id="navInputBtn" class="nav-btn active flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-950">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-        </svg>
-        <span class="text-[9px] font-bold tracking-tight">Input</span>
-      </button>
+  <!-- DYNAMIC BOTTOM NAVIGATION BAR (APP STORE STYLE) -->
+  <nav class="fixed bottom-0 inset-x-0 z-40">
+    <div class="nav-shell">
+      <div class="max-w-md mx-auto relative px-2 pt-1.5 pb-1.5">
+        <div id="navIndicator" class="nav-indicator" aria-hidden="true"></div>
 
-      <button id="navMutasiBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-        <span class="text-[9px] font-semibold tracking-tight">Mutasi</span>
-      </button>
+        <div class="flex items-stretch justify-around">
 
-      <button id="navDashBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-        </svg>
-        <span class="text-[9px] font-semibold tracking-tight">Dashboard</span>
-      </button>
+          <button id="navInputBtn" type="button" data-tab="input" class="nav-btn active flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
+            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            <span class="nav-label text-[10px] font-semibold tracking-tight">Input</span>
+          </button>
 
-      <button id="navReceiptBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-        </svg>
-        <span class="text-[9px] font-semibold tracking-tight">Receipt</span>
-      </button>
+          <button id="navMutasiBtn" type="button" data-tab="mutasi" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
+            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <span class="nav-label text-[10px] font-semibold tracking-tight">Mutasi</span>
+          </button>
 
-      <button id="navSearchBtn" class="nav-btn flex flex-col items-center justify-center w-full py-1.5 rounded-xl transition-all duration-200 text-pink-800/60 hover:text-pink-950">
-        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <span class="text-[9px] font-semibold tracking-tight">Cari</span>
-      </button>
+          <button id="navDashBtn" type="button" data-tab="dashboard" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
+            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            <span class="nav-label text-[10px] font-semibold tracking-tight">Dashboard</span>
+          </button>
 
+          <button id="navReceiptBtn" type="button" data-tab="receipt" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
+            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span class="nav-label text-[10px] font-semibold tracking-tight">Receipt</span>
+          </button>
+
+          <button id="navSearchBtn" type="button" data-tab="search" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
+            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <span class="nav-label text-[10px] font-semibold tracking-tight">Cari</span>
+          </button>
+
+        </div>
+      </div>
+      <div class="nav-safe-area" aria-hidden="true"></div>
     </div>
   </nav>
 
