@@ -8,25 +8,29 @@
 
 const GAS_SEARCH_URL = "https://script.google.com/macros/s/AKfycbyvMao5Rq59c5qG5UuA1VfYN8ifTZGJYHDdoT_OqQASMWhkAgLJsKdGbCa79ygUOZtj1g/exec";
 
+let searchModuleReady = false;
+
 document.addEventListener("DOMContentLoaded", () => {
   initSearchModule();
 });
 
 export function initSearchModule() {
+  // Guard: cegah inisialisasi ganda (kalau file ini juga di-import main.js)
+  if (searchModuleReady) return;
+  searchModuleReady = true;
+
   const btnRefreshSearch = document.getElementById("btnRefreshSearch");
   const searchKeyword = document.getElementById("searchKeyword");
   const searchBulan = document.getElementById("searchBulan");
   const searchTahun = document.getElementById("searchTahun");
   const searchSort = document.getElementById("searchSort");
 
-  // Listener Tombol Refresh
   if (btnRefreshSearch) {
     btnRefreshSearch.addEventListener("click", () => {
       fetchAndRenderSearchData();
     });
   }
 
-  // Listener Input Keyword dengan Debounce (400ms)
   let debounceTimer;
   if (searchKeyword) {
     searchKeyword.addEventListener("input", () => {
@@ -37,31 +41,20 @@ export function initSearchModule() {
     });
   }
 
-  // Listener Change Dropdown Filter
   if (searchBulan) searchBulan.addEventListener("change", fetchAndRenderSearchData);
   if (searchTahun) searchTahun.addEventListener("change", fetchAndRenderSearchData);
   if (searchSort) searchSort.addEventListener("change", fetchAndRenderSearchData);
 
-  // Auto Load Data Pertama Kali saat halaman dibuka
   fetchAndRenderSearchData();
 }
 
-/**
- * Mengambil Data dari Apps Script Web App Router
- */
 export async function fetchAndRenderSearchData() {
   const searchListContainer = document.getElementById("searchListContainer");
-  const searchTotalCount = document.getElementById("searchTotalCount");
-  const searchTotalNominal = document.getElementById("searchTotalNominal");
 
-  let bulan = document.getElementById("searchBulan")?.value || "ALL";
-  let tahun = document.getElementById("searchTahun")?.value || "2026";
+  const bulan = document.getElementById("searchBulan")?.value || "ALL";
+  const tahun = document.getElementById("searchTahun")?.value || "2026";
   const keyword = document.getElementById("searchKeyword")?.value || "";
   const sort = document.getElementById("searchSort")?.value || "DESC";
-
-  // Normalisasi Value "SEMUA" ke "ALL"
-  if (bulan.toUpperCase() === "SEMUA") bulan = "ALL";
-  if (tahun.toUpperCase() === "SEMUA") tahun = "ALL";
 
   if (searchListContainer) {
     searchListContainer.innerHTML = `
@@ -79,17 +72,37 @@ export async function fetchAndRenderSearchData() {
     url.searchParams.append("tahun", tahun);
     url.searchParams.append("keyword", keyword);
     url.searchParams.append("sort", sort);
+    url.searchParams.append("_ts", Date.now()); // anti-cache
 
-    const response = await fetch(url.toString(), { method: "GET" });
-    const res = await response.json();
+    const response = await fetch(url.toString(), { method: "GET", redirect: "follow" });
 
-    if (res.status === "success") {
+    // Bedakan: response BUKAN JSON (mis. HTML login page / deployment salah)
+    let res;
+    try {
+      res = await response.json();
+    } catch (jsonErr) {
+      console.error("[SEARCH] Response bukan JSON. HTTP Status:", response.status, jsonErr);
+      if (searchListContainer) {
+        searchListContainer.innerHTML = `
+          <p class="text-center text-xs text-rose-600 py-6 font-semibold">
+            ⚠️ Server menjawab bukan JSON.<br>
+            Kemungkinan: deployment belum di-update (New version),<br>
+            URL salah, atau akses deployment bukan "Anyone".
+          </p>
+        `;
+      }
+      return;
+    }
+
+    console.log("[SEARCH] Response Apps Script:", res);
+
+    if (res && res.status === "success") {
       renderSearchResults(res);
     } else {
       if (searchListContainer) {
         searchListContainer.innerHTML = `
           <p class="text-center text-xs text-rose-600 py-6 font-semibold">
-            ⚠️ Gagal memuat: ${res.message || "Terjadi kesalahan"}
+            ⚠️ Gagal memuat: ${res?.message || "Terjadi kesalahan"}
           </p>
         `;
       }
@@ -106,9 +119,6 @@ export async function fetchAndRenderSearchData() {
   }
 }
 
-/**
- * Merender daftar hasil transaksi ke tampilan UI
- */
 function renderSearchResults(data) {
   const searchListContainer = document.getElementById("searchListContainer");
   const searchTotalCount = document.getElementById("searchTotalCount");
@@ -116,16 +126,18 @@ function renderSearchResults(data) {
 
   const transactions = data.transactions || [];
 
-  // Update Summary Total Transaksi & Nominal
   if (searchTotalCount) {
     searchTotalCount.innerText = `${data.totalCount || 0} Transaksi`;
   }
   if (searchTotalNominal) {
-    const formatRp = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(data.totalNominal || 0);
+    const formatRp = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0
+    }).format(data.totalNominal || 0);
     searchTotalNominal.innerText = formatRp;
   }
 
-  // Jika Data Kosong
   if (transactions.length === 0) {
     if (searchListContainer) {
       searchListContainer.innerHTML = `
@@ -139,12 +151,15 @@ function renderSearchResults(data) {
     return;
   }
 
-  // Render Daftar Item Transaksi
   let html = "";
   transactions.forEach((tx) => {
-    const isIncome = tx.kategori.includes("PEMASUKAN");
-    const isPindah = tx.kategori.includes("PINDAH DANA");
-    
+    const kategori = String(tx.kategori || "");
+    const subKategori = String(tx.subKategori || "");
+    const akun = String(tx.akun || "");
+
+    const isIncome = kategori.includes("PEMASUKAN");
+    const isPindah = kategori.includes("PINDAH DANA");
+
     let badgeColor = "bg-rose-100 text-rose-800 border-rose-200/80";
     let sign = "-";
 
@@ -156,23 +171,23 @@ function renderSearchResults(data) {
       sign = "⇄";
     }
 
-    const nominalFormatted = new Intl.NumberFormat("id-ID").format(tx.nominal);
+    const nominalFormatted = new Intl.NumberFormat("id-ID").format(tx.nominal || 0);
 
     html += `
       <div class="glass-card p-2.5 rounded-xl border border-white/80 shadow-sm flex items-center justify-between hover:bg-white/90 transition">
         <div class="flex flex-col gap-0.5 max-w-[65%]">
           <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md border ${badgeColor}">
-              ${tx.kategori}
+              ${kategori}
             </span>
             <span class="text-[10px] font-bold text-pink-950/80 truncate">
-              ${tx.subKategori}
+              ${subKategori}
             </span>
           </div>
           <div class="flex items-center gap-2 text-[10px] text-pink-900/60 font-medium">
             <span>📅 ${tx.tgl}</span>
             <span>•</span>
-            <span>🏦 ${tx.akun}</span>
+            <span>🏦 ${akun}</span>
           </div>
         </div>
 
