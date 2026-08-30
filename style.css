@@ -15,7 +15,6 @@ body {
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
 }
 
-/* Wajib font-size minimal 16px pada seluruh elemen input & select */
 /* Mencegah iOS Safari otomatis melakukan 'zoom-in' saat input/select diklik */
 input, select, textarea {
   font-size: 16px !important;
@@ -67,25 +66,20 @@ input, select, textarea {
   box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.2);
 }
 
-/* =========================================================
-   PENYESUAIAN DROPDOWN & PLACEHOLDER MULTI-SELECT
-   ========================================================= */
-
-/* Trik Scaling Visual Font Dropdown tanpa memicu Auto-Zoom iOS */
+/* Dropdown & Scaling */
 .select-compact {
-  font-size: 16px !important; /* Lolos dari auto-zoom iOS Safari */
+  font-size: 16px !important;
   padding-left: 0.35rem !important;
   padding-right: 1.2rem !important;
   letter-spacing: -0.02em;
-  transform: scale(0.88); /* Mengecilkan teks secara visual ke ~13px */
+  transform: scale(0.88);
   transform-origin: center left;
-  width: 113.6% !important; /* Menyeimbangkan area akibat scaling down */
+  width: 113.6% !important;
   margin-right: -13.6%;
 }
 
-/* Style Placeholder Dropdown Miring, Pudar, dan Bergaya Instruksi */
 select.is-placeholder {
-  color: rgba(131, 24, 67, 0.45) !important; /* Warna pudar */
+  color: rgba(131, 24, 67, 0.45) !important;
   font-style: italic !important;
   font-weight: 400 !important;
   font-size: 14px !important;
@@ -103,15 +97,61 @@ select option[disabled] {
   font-style: italic !important;
 }
 
-/* =========================================================
-   PERBAIKAN TAMPILAN MUTASI (KATEGORI SEJAJAR TANGGAL)
-   ========================================================= */
+/* PALET WARNA INTERAKTIF & SOFT PASTEL */
+/* KAS & BANK */
+.card-seabank {
+  background: linear-gradient(135deg, rgba(255,237,213,0.85) 0%, rgba(254,215,170,0.85) 100%);
+  border: 1px solid rgba(251, 146, 60, 0.4);
+}
+.card-bca {
+  background: linear-gradient(135deg, rgba(224,242,254,0.85) 0%, rgba(186,230,253,0.85) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+.card-mandiri {
+  background: linear-gradient(135deg, rgba(224,231,255,0.85) 0%, rgba(199,210,254,0.85) 100%);
+  border: 1px solid rgba(129, 140, 248, 0.4);
+}
+.card-dana {
+  background: linear-gradient(135deg, rgba(207,250,254,0.85) 0%, rgba(165,243,252,0.85) 100%);
+  border: 1px solid rgba(34, 211, 238, 0.4);
+}
+.card-cash {
+  background: linear-gradient(135deg, rgba(209,250,229,0.85) 0%, rgba(167,243,208,0.85) 100%);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+}
 
+/* ASET INVESTASI */
+.card-inv-safety {
+  background: linear-gradient(135deg, rgba(209,250,229,0.8) 0%, rgba(167,243,208,0.8) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.card-inv-deposito {
+  background: linear-gradient(135deg, rgba(207,250,254,0.8) 0%, rgba(165,243,252,0.8) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+}
+.card-inv-reksadana {
+  background: linear-gradient(135deg, rgba(224,231,255,0.8) 0%, rgba(199,210,254,0.8) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+.card-inv-arisan {
+  background: linear-gradient(135deg, rgba(254,243,199,0.8) 0%, rgba(253,230,138,0.8) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.card-inv-logam {
+  background: linear-gradient(135deg, rgba(254,252,232,0.9) 0%, rgba(254,240,138,0.85) 100%);
+  border: 1px solid rgba(234, 179, 8, 0.4);
+}
+.card-inv-saham {
+  background: linear-gradient(135deg, rgba(243,232,255,0.8) 0%, rgba(233,213,255,0.8) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+/* MUTASI CHECKER */
 .mutasi-header-row {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  flex-wrap: nowrap !important; /* Melarang kategori turun ke bawah */
+  flex-wrap: nowrap !important;
   gap: 6px;
   width: 100%;
 }
@@ -122,7 +162,7 @@ select option[disabled] {
 }
 
 .mutasi-badge {
-  max-width: 160px; /* Membatasi panjang badge kategori */
+  max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -158,10 +198,7 @@ select option[disabled] {
   animation: shake 0.35s ease-in-out;
 }
 
-/* =========================================================
-   FLOATING BOTTOM NAVIGATION BAR (APP STORE STYLE)
-   ========================================================= */
-
+/* FLOATING NAV */
 .nav-btn {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -172,10 +209,9 @@ select option[disabled] {
   transform: scale(0.92);
 }
 
-/* State ketika Tab Aktif */
 .nav-btn.active {
   background-color: rgba(255, 255, 255, 0.9);
-  color: #831843; /* text-pink-950 */
+  color: #831843;
   box-shadow: 0 4px 12px -2px rgba(219, 112, 147, 0.3);
 }
 
