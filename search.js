@@ -2,7 +2,11 @@
  * =========================================================================
  * search.js — MODUL PENCARIAN TRANSACTION HISTORY
  * =========================================================================
- * Menangani komunikasi AJAX dari web ke Router Apps Script (01_PenerimaanDataFormUI)
+ * CATATAN PENTING:
+ * File ini di-load lewat dynamic import dari script.js, artinya dia
+ * dieksekusi SETELAH event DOMContentLoaded selesai. Makanya listener
+ * "DOMContentLoaded" versi lama itu DEAD CODE (gak pernah jalan).
+ * Init sekarang dipanggil langsung oleh script.js -> initSearchModule()
  * =========================================================================
  */
 
@@ -10,12 +14,8 @@ const GAS_SEARCH_URL = "https://script.google.com/macros/s/AKfycbwsK7ROvO1TE4EFZ
 
 let searchModuleReady = false;
 
-document.addEventListener("DOMContentLoaded", () => {
-  initSearchModule();
-});
-
 export function initSearchModule() {
-  // Guard: cegah inisialisasi ganda (kalau file ini juga di-import main.js)
+  // Guard: cegah inisialisasi ganda
   if (searchModuleReady) return;
   searchModuleReady = true;
 
@@ -26,18 +26,24 @@ export function initSearchModule() {
   const searchSort = document.getElementById("searchSort");
 
   if (btnRefreshSearch) {
-    btnRefreshSearch.addEventListener("click", () => {
-      fetchAndRenderSearchData();
-    });
+    btnRefreshSearch.addEventListener("click", () => fetchAndRenderSearchData());
   }
 
+  // Debounce 400ms biar gak spam server tiap ketik huruf
   let debounceTimer;
   if (searchKeyword) {
     searchKeyword.addEventListener("input", () => {
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
+      debounceTimer = setTimeout(() => fetchAndRenderSearchData(), 400);
+    });
+
+    // Enter = langsung cari tanpa nunggu debounce
+    searchKeyword.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        clearTimeout(debounceTimer);
         fetchAndRenderSearchData();
-      }, 400);
+      }
     });
   }
 
@@ -53,7 +59,7 @@ export async function fetchAndRenderSearchData() {
 
   const bulan = document.getElementById("searchBulan")?.value || "ALL";
   const tahun = document.getElementById("searchTahun")?.value || "2026";
-  const keyword = document.getElementById("searchKeyword")?.value || "";
+  const keyword = (document.getElementById("searchKeyword")?.value || "").trim();
   const sort = document.getElementById("searchSort")?.value || "DESC";
 
   if (searchListContainer) {
@@ -82,44 +88,68 @@ export async function fetchAndRenderSearchData() {
       res = await response.json();
     } catch (jsonErr) {
       console.error("[SEARCH] Response bukan JSON. HTTP Status:", response.status, jsonErr);
-      if (searchListContainer) {
-        searchListContainer.innerHTML = `
-          <p class="text-center text-xs text-rose-600 py-6 font-semibold">
-            ⚠️ Server menjawab bukan JSON.<br>
-            Kemungkinan: deployment belum di-update (New version),<br>
-            URL salah, atau akses deployment bukan "Anyone".
-          </p>
-        `;
-      }
+      renderSearchError(
+        "⚠️ Server menjawab bukan JSON.<br>" +
+        "Kemungkinan: deployment Apps Script belum di-update " +
+        "(buat <b>New Version</b> dulu),<br>atau akses deployment bukan \"Anyone\"."
+      );
       return;
     }
 
     console.log("[SEARCH] Response Apps Script:", res);
 
-    if (res && res.status === "success") {
-      renderSearchResults(res);
+    const isSuccess = res && (res.status === "success" || res.result === "success");
+
+    if (isSuccess) {
+      renderSearchResults(normalizeResponse(res), keyword);
     } else {
-      if (searchListContainer) {
-        searchListContainer.innerHTML = `
-          <p class="text-center text-xs text-rose-600 py-6 font-semibold">
-            ⚠️ Gagal memuat: ${res?.message || "Terjadi kesalahan"}
-          </p>
-        `;
-      }
+      renderSearchError(
+        "⚠️ Gagal memuat: " + escapeHtml(res?.message || res?.error || "Terjadi kesalahan di server")
+      );
     }
   } catch (error) {
     console.error("Fetch Search Error:", error);
-    if (searchListContainer) {
-      searchListContainer.innerHTML = `
-        <p class="text-center text-xs text-rose-600 py-6 font-semibold">
-          ❌ Koneksi Terputus / Script URL Belum Sesuai
-        </p>
-      `;
-    }
+    renderSearchError("❌ Koneksi Terputus / URL Apps Script Belum Sesuai");
   }
 }
 
-function renderSearchResults(data) {
+/* ================= HELPER NORMALISASI RESPONSE ================= */
+
+function normalizeResponse(res) {
+  // Backend bisa balasin { status, transactions } atau { status, data: { transactions } }
+  let d = res;
+  if (res && res.data && typeof res.data === "object" && !Array.isArray(res.data)) {
+    d = res.data;
+  }
+
+  let raw = d.transactions || d.results || d.items;
+  if (!raw && res && Array.isArray(res.data)) raw = res.data;
+  if (!Array.isArray(raw)) raw = [];
+
+  const transactions = raw.map(normalizeTransaction);
+
+  return {
+    transactions: transactions,
+    totalCount: Number(d.totalCount ?? d.total ?? transactions.length) || transactions.length,
+    // Total nominal dihitung ulang di frontend biar selalu akurat
+    totalNominal: transactions.reduce((sum, t) => sum + t.nominal, 0)
+  };
+}
+
+function normalizeTransaction(tx) {
+  return {
+    tgl: tx.tgl || tx.tanggal || tx.date || "-",
+    kategori: tx.kategori || tx.category || "-",
+    subKategori: tx.subKategori || tx.sub_kategori || tx.keterangan || "-",
+    akun: tx.akun || tx.bank || tx.account || "-",
+    nominal: Number(String(tx.nominal ?? tx.amount ?? 0).replace(/[^0-9-]/g, "")) || 0,
+    rowIndex: tx.rowIndex ?? tx.row ?? tx.no ?? null
+  };
+}
+
+/* ================= RENDER UI ================= */
+
+function renderSearchResults(data, keyword) {
   const searchListContainer = document.getElementById("searchListContainer");
   const searchTotalCount = document.getElementById("searchTotalCount");
   const searchTotalNominal = document.getElementById("searchTotalNominal");
@@ -130,12 +160,7 @@ function renderSearchResults(data) {
     searchTotalCount.innerText = `${data.totalCount || 0} Transaksi`;
   }
   if (searchTotalNominal) {
-    const formatRp = new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      maximumFractionDigits: 0
-    }).format(data.totalNominal || 0);
-    searchTotalNominal.innerText = formatRp;
+    searchTotalNominal.innerText = "Rp " + (data.totalNominal || 0).toLocaleString("id-ID");
   }
 
   if (transactions.length === 0) {
@@ -154,11 +179,10 @@ function renderSearchResults(data) {
   let html = "";
   transactions.forEach((tx) => {
     const kategori = String(tx.kategori || "");
-    const subKategori = String(tx.subKategori || "");
-    const akun = String(tx.akun || "");
+    const kategoriUp = kategori.toUpperCase();
 
-    const isIncome = kategori.includes("PEMASUKAN");
-    const isPindah = kategori.includes("PINDAH DANA");
+    const isIncome = kategoriUp.includes("PEMASUKAN");
+    const isPindah = kategoriUp.includes("PINDAH DANA");
 
     let badgeColor = "bg-rose-100 text-rose-800 border-rose-200/80";
     let sign = "-";
@@ -171,23 +195,26 @@ function renderSearchResults(data) {
       sign = "⇄";
     }
 
-    const nominalFormatted = new Intl.NumberFormat("id-ID").format(tx.nominal || 0);
+    const nominalFormatted = (tx.nominal || 0).toLocaleString("id-ID");
+    const rowIndexHtml = tx.rowIndex
+      ? `<span class="text-[9px] text-pink-800/40 block">Baris #${escapeHtml(tx.rowIndex)}</span>`
+      : "";
 
     html += `
       <div class="glass-card p-2.5 rounded-xl border border-white/80 shadow-sm flex items-center justify-between hover:bg-white/90 transition">
         <div class="flex flex-col gap-0.5 max-w-[65%]">
           <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md border ${badgeColor}">
-              ${kategori}
+              ${highlightText(kategori, keyword)}
             </span>
             <span class="text-[10px] font-bold text-pink-950/80 truncate">
-              ${subKategori}
+              ${highlightText(tx.subKategori, keyword)}
             </span>
           </div>
           <div class="flex items-center gap-2 text-[10px] text-pink-900/60 font-medium">
-            <span>📅 ${tx.tgl}</span>
+            <span>📅 ${escapeHtml(tx.tgl)}</span>
             <span>•</span>
-            <span>🏦 ${akun}</span>
+            <span>🏦 ${highlightText(tx.akun, keyword)}</span>
           </div>
         </div>
 
@@ -195,7 +222,7 @@ function renderSearchResults(data) {
           <span class="text-xs font-black ${isIncome ? 'text-emerald-700' : isPindah ? 'text-blue-700' : 'text-rose-700'} block">
             ${sign} Rp ${nominalFormatted}
           </span>
-          <span class="text-[9px] text-pink-800/40 block">Baris #${tx.rowIndex}</span>
+          ${rowIndexHtml}
         </div>
       </div>
     `;
@@ -203,5 +230,42 @@ function renderSearchResults(data) {
 
   if (searchListContainer) {
     searchListContainer.innerHTML = html;
+  }
+}
+
+function renderSearchError(messageHtml) {
+  const searchListContainer = document.getElementById("searchListContainer");
+  if (searchListContainer) {
+    searchListContainer.innerHTML = `
+      <p class="text-center text-xs text-rose-600 py-6 font-semibold leading-relaxed">${messageHtml}</p>
+    `;
+  }
+}
+
+/* ================= HELPER KEAMANAN & HIGHLIGHT ================= */
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Highlight kata kunci yang dicari biar ketemuannya keliatan jelas
+function highlightText(text, keyword) {
+  const safe = escapeHtml(text || "");
+  const kw = (keyword || "").trim();
+  if (!kw) return safe;
+
+  const safeKw = escapeHtml(kw).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  if (!safeKw) return safe;
+
+  try {
+    const regex = new RegExp(`(${safeKw})`, "gi");
+    return safe.replace(regex, '<mark class="bg-yellow-200/80 text-pink-950 rounded px-0.5">$1</mark>');
+  } catch (e) {
+    return safe;
   }
 }
