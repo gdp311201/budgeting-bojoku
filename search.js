@@ -186,4 +186,3 @@ function renderSearchResults(data) {
   if (searchListContainer) {
     searchListContainer.innerHTML = html;
   }
-}
