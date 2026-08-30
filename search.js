@@ -1,58 +1,112 @@
 /**
  * =========================================================================
- * search.js — MODUL PENCARIAN TRANSACTION HISTORY
+ * search.js — MODUL PENCARIAN TRANSACTION HISTORY (MODE MANUAL LOAD)
  * =========================================================================
- * CATATAN PENTING:
- * File ini di-load lewat dynamic import dari script.js, artinya dia
- * dieksekusi SETELAH event DOMContentLoaded selesai. Makanya listener
- * "DOMContentLoaded" versi lama itu DEAD CODE (gak pernah jalan).
- * Init sekarang dipanggil langsung oleh script.js -> initSearchModule()
+ * PERUBAHAN BESAR:
+ * - NGETIK TIDAK LAGI AUTO-FETCH (dulu: fetch tiap jeda 400ms — boros!)
+ *   Sekarang ngetik hanya menandai "filter berubah" (hint kuning).
+ * - Data HANYA dimuat saat tombol "🔍 Cari Sekarang" diklik
+ *   (atau tombol Refresh, atau tekan Enter — itu perintah eksplisit).
  * =========================================================================
  */
 
 const GAS_SEARCH_URL = "https://script.google.com/macros/s/AKfycbwsK7ROvO1TE4EFZVZ9TWiWYPeVzyYc6YwG5qxMWtfqQM2GkeA3iR7e6Ni894q3D2F2Vg/exec";
 
 let searchModuleReady = false;
+let lastFetchedFilter = null;
+
+/* ================= FILTER & STATE HELPER ================= */
+
+function getSearchFilter() {
+  return JSON.stringify({
+    keyword: (document.getElementById("searchKeyword")?.value || "").trim(),
+    bulan: document.getElementById("searchBulan")?.value || "ALL",
+    tahun: document.getElementById("searchTahun")?.value || "2026",
+    sort: document.getElementById("searchSort")?.value || "DESC"
+  });
+}
+
+function nowWIB() {
+  try {
+    return new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Jakarta', hour12: false }) + ' WIB';
+  } catch (err) {
+    return new Date().toLocaleTimeString('en-GB', { hour12: false });
+  }
+}
+
+function setDirtyHint(show) {
+  const hint = document.getElementById("searchDirtyHint");
+  if (hint) hint.classList.toggle("hidden", !show);
+}
+
+function updateDataStamp() {
+  const stamp = document.getElementById("searchDataStamp");
+  if (stamp) {
+    stamp.classList.remove("hidden");
+    stamp.textContent = '📅 Data per ' + nowWIB();
+  }
+}
+
+function markSearchDirty() {
+  // Keyword/filter berubah → tampilkan hint (kalau beda dari data terakhir),
+  // JANGAN fetch otomatis.
+  setDirtyHint(lastFetchedFilter !== null && getSearchFilter() !== lastFetchedFilter);
+}
+
+function setBtnLoading(isLoading) {
+  const btn = document.getElementById("btnDoSearch");
+  if (!btn) return;
+  if (isLoading) {
+    if (!btn.dataset.origHtml) btn.dataset.origHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Mencari...";
+  } else {
+    if (btn.dataset.origHtml) btn.innerHTML = btn.dataset.origHtml;
+    btn.disabled = false;
+  }
+}
+
+/* ================= INIT ================= */
 
 export function initSearchModule() {
   // Guard: cegah inisialisasi ganda
   if (searchModuleReady) return;
   searchModuleReady = true;
 
-  const btnRefreshSearch = document.getElementById("btnRefreshSearch");
-  const searchKeyword = document.getElementById("searchKeyword");
-  const searchBulan = document.getElementById("searchBulan");
-  const searchTahun = document.getElementById("searchTahun");
-  const searchSort = document.getElementById("searchSort");
+  // Tombol utama — SATU-SATUNYA pemicu pencarian
+  const btnDoSearch = document.getElementById("btnDoSearch");
+  if (btnDoSearch) {
+    btnDoSearch.addEventListener("click", () => fetchAndRenderSearchData());
+  }
 
+  // Tombol refresh di header modul = cari ulang (perintah eksplisit user)
+  const btnRefreshSearch = document.getElementById("btnRefreshSearch");
   if (btnRefreshSearch) {
     btnRefreshSearch.addEventListener("click", () => fetchAndRenderSearchData());
   }
 
-  // Debounce 400ms biar gak spam server tiap ketik huruf
-  let debounceTimer;
+  const searchKeyword = document.getElementById("searchKeyword");
   if (searchKeyword) {
-    searchKeyword.addEventListener("input", () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => fetchAndRenderSearchData(), 400);
-    });
+    // NGETIK = tandai kotor saja, TIDAK fetch (dulu: fetch tiap 400ms!)
+    searchKeyword.addEventListener("input", markSearchDirty);
 
-    // Enter = langsung cari tanpa nunggu debounce
+    // Enter = perintah eksplisit user → boleh langsung cari
     searchKeyword.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        clearTimeout(debounceTimer);
         fetchAndRenderSearchData();
       }
     });
   }
 
-  if (searchBulan) searchBulan.addEventListener("change", fetchAndRenderSearchData);
-  if (searchTahun) searchTahun.addEventListener("change", fetchAndRenderSearchData);
-  if (searchSort) searchSort.addEventListener("change", fetchAndRenderSearchData);
+  ["searchBulan", "searchTahun", "searchSort"].forEach((id) => {
+    document.getElementById(id)?.addEventListener("change", markSearchDirty);
+  });
 
-  fetchAndRenderSearchData();
+  // TIDAK ADA auto-load. Data dimuat manual via tombol.
 }
+
+/* ================= FETCH & RENDER ================= */
 
 export async function fetchAndRenderSearchData() {
   const searchListContainer = document.getElementById("searchListContainer");
@@ -66,10 +120,11 @@ export async function fetchAndRenderSearchData() {
     searchListContainer.innerHTML = `
       <div class="text-center py-8">
         <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-pink-500 mb-2"></div>
-        <p class="text-xs text-pink-800/60 font-medium">Memuat data pencarian...</p>
+        <p class="text-xs text-pink-800/60 font-medium">Mencari transaksi...</p>
       </div>
     `;
   }
+  setBtnLoading(true);
 
   try {
     const url = new URL(GAS_SEARCH_URL);
@@ -102,6 +157,9 @@ export async function fetchAndRenderSearchData() {
 
     if (isSuccess) {
       renderSearchResults(normalizeResponse(res), keyword);
+      lastFetchedFilter = getSearchFilter();
+      setDirtyHint(false);
+      updateDataStamp();
     } else {
       renderSearchError(
         "⚠️ Gagal memuat: " + escapeHtml(res?.message || res?.error || "Terjadi kesalahan di server")
@@ -110,6 +168,8 @@ export async function fetchAndRenderSearchData() {
   } catch (error) {
     console.error("Fetch Search Error:", error);
     renderSearchError("❌ Koneksi Terputus / URL Apps Script Belum Sesuai");
+  } finally {
+    setBtnLoading(false);
   }
 }
 
