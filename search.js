@@ -1,176 +1,207 @@
-import { initTransaksi } from './transaksi.js';
-import { initDashboard, loadDashboardData } from './dashboard.js';
+/**
+ * =========================================================================
+ * search.js — MODUL PENCARIAN TRANSACTION HISTORY
+ * =========================================================================
+ * Menangani komunikasi AJAX dari web ke Router Apps Script (01_PenerimaanDataFormUI)
+ * =========================================================================
+ */
 
-// PIN Akses Aplikasi
-const CORRECT_PIN = "080798";
+const GAS_SEARCH_URL = "https://script.google.com/macros/s/AKfycbwsK7ROvO1TE4EFZVZ9TWiWYPeVzyYc6YwG5qxMWtfqQM2GkeA3iR7e6Ni894q3D2F2Vg/exec";
 
-document.addEventListener('DOMContentLoaded', () => {
-  const pinInput = document.getElementById('pinInput');
-  if (pinInput) pinInput.focus();
+let searchModuleReady = false;
 
-  // Attach PIN Listeners
-  pinInput?.addEventListener('input', checkPinAuto);
-  pinInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') verifyPin();
-  });
-
-  document.getElementById('btnTogglePin')?.addEventListener('click', togglePinVisibility);
-
-  // Attach Navigation Listeners
-  document.getElementById('navInputBtn')?.addEventListener('click', () => switchTab('input'));
-  document.getElementById('navMutasiBtn')?.addEventListener('click', () => switchTab('mutasi'));
-  document.getElementById('navDashBtn')?.addEventListener('click', () => switchTab('dashboard'));
-  document.getElementById('navReceiptBtn')?.addEventListener('click', () => switchTab('receipt'));
-  document.getElementById('navSearchBtn')?.addEventListener('click', () => switchTab('search'));
-
-  // Handler Event Listener untuk Dropdown Placeholder Style (Miring & Pudar)
-  initPlaceholderDropdowns();
-
-  // Safe Load Modules
-  if (typeof initTransaksi === 'function') initTransaksi();
-  if (typeof initDashboard === 'function') initDashboard();
-
-  // Load Optional Modules jika sudah tersedia
-  loadOptionalModules();
+document.addEventListener("DOMContentLoaded", () => {
+  initSearchModule();
 });
 
-// Mengelola Tampilan Dropdown Placeholder
-function initPlaceholderDropdowns() {
-  const dropdowns = document.querySelectorAll('select.is-placeholder');
-  dropdowns.forEach((select) => {
-    if (select.value !== "") {
-      select.classList.remove('is-placeholder');
-    }
+export function initSearchModule() {
+  // Guard: cegah inisialisasi ganda (kalau file ini juga di-import main.js)
+  if (searchModuleReady) return;
+  searchModuleReady = true;
 
-    select.addEventListener('change', function () {
-      if (this.value === "" || this.value === null) {
-        this.classList.add('is-placeholder');
-      } else {
-        this.classList.remove('is-placeholder');
-      }
+  const btnRefreshSearch = document.getElementById("btnRefreshSearch");
+  const searchKeyword = document.getElementById("searchKeyword");
+  const searchBulan = document.getElementById("searchBulan");
+  const searchTahun = document.getElementById("searchTahun");
+  const searchSort = document.getElementById("searchSort");
+
+  if (btnRefreshSearch) {
+    btnRefreshSearch.addEventListener("click", () => {
+      fetchAndRenderSearchData();
     });
-  });
+  }
+
+  let debounceTimer;
+  if (searchKeyword) {
+    searchKeyword.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        fetchAndRenderSearchData();
+      }, 400);
+    });
+  }
+
+  if (searchBulan) searchBulan.addEventListener("change", fetchAndRenderSearchData);
+  if (searchTahun) searchTahun.addEventListener("change", fetchAndRenderSearchData);
+  if (searchSort) searchSort.addEventListener("change", fetchAndRenderSearchData);
+
+  fetchAndRenderSearchData();
 }
 
-// Pemuatan Modul Tambahan Secara Aman
-let initMutasi, loadMutasiData, initReceipt, loadEReceiptData, initSearchModule, loadSearchData;
+export async function fetchAndRenderSearchData() {
+  const searchListContainer = document.getElementById("searchListContainer");
 
-async function loadOptionalModules() {
+  const bulan = document.getElementById("searchBulan")?.value || "ALL";
+  const tahun = document.getElementById("searchTahun")?.value || "2026";
+  const keyword = document.getElementById("searchKeyword")?.value || "";
+  const sort = document.getElementById("searchSort")?.value || "DESC";
+
+  if (searchListContainer) {
+    searchListContainer.innerHTML = `
+      <div class="text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-pink-500 mb-2"></div>
+        <p class="text-xs text-pink-800/60 font-medium">Memuat data pencarian...</p>
+      </div>
+    `;
+  }
+
   try {
-    const mutasiMod = await import('./mutasi.js').catch(() => null);
-    if (mutasiMod && mutasiMod.initMutasi) {
-      initMutasi = mutasiMod.initMutasi;
-      loadMutasiData = mutasiMod.loadMutasiData;
-      initMutasi();
+    const url = new URL(GAS_SEARCH_URL);
+    url.searchParams.append("action", "getSearchData");
+    url.searchParams.append("bulan", bulan);
+    url.searchParams.append("tahun", tahun);
+    url.searchParams.append("keyword", keyword);
+    url.searchParams.append("sort", sort);
+    url.searchParams.append("_ts", Date.now()); // anti-cache
+
+    const response = await fetch(url.toString(), { method: "GET", redirect: "follow" });
+
+    // Bedakan: response BUKAN JSON (mis. HTML login page / deployment salah)
+    let res;
+    try {
+      res = await response.json();
+    } catch (jsonErr) {
+      console.error("[SEARCH] Response bukan JSON. HTTP Status:", response.status, jsonErr);
+      if (searchListContainer) {
+        searchListContainer.innerHTML = `
+          <p class="text-center text-xs text-rose-600 py-6 font-semibold">
+            ⚠️ Server menjawab bukan JSON.<br>
+            Kemungkinan: deployment belum di-update (New version),<br>
+            URL salah, atau akses deployment bukan "Anyone".
+          </p>
+        `;
+      }
+      return;
     }
 
-    const receiptMod = await import('./receipt.js').catch(() => null);
-    if (receiptMod && receiptMod.initReceipt) {
-      initReceipt = receiptMod.initReceipt;
-      loadEReceiptData = receiptMod.loadEReceiptData;
-      initReceipt();
-    }
+    console.log("[SEARCH] Response Apps Script:", res);
 
-    const searchMod = await import('./search.js').catch((err) => {
-      console.warn('[LOAD] search.js gagal di-import (cek syntax error):', err);
-      return null;
-    });
-
-    // ===== FIX UTAMA =====
-    // Dulu: if (searchMod && searchMod.initSearch) -> SELALU false,
-    // karena yang di-export search.js namanya "initSearchModule".
-    // Akibatnya modul search GAK PERNAH jalan sama sekali.
-    if (searchMod && searchMod.initSearchModule) {
-      initSearchModule = searchMod.initSearchModule;
-      loadSearchData = searchMod.fetchAndRenderSearchData;
-      initSearchModule();
+    if (res && res.status === "success") {
+      renderSearchResults(res);
     } else {
-      console.warn('[LOAD] search.js dimuat, tapi fungsi initSearchModule tidak ditemukan.');
+      if (searchListContainer) {
+        searchListContainer.innerHTML = `
+          <p class="text-center text-xs text-rose-600 py-6 font-semibold">
+            ⚠️ Gagal memuat: ${res?.message || "Terjadi kesalahan"}
+          </p>
+        `;
+      }
     }
-  } catch (e) {
-    console.warn("Modul belum lengkap/masih kosong, dikondisikan aman:", e);
+  } catch (error) {
+    console.error("Fetch Search Error:", error);
+    if (searchListContainer) {
+      searchListContainer.innerHTML = `
+        <p class="text-center text-xs text-rose-600 py-6 font-semibold">
+          ❌ Koneksi Terputus / Script URL Belum Sesuai
+        </p>
+      `;
+    }
   }
 }
 
-// Toggle Show/Hide PIN
-function togglePinVisibility() {
-  const pinInput = document.getElementById('pinInput');
-  const eyeIcon = document.getElementById('eyeIcon');
-  if (!pinInput || !eyeIcon) return;
+function renderSearchResults(data) {
+  const searchListContainer = document.getElementById("searchListContainer");
+  const searchTotalCount = document.getElementById("searchTotalCount");
+  const searchTotalNominal = document.getElementById("searchTotalNominal");
 
-  if (pinInput.type === 'password') {
-    pinInput.type = 'text';
-    eyeIcon.innerText = '🙈';
-  } else {
-    pinInput.type = 'password';
-    eyeIcon.innerText = '👁️';
+  const transactions = data.transactions || [];
+
+  if (searchTotalCount) {
+    searchTotalCount.innerText = `${data.totalCount || 0} Transaksi`;
   }
-}
-
-// Auto check PIN saat 6 digit
-function checkPinAuto() {
-  const pinInput = document.getElementById('pinInput');
-  if (pinInput && pinInput.value.length === 6) {
-    verifyPin();
+  if (searchTotalNominal) {
+    const formatRp = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0
+    }).format(data.totalNominal || 0);
+    searchTotalNominal.innerText = formatRp;
   }
-}
 
-// Verifikasi PIN Login
-function verifyPin() {
-  const pinInput = document.getElementById('pinInput');
-  const pinBox = document.getElementById('pinBox');
-  const pinError = document.getElementById('pinError');
-  const lockScreen = document.getElementById('lockScreen');
-
-  if (!pinInput) return;
-
-  if (pinInput.value === CORRECT_PIN) {
-    if (pinError) pinError.classList.add('hidden');
-    if (lockScreen) {
-      lockScreen.classList.add('opacity-0', 'pointer-events-none');
-      setTimeout(() => lockScreen.remove(), 700);
+  if (transactions.length === 0) {
+    if (searchListContainer) {
+      searchListContainer.innerHTML = `
+        <div class="text-center py-8">
+          <span class="text-2xl block mb-1">🔍</span>
+          <p class="text-xs font-semibold text-pink-900/70">Tidak Ada Transaksi Ditemukan</p>
+          <p class="text-[10px] text-pink-800/50 mt-0.5">Coba ubah kata kunci atau filter Bulan/Tahun</p>
+        </div>
+      `;
     }
-  } else {
-    if (pinError) pinError.classList.remove('hidden');
-    if (pinBox) {
-      pinBox.classList.remove('animate-shake');
-      void pinBox.offsetWidth;
-      pinBox.classList.add('animate-shake');
-    }
-    pinInput.value = '';
-    pinInput.focus();
+    return;
   }
-}
 
-// Tab Switcher Controller
-function switchTab(targetTab) {
-  const tabs = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
+  let html = "";
+  transactions.forEach((tx) => {
+    const kategori = String(tx.kategori || "");
+    const subKategori = String(tx.subKategori || "");
+    const akun = String(tx.akun || "");
 
-  tabs.forEach(tab => {
-    const view = document.getElementById(`view${capitalize(tab)}`);
-    const btn = document.getElementById(`nav${capitalize(tab)}Btn`);
+    const isIncome = kategori.includes("PEMASUKAN");
+    const isPindah = kategori.includes("PINDAH DANA");
 
-    if (tab === targetTab) {
-      if (view) view.classList.remove('hidden');
-      if (btn) btn.classList.add('active');
-    } else {
-      if (view) view.classList.add('hidden');
-      if (btn) btn.classList.remove('active');
+    let badgeColor = "bg-rose-100 text-rose-800 border-rose-200/80";
+    let sign = "-";
+
+    if (isIncome) {
+      badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200/80";
+      sign = "+";
+    } else if (isPindah) {
+      badgeColor = "bg-blue-100 text-blue-800 border-blue-200/80";
+      sign = "⇄";
     }
+
+    const nominalFormatted = new Intl.NumberFormat("id-ID").format(tx.nominal || 0);
+
+    html += `
+      <div class="glass-card p-2.5 rounded-xl border border-white/80 shadow-sm flex items-center justify-between hover:bg-white/90 transition">
+        <div class="flex flex-col gap-0.5 max-w-[65%]">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md border ${badgeColor}">
+              ${kategori}
+            </span>
+            <span class="text-[10px] font-bold text-pink-950/80 truncate">
+              ${subKategori}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-[10px] text-pink-900/60 font-medium">
+            <span>📅 ${tx.tgl}</span>
+            <span>•</span>
+            <span>🏦 ${akun}</span>
+          </div>
+        </div>
+
+        <div class="text-right">
+          <span class="text-xs font-black ${isIncome ? 'text-emerald-700' : isPindah ? 'text-blue-700' : 'text-rose-700'} block">
+            ${sign} Rp ${nominalFormatted}
+          </span>
+          <span class="text-[9px] text-pink-800/40 block">Baris #${tx.rowIndex}</span>
+        </div>
+      </div>
+    `;
   });
 
-  if (targetTab === 'dashboard' && typeof loadDashboardData === 'function') {
-    loadDashboardData();
-  } else if (targetTab === 'mutasi' && typeof loadMutasiData === 'function') {
-    loadMutasiData();
-  } else if (targetTab === 'receipt' && typeof loadEReceiptData === 'function') {
-    loadEReceiptData();
-  } else if (targetTab === 'search' && typeof loadSearchData === 'function') {
-    // FIX: refresh hasil pencarian tiap kali tab "Cari" dibuka
-    loadSearchData();
+  if (searchListContainer) {
+    searchListContainer.innerHTML = html;
   }
-}
-
-function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
