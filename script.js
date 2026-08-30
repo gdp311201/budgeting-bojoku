@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   pinInput?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') verifyPin();
   });
-  
+
   document.getElementById('btnTogglePin')?.addEventListener('click', togglePinVisibility);
 
   // Attach Navigation Listeners
@@ -53,27 +53,39 @@ function initPlaceholderDropdowns() {
 }
 
 // Pemuatan Modul Tambahan Secara Aman
-let initMutasi, loadMutasiData, initReceipt, loadEReceiptData, initSearch;
+let initMutasi, loadMutasiData, initReceipt, loadEReceiptData, initSearchModule, loadSearchData;
+
 async function loadOptionalModules() {
   try {
     const mutasiMod = await import('./mutasi.js').catch(() => null);
-    if (mutasiMod && mutasiMod.initMutasi) { 
-      initMutasi = mutasiMod.initMutasi; 
+    if (mutasiMod && mutasiMod.initMutasi) {
+      initMutasi = mutasiMod.initMutasi;
       loadMutasiData = mutasiMod.loadMutasiData;
       initMutasi();
     }
 
     const receiptMod = await import('./receipt.js').catch(() => null);
-    if (receiptMod && receiptMod.initReceipt) { 
+    if (receiptMod && receiptMod.initReceipt) {
       initReceipt = receiptMod.initReceipt;
       loadEReceiptData = receiptMod.loadEReceiptData;
       initReceipt();
     }
 
-    const searchMod = await import('./search.js').catch(() => null);
-    if (searchMod && searchMod.initSearch) { 
-      initSearch = searchMod.initSearch;
-      initSearch();
+    const searchMod = await import('./search.js').catch((err) => {
+      console.warn('[LOAD] search.js gagal di-import (cek syntax error):', err);
+      return null;
+    });
+
+    // ===== FIX UTAMA =====
+    // Dulu: if (searchMod && searchMod.initSearch) -> SELALU false,
+    // karena yang di-export search.js namanya "initSearchModule".
+    // Akibatnya modul search GAK PERNAH jalan sama sekali.
+    if (searchMod && searchMod.initSearchModule) {
+      initSearchModule = searchMod.initSearchModule;
+      loadSearchData = searchMod.fetchAndRenderSearchData;
+      initSearchModule();
+    } else {
+      console.warn('[LOAD] search.js dimuat, tapi fungsi initSearchModule tidak ditemukan.');
     }
   } catch (e) {
     console.warn("Modul belum lengkap/masih kosong, dikondisikan aman:", e);
@@ -153,6 +165,9 @@ function switchTab(targetTab) {
     loadMutasiData();
   } else if (targetTab === 'receipt' && typeof loadEReceiptData === 'function') {
     loadEReceiptData();
+  } else if (targetTab === 'search' && typeof loadSearchData === 'function') {
+    // FIX: refresh hasil pencarian tiap kali tab "Cari" dibuka
+    loadSearchData();
   }
 }
 
