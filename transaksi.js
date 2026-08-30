@@ -1,4 +1,4 @@
-export const GAS_URL = "https://script.google.com/macros/s/AKfycbzqrpR8qrDH3Mr_qN8j95sJhjwRds2TokRm3SBCnTZmUWw2jW_wf7OMVoAX4h2LcxHKzw/exec";
+export const GAS_URL = "https://script.google.com/macros/s/AKfycbz5jfS2zrZUV4U3Kxsfue7USY3XtG3xXmc6THvSNIMgOeS05iLmvDxc32tq8XUEi8fR/exec";
 
 export const SUB_DATA = {
   "💸 PINDAH DANA": ["SEABANK", "BCA", "MANDIRI", "DANA", "CASH"],
