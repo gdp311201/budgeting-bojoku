@@ -6,7 +6,6 @@
  * =========================================================================
  */
 
-// Ganti URL ini dengan Apps Script Web App Deployment URL Anda
 const GAS_SEARCH_URL = "https://script.google.com/macros/s/AKfycbyvMao5Rq59c5qG5UuA1VfYN8ifTZGJYHDdoT_OqQASMWhkAgLJsKdGbCa79ygUOZtj1g/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,14 +19,12 @@ export function initSearchModule() {
   const searchTahun = document.getElementById("searchTahun");
   const searchSort = document.getElementById("searchSort");
 
-  // Event Listener: Klik Refresh
   if (btnRefreshSearch) {
     btnRefreshSearch.addEventListener("click", () => {
       fetchAndRenderSearchData();
     });
   }
 
-  // Event Listener: Realtime Input Keyword (Debounce 400ms)
   let debounceTimer;
   if (searchKeyword) {
     searchKeyword.addEventListener("input", () => {
@@ -42,13 +39,9 @@ export function initSearchModule() {
   if (searchTahun) searchTahun.addEventListener("change", fetchAndRenderSearchData);
   if (searchSort) searchSort.addEventListener("change", fetchAndRenderSearchData);
 
-  // Auto Load pertama kali saat halaman dibuka
   fetchAndRenderSearchData();
 }
 
-/**
- * Mengambil data dari Web App Router
- */
 export async function fetchAndRenderSearchData() {
   const searchListContainer = document.getElementById("searchListContainer");
   const searchTotalCount = document.getElementById("searchTotalCount");
@@ -70,7 +63,6 @@ export async function fetchAndRenderSearchData() {
 
   try {
     const url = new URL(GAS_SEARCH_URL);
-    // Mengirim action=getSearchData agar ditangkap oleh handleRouter di 01_PenerimaanDataFormUI.gs
     url.searchParams.append("action", "getSearchData");
     url.searchParams.append("bulan", bulan);
     url.searchParams.append("tahun", tahun);
@@ -103,9 +95,6 @@ export async function fetchAndRenderSearchData() {
   }
 }
 
-/**
- * Merender daftar item ke dalam HTML UI
- */
 function renderSearchResults(data) {
   const searchListContainer = document.getElementById("searchListContainer");
   const searchTotalCount = document.getElementById("searchTotalCount");
@@ -113,7 +102,6 @@ function renderSearchResults(data) {
 
   const transactions = data.transactions || [];
 
-  // 1. Update Ringkasan Stat
   if (searchTotalCount) {
     searchTotalCount.innerText = `${data.totalCount || 0} Transaksi`;
   }
@@ -122,7 +110,6 @@ function renderSearchResults(data) {
     searchTotalNominal.innerText = formatRp;
   }
 
-  // 2. Jika Tidak Ada Data Ditemukan
   if (transactions.length === 0) {
     if (searchListContainer) {
       searchListContainer.innerHTML = `
@@ -136,7 +123,6 @@ function renderSearchResults(data) {
     return;
   }
 
-  // 3. Render Daftar Transaksi
   let html = "";
   transactions.forEach((tx) => {
     const isIncome = tx.kategori.includes("PEMASUKAN");
@@ -186,3 +172,4 @@ function renderSearchResults(data) {
   if (searchListContainer) {
     searchListContainer.innerHTML = html;
   }
+}
