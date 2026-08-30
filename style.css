@@ -36,6 +36,11 @@ input, select, textarea {
   backdrop-filter: blur(8px);
 }
 
+/* Kalender flatpickr harus di atas modal edit */
+.flatpickr-calendar.open {
+  z-index: 99999 !important;
+}
+
 .flatpickr-day.selected {
   background: #c88ea7 !important;
   border-color: #c88ea7 !important;
@@ -142,7 +147,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   TAMPILAN MUTASI (KATEGORI SEJAJAR TANGGAL)
+   TAMPILAN MUTASI
    ========================================================= */
 
 .mutasi-header-row {
@@ -342,6 +347,73 @@ select option[disabled] {
 
 .module-anim-prev {
   animation: moduleInPrev 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================================
+   SWIPE CARD ACTIONS — EDIT (kanan) / HAPUS (kiri), gaya Gmail
+   ========================================================= */
+
+.swipe-item {
+  position: relative;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.swipe-actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 84px;
+  display: flex;
+  align-items: stretch;
+  z-index: 1;
+}
+
+.swipe-actions-left {
+  left: 0;
+}
+
+.swipe-actions-right {
+  right: 0;
+}
+
+.swipe-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.swipe-btn-edit {
+  background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+}
+
+.swipe-btn-delete {
+  background: linear-gradient(135deg, #fb7185 0%, #be123c 100%);
+}
+
+.swipe-btn:active {
+  filter: brightness(1.15);
+}
+
+/* Kartu harus OPAK supaya tombol di belakangnya gak tembus */
+.swipe-content {
+  position: relative;
+  z-index: 2;
+  touch-action: pan-y; /* scroll vertikal tetap native, horizontal ditangani JS */
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  background: rgba(255, 255, 255, 0.97) !important;
+  cursor: grab;
 }
 
 /* =========================================================
