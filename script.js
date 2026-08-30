@@ -4,10 +4,13 @@ import { initDashboard, loadDashboardData } from './dashboard.js';
 // PIN Akses Aplikasi
 const CORRECT_PIN = "080798";
 
+// Urutan tab — dipakai untuk navigasi swipe (kiri = maju, kanan = mundur)
+const TAB_ORDER = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
+let currentTab = 'input';
+
 /* =========================================================
    1) LIVE CLOCK — Jam, Hari & Tanggal Real-Time (WIB)
    Contoh output: 19:12:54 WIB | Selasa, 27 Agustus 2026
-   Dipakai di: footer bawah & e-receipt.
    ========================================================= */
 const clockTimeFmt = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Asia/Jakarta',
@@ -55,8 +58,6 @@ function startLiveClock() {
 
 /* =========================================================
    2) KALENDER-ONLY — cegah keyboard muncul di field Tanggal
-   Input dikunci: readonly + inputmode="none" supaya tap hanya
-   membuka popup kalender flatpickr, keyboard virtual diem total.
    ========================================================= */
 const lockedCalendarInputs = new WeakSet();
 
@@ -71,7 +72,7 @@ function lockCalendarInput(el) {
 
   lock();
 
-  // Flatpickr bisa menghapus atribut readonly saat init (config allowInput),
+  // Flatpickr bisa menghapus atribut readonly saat init,
   // jadi atributnya dipantau terus & dikunci ulang otomatis.
   new MutationObserver(lock).observe(el, {
     attributes: true,
@@ -90,8 +91,8 @@ function enforceCalendarOnlyInput() {
   setTimeout(sweep, 2000);
 }
 
-// Karena input readonly mem-bypass validasi "required" bawaan browser,
-// guard ini memastikan form gak bisa dikirim kalau tanggal masih kosong.
+// Guard: form gak bisa dikirim kalau tanggal masih kosong
+// (input readonly mem-bypass validasi required bawaan browser)
 function guardTanggalWajib() {
   const form = document.getElementById('txForm');
   const tgl = document.getElementById('tanggal');
@@ -115,57 +116,128 @@ function guardTanggalWajib() {
 }
 
 /* =========================================================
-   3) NAVBAR FLOATING BUBBLE (DYNAMIC ISLAND STYLE)
-   Sliding pill indicator BESAR yang meluncur ke tab aktif.
-   Pill hampir seukuran tombol penuh (inset cuma 2px) supaya
-   icon & label menu gak pernah kepotong.
+   3) SWIPE NAVIGATION ANTAR HALAMAN
+   - Swipe KIRI  : pindah ke menu berikutnya
+   - Swipe KANAN : pindah ke menu sebelumnya
+   - Halaman ikut terseret pelan pas di-swipe (preview),
+     lalu slide-in dari arah yang sesuai setelah pindah.
+   - Aman: scroll vertikal, input form, tombol & kalender
+     tidak terganggu (deteksi hanya gerakan dominan horizontal).
    ========================================================= */
-function positionNavIndicator(animate = true) {
-  const indicator = document.getElementById('navIndicator');
-  const activeBtn = document.querySelector('.nav-btn.active');
-  if (!indicator || !activeBtn) return;
+function initSwipeNavigation() {
+  const shell = document.getElementById('appShell');
+  if (!shell) return;
 
-  const track = indicator.parentElement;
-  if (!track) return;
+  const INTERACTIVE = 'input, select, textarea, button, a, .flatpickr-calendar, .nav-bar, [data-no-swipe]';
 
-  const trackRect = track.getBoundingClientRect();
-  const btnRect = activeBtn.getBoundingClientRect();
-  const inset = 2; // selisih tipis dari tepi tombol (bubble nyaris full-size)
+  let startX = 0;
+  let startY = 0;
+  let startT = 0;
+  let tracking = false;
+  let horizontal = false;
+  let previewEl = null;
 
-  if (!animate) indicator.style.transition = 'none';
+  const resetPreview = () => {
+    if (!previewEl) return;
+    const el = previewEl;
+    previewEl = null;
+    el.style.transition = 'transform 0.25s ease';
+    el.style.transform = '';
+    setTimeout(() => { el.style.transition = ''; }, 260);
+  };
 
-  indicator.style.width = `${Math.max(btnRect.width - inset * 2, 32)}px`;
-  indicator.style.transform = `translateX(${btnRect.left - trackRect.left + inset}px)`;
+  shell.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) {
+      tracking = false;
+      resetPreview();
+      return;
+    }
+    // Abaikan swipe yang dimulai dari elemen interaktif
+    if (e.target.closest && e.target.closest(INTERACTIVE)) {
+      tracking = false;
+      return;
+    }
 
-  if (!animate) {
-    void indicator.offsetWidth; // paksa reflow biar langsung snap tanpa animasi
-    indicator.style.transition = '';
-  }
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    startT = Date.now();
+    tracking = true;
+    horizontal = false;
+  }, { passive: true });
+
+  shell.addEventListener('touchmove', (e) => {
+    if (!tracking) return;
+    const t = e.touches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+
+    if (!horizontal) {
+      if (Math.abs(dx) > 18 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+        // Gerakan jelas horizontal → mulai preview seret halaman
+        horizontal = true;
+        previewEl = document.querySelector('.app-module:not(.hidden)');
+      } else if (Math.abs(dy) > 14) {
+        // User lagi scroll vertikal → stop tracking
+        tracking = false;
+        resetPreview();
+        return;
+      }
+    }
+
+    if (horizontal && previewEl) {
+      // Halaman terseret pelan mengikuti jari (dibatasi biar gak lebay)
+      const drag = Math.max(Math.min(dx * 0.14, 48), -48);
+      previewEl.style.transition = 'none';
+      previewEl.style.transform = `translateX(${drag}px)`;
+    }
+  }, { passive: true });
+
+  shell.addEventListener('touchend', (e) => {
+    if (!tracking) {
+      resetPreview();
+      return;
+    }
+    tracking = false;
+
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    const dt = Date.now() - startT;
+
+    resetPreview();
+
+    // Validasi swipe: cukup jauh, dominan horizontal, & cukup cepat
+    if (dt > 800) return;
+    if (Math.abs(dx) < 55) return;
+    if (Math.abs(dx) < Math.abs(dy) * 1.5) return;
+
+    const idx = TAB_ORDER.indexOf(currentTab);
+    const nextIdx = dx < 0 ? idx + 1 : idx - 1;
+
+    // Sudah mentok di ujung → diam di tempat (rubber band balik)
+    if (nextIdx < 0 || nextIdx >= TAB_ORDER.length) return;
+
+    switchTab(TAB_ORDER[nextIdx], dx < 0 ? 'next' : 'prev');
+  }, { passive: true });
+
+  shell.addEventListener('touchcancel', () => {
+    tracking = false;
+    resetPreview();
+  }, { passive: true });
 }
 
-// Ukur ulang posisi pill setelah semua font selesai dimuat,
-// biar lebar label "Dashboard" dsb. terhitung akurat.
-function scheduleIndicatorMeasure() {
-  requestAnimationFrame(() => positionNavIndicator(false));
-  setTimeout(() => positionNavIndicator(false), 300);
-  setTimeout(() => positionNavIndicator(false), 700);
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(() => positionNavIndicator(false)).catch(() => {});
-  }
-  document.querySelector('.nav-island')?.addEventListener('animationend', () => {
-    positionNavIndicator(false);
-  });
-}
-
-// Island sopan: sembunyi saat keyboard virtual aktif, muncul lagi saat ditutup
+/* =========================================================
+   4) NAVBAR — sembunyi saat keyboard virtual aktif
+   ========================================================= */
 function initNavbarKeyboardAwareness() {
-  const island = document.querySelector('.nav-island');
-  if (!island || !window.visualViewport) return;
+  const bar = document.querySelector('.nav-bar');
+  if (!bar || !window.visualViewport) return;
 
   const vv = window.visualViewport;
   const check = () => {
     const keyboardOpen = (window.innerHeight - vv.height) > 120;
-    island.classList.toggle('nav-island-hidden', keyboardOpen);
+    bar.classList.toggle('nav-bar-hidden', keyboardOpen);
   };
 
   vv.addEventListener('resize', check);
@@ -194,10 +266,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btnTogglePin')?.addEventListener('click', togglePinVisibility);
 
-  // Attach Navigation Listeners (navbar floating bubble style)
+  // Attach Navigation Listeners (klik menu)
   document.querySelectorAll('.nav-btn[data-tab]').forEach((btn) => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
+
+  // Navigasi swipe antar halaman
+  initSwipeNavigation();
 
   // Handler Event Listener untuk Dropdown Placeholder Style (Miring & Pudar)
   initPlaceholderDropdowns();
@@ -209,18 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load Optional Modules jika sudah tersedia
   loadOptionalModules();
 
-  // Island: sembunyi saat keyboard aktif
+  // Navbar: sembunyi saat keyboard aktif
   initNavbarKeyboardAwareness();
-
-  // Posisikan indikator navbar begitu layout siap (tanpa animasi awal)
-  scheduleIndicatorMeasure();
-});
-
-// Reposisi indikator navbar saat layar berubah ukuran / dirotasi
-window.addEventListener('load', () => positionNavIndicator(false));
-window.addEventListener('resize', () => positionNavIndicator(false));
-window.addEventListener('orientationchange', () => {
-  setTimeout(() => positionNavIndicator(false), 250);
 });
 
 // Mengelola Tampilan Dropdown Placeholder
@@ -328,21 +393,33 @@ function verifyPin() {
   }
 }
 
-// Tab Switcher Controller (dengan animasi modul + indikator dinamis)
-function switchTab(targetTab) {
-  const tabs = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
+/* =========================================================
+   Tab Switcher Controller
+   - direction 'next' : halaman baru slide-in dari kanan
+   - direction 'prev' : halaman baru slide-in dari kiri
+   - Klik menu juga pakai arah sesuai urutan tab,
+     biar rasanya konsisten dengan swipe.
+   ========================================================= */
+function switchTab(targetTab, direction = null) {
+  if (!TAB_ORDER.includes(targetTab)) return;
 
-  tabs.forEach(tab => {
+  if (!direction) {
+    const from = TAB_ORDER.indexOf(currentTab);
+    const to = TAB_ORDER.indexOf(targetTab);
+    direction = to > from ? 'next' : 'prev';
+  }
+
+  TAB_ORDER.forEach(tab => {
     const view = document.getElementById(`view${capitalize(tab)}`);
     const btn = document.getElementById(`nav${capitalize(tab)}Btn`);
 
     if (tab === targetTab) {
       if (view) {
         view.classList.remove('hidden');
-        // Animasi entrance biar perpindahan modul terasa dinamis
-        view.classList.remove('module-anim');
+        // Reset & trigger ulang animasi entrance sesuai arah
+        view.classList.remove('module-anim', 'module-anim-next', 'module-anim-prev');
         void view.offsetWidth;
-        view.classList.add('module-anim');
+        view.classList.add(direction === 'next' ? 'module-anim-next' : 'module-anim-prev');
       }
       if (btn) btn.classList.add('active');
     } else {
@@ -351,8 +428,7 @@ function switchTab(targetTab) {
     }
   });
 
-  // Geser pill indikator ke tab yang baru aktif
-  positionNavIndicator();
+  currentTab = targetTab;
 
   if (targetTab === 'dashboard' && typeof loadDashboardData === 'function') {
     loadDashboardData();
