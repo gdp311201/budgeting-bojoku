@@ -175,6 +175,7 @@ select option[disabled] {
 
 /* =========================================================
    LIVE CLOCK (TIMESTAMP JAM, HARI & TANGGAL REAL-TIME)
+   Dipakai di: footer bawah & e-receipt.
    Contoh output: 19:12:54 WIB | Selasa, 27 Agustus 2026
    ========================================================= */
 
