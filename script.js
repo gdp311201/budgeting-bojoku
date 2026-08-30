@@ -7,7 +7,7 @@ const CORRECT_PIN = "080798";
 /* =========================================================
    1) LIVE CLOCK — Jam, Hari & Tanggal Real-Time (WIB)
    Contoh output: 19:12:54 WIB | Selasa, 27 Agustus 2026
-   Dipakai di: badge atas, footer bawah & e-receipt.
+   Dipakai di: footer bawah & e-receipt.
    ========================================================= */
 const clockTimeFmt = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Asia/Jakarta',
