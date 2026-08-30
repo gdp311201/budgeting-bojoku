@@ -1,19 +1,16 @@
 /* =========================================================
-   script.js — ENHANCEMENT LAYER (opsional tapi utamanya jalan)
+   script.js — ENHANCEMENT LAYER
    
-   PENTING: Login, navigasi dasar, jam live & glider sudah
-   dijalankan oleh inline script di index.html (non-module),
-   sehingga TETAP JALAN walau file ini error sekalipun.
+   Login, navigasi dasar, jam live & glider dijalankan inline
+   script di index.html (non-module) — tetap jalan walau file
+   ini error sekalipun.
 
-   File ini TIDAK punya static import (semua modul di-load
-   dinamis & tahan error) dan setiap fitur dibungkus try/catch.
+   PERUBAHAN BESAR v5 (MODE MANUAL-LOAD):
+   - TIDAK ADA lagi fetch otomatis saat pindah/swipe tab.
+   - Data modul (Dashboard/Mutasi/Receipt/Cari) HANYA dimuat
+     saat tombol "Tampilkan/Cari" diklik — listener-nya
+     dipasang oleh masing-masing file modul.
    ========================================================= */
-
-// Referensi fungsi modul (diisi dinamis)
-let loadDashboardData = null;
-let loadMutasiData = null;
-let loadEReceiptData = null;
-let loadSearchData = null;
 
 const TAB_ORDER = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
 let currentTab = 'input';
@@ -31,7 +28,8 @@ function safeRun(label, fn) {
 }
 
 /* =========================================================
-   1) LOADER MODUL — semua dinamis, satu gagal gak menular
+   1) LOADER MODUL — semua dinamis, satu gagal gak menular.
+   init hanya memasang listener (ringan), TIDAK fetch.
    ========================================================= */
 async function tryImport(path, label) {
   try {
@@ -50,40 +48,24 @@ async function loadAllModules() {
 
   const d = await tryImport('./dashboard.js', 'dashboard.js');
   if (d && typeof d.initDashboard === 'function') {
-    if (typeof d.loadDashboardData === 'function') loadDashboardData = d.loadDashboardData;
     safeRun('initDashboard', function () { d.initDashboard(); });
   }
 
   const m = await tryImport('./mutasi.js', 'mutasi.js');
   if (m && typeof m.initMutasi === 'function') {
-    if (typeof m.loadMutasiData === 'function') loadMutasiData = m.loadMutasiData;
     safeRun('initMutasi', function () { m.initMutasi(); });
   }
 
   const r = await tryImport('./receipt.js', 'receipt.js');
   if (r && typeof r.initReceipt === 'function') {
-    if (typeof r.loadEReceiptData === 'function') loadEReceiptData = r.loadEReceiptData;
     safeRun('initReceipt', function () { r.initReceipt(); });
   }
 
   const s = await tryImport('./search.js', 'search.js');
   if (s && typeof s.initSearchModule === 'function') {
-    if (typeof s.fetchAndRenderSearchData === 'function') loadSearchData = s.fetchAndRenderSearchData;
     safeRun('initSearchModule', function () { s.initSearchModule(); });
   }
 }
-
-// Dipakai oleh navigasi (inline) untuk memuat data per tab
-window.__loadTabData = function (tab) {
-  try {
-    if (tab === 'dashboard' && typeof loadDashboardData === 'function') loadDashboardData();
-    else if (tab === 'mutasi' && typeof loadMutasiData === 'function') loadMutasiData();
-    else if (tab === 'receipt' && typeof loadEReceiptData === 'function') loadEReceiptData();
-    else if (tab === 'search' && typeof loadSearchData === 'function') loadSearchData();
-  } catch (err) {
-    console.warn('[APP] Gagal memuat data tab "' + tab + '":', err);
-  }
-};
 
 /* =========================================================
    2) KALENDER-ONLY — keyboard gak muncul di field Tanggal
@@ -155,8 +137,6 @@ function updateGliderDrag(fromTab, toTab, progress) {
 
 /* =========================================================
    4) CAROUSEL SWIPE GAYA INSTAGRAM
-   Halaman aktif + halaman sebelah bergeser bersamaan 1:1
-   mengikuti jari; lepas jari → lanjut / snap balik.
    ========================================================= */
 const swipe = {
   active: false,
@@ -365,7 +345,7 @@ function applyTabState(targetTab) {
   });
 
   positionGlider(targetTab, true);
-  window.__loadTabData(targetTab);
+  // CATATAN: TIDAK ada loadTabData — data dimuat manual via tombol
 }
 
 function initSwipeNavigation() {
@@ -407,12 +387,12 @@ function initSwipeNavigation() {
         const idx = TAB_ORDER.indexOf(currentTab);
         const nextIdx = dx < 0 ? idx + 1 : idx - 1;
         if (nextIdx < 0 || nextIdx >= TAB_ORDER.length) {
-          boundary = true; // mentok di ujung → rubber band
+          boundary = true;
         } else {
           boundary = !stagePrepare(TAB_ORDER[nextIdx], dx < 0 ? 'next' : 'prev');
         }
       } else if (Math.abs(dy) > 12) {
-        tracking = false; // user lagi scroll vertikal
+        tracking = false;
       }
       return;
     }
@@ -491,16 +471,15 @@ function initNavbarKeyboardAwareness() {
 }
 
 /* =========================================================
-   6) SWITCH TAB FANCY — upgrade navigasi dasar jadi carousel
+   6) SWITCH TAB FANCY — klik menu → transisi carousel.
+   Pindah tab TIDAK memicu fetch data (mode manual-load).
    ========================================================= */
 function fancySwitchTab(targetTab) {
   if (swipe.active) return;
   if (TAB_ORDER.indexOf(targetTab) === -1) return;
 
-  if (targetTab === currentTab) {
-    window.__loadTabData(targetTab);
-    return;
-  }
+  // Klik tab yang sedang aktif = tidak melakukan apa-apa
+  if (targetTab === currentTab) return;
 
   const from = TAB_ORDER.indexOf(currentTab);
   const to = TAB_ORDER.indexOf(targetTab);
@@ -523,7 +502,6 @@ function fancySwitchTab(targetTab) {
    BOOT
    ========================================================= */
 function boot() {
-  // Sinkronkan tab aktif dari DOM (kalau user sempat klik sebelum module termuat)
   const activeBtn = document.querySelector('.nav-btn.active');
   if (activeBtn) {
     const t = activeBtn.getAttribute('data-tab');
@@ -539,10 +517,9 @@ function boot() {
   // Upgrade navigasi dasar (inline) → versi carousel
   window.__switchTab = fancySwitchTab;
 
-  // Muat semua modul secara dinamis & tahan error
+  // Muat modul (init ringan — listener saja, tanpa fetch)
   loadAllModules();
 
-  // Pastikan glider presisi setelah layout & font siap
   requestAnimationFrame(function () { positionGlider(currentTab, false); });
   setTimeout(function () { positionGlider(currentTab, false); }, 400);
   setTimeout(function () { positionGlider(currentTab, false); }, 900);
