@@ -2,8 +2,7 @@
  * =========================================================================
  * search.js — MODUL PENCARIAN TRANSACTION HISTORY
  * =========================================================================
- * Menangani komunikasi AJAX dari web ke Apps Script getSearchData
- * serta merender list transaksi, ringkasan nominal, dan status filter.
+ * Menangani komunikasi AJAX dari web ke Router Apps Script (01_PenerimaanDataFormUI)
  * =========================================================================
  */
 
@@ -28,14 +27,14 @@ export function initSearchModule() {
     });
   }
 
-  // Event Listener: Realtime input/filter
+  // Event Listener: Realtime Input Keyword (Debounce 400ms)
   let debounceTimer;
   if (searchKeyword) {
     searchKeyword.addEventListener("input", () => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
         fetchAndRenderSearchData();
-      }, 400); // Penundaan 400ms agar hemat API Call
+      }, 400);
     });
   }
 
@@ -43,12 +42,12 @@ export function initSearchModule() {
   if (searchTahun) searchTahun.addEventListener("change", fetchAndRenderSearchData);
   if (searchSort) searchSort.addEventListener("change", fetchAndRenderSearchData);
 
-  // Auto Load pertama kali saat dibuka
+  // Auto Load pertama kali saat halaman dibuka
   fetchAndRenderSearchData();
 }
 
 /**
- * Mengambil data dari Apps Script Web App
+ * Mengambil data dari Web App Router
  */
 export async function fetchAndRenderSearchData() {
   const searchListContainer = document.getElementById("searchListContainer");
@@ -71,6 +70,7 @@ export async function fetchAndRenderSearchData() {
 
   try {
     const url = new URL(GAS_SEARCH_URL);
+    // Mengirim action=getSearchData agar ditangkap oleh handleRouter di 01_PenerimaanDataFormUI.gs
     url.searchParams.append("action", "getSearchData");
     url.searchParams.append("bulan", bulan);
     url.searchParams.append("tahun", tahun);
@@ -104,7 +104,7 @@ export async function fetchAndRenderSearchData() {
 }
 
 /**
- * Merender daftar item ke dalam HTML
+ * Merender daftar item ke dalam HTML UI
  */
 function renderSearchResults(data) {
   const searchListContainer = document.getElementById("searchListContainer");
@@ -122,7 +122,7 @@ function renderSearchResults(data) {
     searchTotalNominal.innerText = formatRp;
   }
 
-  // 2. Render List jika Kosong
+  // 2. Jika Tidak Ada Data Ditemukan
   if (transactions.length === 0) {
     if (searchListContainer) {
       searchListContainer.innerHTML = `
