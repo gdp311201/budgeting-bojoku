@@ -22,11 +22,6 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
-    /*
-     * FIX MOBILE: paksa flatpickr memakai kalender custom di semua device.
-     * Tanpa ini, di HP input tanggal diubah jadi native date picker bawaan HP
-     * yang bikin bar input TANGGAL beda ukuran (lebih panjang) dari field lain.
-     */
     if (window.flatpickr && typeof window.flatpickr.setDefaults === 'function') {
       window.flatpickr.setDefaults({ disableMobile: true });
     }
@@ -35,8 +30,8 @@
   <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Custom CSS (?v=3 = cache buster, paksa browser ambil file baru) -->
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-32">
 
@@ -65,6 +60,7 @@
             maxlength="6" 
             inputmode="numeric" 
             pattern="[0-9]*"
+            autocomplete="off"
             placeholder="• • • • • •" 
             class="w-full text-center text-lg font-bold tracking-[0.3em] py-2 px-3 rounded-xl bg-white/80 border border-pink-300/80 text-pink-950 focus:outline-none focus:ring-2 focus:ring-pink-400 placeholder-pink-300"
           >
@@ -80,7 +76,7 @@
     </div>
   </div>
 
-  <!-- MAIN CONTAINER (area swipe antar halaman) -->
+  <!-- MAIN CONTAINER -->
   <div id="appShell" class="w-full max-w-md glass-card rounded-3xl p-5 sm:p-6 relative overflow-hidden my-auto">
     
     <!-- HEADER BADGE -->
@@ -90,7 +86,7 @@
       </div>
     </div>
 
-    <!-- PANGGUNG HALAMAN: di dalam sini halaman meluncur saat swipe -->
+    <!-- PANGGUNG HALAMAN -->
     <div id="pagesViewport" class="relative">
 
       <!-- MODUL 1: INPUT TRANSAKSI -->
@@ -109,7 +105,6 @@
           <div>
             <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Tanggal</label>
             <div class="relative">
-              <!-- readonly + inputmode="none" = tap hanya membuka kalender, keyboard TIDAK muncul -->
               <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required readonly inputmode="none" autocomplete="off"
                 class="w-full custom-input rounded-xl pl-3.5 pr-10 py-2 font-medium cursor-pointer">
               <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400">
@@ -201,7 +196,7 @@
           </div>
         </div>
 
-        <!-- KARTU TOTAL ASET BERSIH (DEKORASI LINGKARAN ELEGAN) -->
+        <!-- KARTU TOTAL ASET BERSIH -->
         <div class="relative overflow-hidden bg-gradient-to-br from-pink-500/90 via-rose-500/90 to-pink-600/90 rounded-3xl p-4 sm:p-5 text-white shadow-lg mb-4 border border-white/30">
           <span class="asset-bubble asset-bubble-lg" aria-hidden="true"></span>
           <span class="asset-bubble asset-bubble-md" aria-hidden="true"></span>
@@ -249,7 +244,7 @@
           </div>
         </div>
 
-        <!-- REKAPITULASI ASET INVESTASI -->
+        <!-- ASET INVESTASI -->
         <div class="mb-4">
           <div class="flex justify-between items-center mb-2">
             <h3 class="text-xs font-bold text-indigo-950/80 uppercase tracking-wider">Aset Investasi</h3>
@@ -285,7 +280,7 @@
           </div>
         </div>
 
-        <!-- CASH FLOW BULAN INI -->
+        <!-- CASH FLOW -->
         <div class="mb-4">
           <div class="flex justify-between items-center mb-2">
             <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider">Cash Flow Bulan Ini</h3>
@@ -324,7 +319,7 @@
           </div>
         </div>
 
-        <!-- RINCIAN KATEGORI BIAYA -->
+        <!-- RINCIAN KATEGORI -->
         <div class="mb-4">
           <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Rincian Kategori Biaya</h3>
           <div class="grid grid-cols-2 gap-2 space-y-0">
@@ -387,7 +382,7 @@
           </div>
         </div>
 
-        <!-- TOP 5 PENGELUARAN SUB-KATEGORI -->
+        <!-- TOP 5 -->
         <div>
           <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Top 5 Pengeluaran Sub-Kategori</h3>
           <div id="dashTop5Container" class="space-y-2.5 glass-mini p-3 rounded-2xl border border-pink-200/60">
@@ -594,7 +589,6 @@
           </button>
         </div>
 
-        <!-- FILTER BOX -->
         <div class="glass-mini rounded-2xl p-3 border border-pink-200/60 shadow-sm space-y-2">
           <div class="relative">
             <input 
@@ -648,7 +642,6 @@
           </div>
         </div>
 
-        <!-- STAT REKAP RINGKAS HASIL CARI -->
         <div class="grid grid-cols-2 gap-2">
           <div class="bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-300/60 p-2.5 rounded-2xl text-center">
             <span class="text-[9px] font-bold text-pink-900/70 uppercase block">Total Transaksi</span>
@@ -660,7 +653,6 @@
           </div>
         </div>
 
-        <!-- LIST HASIL PENCARIAN -->
         <div class="glass-mini rounded-2xl p-3 border border-pink-200/60 shadow-sm">
           <div id="searchListContainer" class="max-h-[380px] overflow-y-auto pr-1 space-y-2">
             <p class="text-center text-xs text-pink-800/60 py-6">Memuat data pencarian...</p>
@@ -683,7 +675,7 @@
     </div>
   </div>
 
-  <!-- FLOATING NAVIGATION BAR (TRANSPARENT GLASS + GLIDER PINK) -->
+  <!-- FLOATING NAVIGATION BAR -->
   <nav class="nav-bar" aria-label="Navigasi utama">
     <div id="navTrack" class="relative">
       <div id="navGlider" class="nav-glider" aria-hidden="true"></div>
@@ -739,34 +731,6 @@
     </div>
   </nav>
 
-  <!-- Bootstrap posisi awal glider (inline biar bubble pink langsung pas sebelum JS modul termuat) -->
-  <script>
-    (function () {
-      function pos() {
-        var g = document.getElementById('navGlider');
-        var t = document.getElementById('navTrack');
-        var b = document.querySelector('.nav-btn[data-tab="input"] .nav-icon-box');
-        if (!g || !t || !b) return;
-        var tr = t.getBoundingClientRect();
-        var br = b.getBoundingClientRect();
-        var pad = 4;
-        g.style.transition = 'none';
-        g.style.width = (br.width + pad * 2) + 'px';
-        g.style.height = (br.height + pad * 2) + 'px';
-        g.style.transform = 'translate(' + (br.left - tr.left - pad) + 'px,' + (br.top - tr.top - pad) + 'px)';
-        void g.offsetWidth;
-        g.classList.add('nav-glider-ready');
-        g.style.transition = '';
-      }
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', pos);
-      } else {
-        pos();
-      }
-      window.addEventListener('load', pos);
-    })();
-  </script>
-
   <!-- NOTIFICATION MODAL -->
   <div id="cuteModal" class="fixed inset-0 bg-pink-950/20 backdrop-blur-[4px] flex items-center justify-center p-4 z-50 hidden transition-opacity duration-200">
     <div class="bg-white/85 border border-white/80 backdrop-blur-md rounded-3xl p-5 max-w-xs w-full text-center shadow-xl animate-pop relative overflow-hidden">
@@ -781,16 +745,213 @@
     </div>
   </div>
 
+  <!-- =========================================================
+       CORE APP — inline script BIASA (bukan module, tanpa import).
+       Login, navigasi dasar, jam live & glider jalan di sini,
+       KEBAL terhadap error di script.js / modul lain.
+       ========================================================= -->
   <script>
-    document.addEventListener('gesturestart', function (e) {
-      e.preventDefault();
+  (function () {
+    'use strict';
+
+    /* ---------- 1) LOGIN PIN (anti-gagal) ---------- */
+    var CORRECT_PIN = '080798';
+    var pinInput = document.getElementById('pinInput');
+    var pinBox = document.getElementById('pinBox');
+    var pinError = document.getElementById('pinError');
+    var lockScreen = document.getElementById('lockScreen');
+    var btnTogglePin = document.getElementById('btnTogglePin');
+    var eyeIcon = document.getElementById('eyeIcon');
+
+    function verifyPin() {
+      if (!pinInput) return;
+      if (pinInput.value === CORRECT_PIN) {
+        if (pinError) pinError.classList.add('hidden');
+        if (lockScreen) {
+          lockScreen.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(function () {
+            if (lockScreen.parentNode) lockScreen.parentNode.removeChild(lockScreen);
+          }, 700);
+        }
+      } else {
+        if (pinError) pinError.classList.remove('hidden');
+        if (pinBox) {
+          pinBox.classList.remove('animate-shake');
+          void pinBox.offsetWidth;
+          pinBox.classList.add('animate-shake');
+        }
+        pinInput.value = '';
+        pinInput.focus();
+      }
+    }
+
+    if (pinInput) {
+      try { pinInput.focus(); } catch (err) { /* aman */ }
+      pinInput.addEventListener('input', function () {
+        if (pinInput.value.length >= 6) verifyPin();
+      });
+      pinInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') verifyPin();
+      });
+    }
+
+    if (btnTogglePin) {
+      btnTogglePin.addEventListener('click', function () {
+        if (!pinInput || !eyeIcon) return;
+        if (pinInput.type === 'password') { pinInput.type = 'text'; eyeIcon.innerText = '🙈'; }
+        else { pinInput.type = 'password'; eyeIcon.innerText = '👁️'; }
+      });
+    }
+
+    /* ---------- 2) LIVE CLOCK (WIB, tanpa Intl) ---------- */
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    var HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    var BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+    function wibNow() {
+      var utc = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+      return new Date(utc + 7 * 3600000);
+    }
+
+    function updateClock() {
+      var n = wibNow();
+      var teks = pad(n.getHours()) + ':' + pad(n.getMinutes()) + ':' + pad(n.getSeconds()) +
+        ' WIB | ' + HARI[n.getDay()] + ', ' + n.getDate() + ' ' + BULAN[n.getMonth()] + ' ' + n.getFullYear();
+      var els = document.querySelectorAll('.live-clock');
+      for (var i = 0; i < els.length; i++) els[i].textContent = teks;
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    /* ---------- 3) GLIDER BUBBLE PINK ---------- */
+    function gliderPosFor(tab) {
+      var track = document.getElementById('navTrack');
+      var btn = document.querySelector('.nav-btn[data-tab="' + tab + '"]');
+      if (!track || !btn) return null;
+      var box = btn.querySelector('.nav-icon-box');
+      if (!box) return null;
+      var tr = track.getBoundingClientRect();
+      var br = box.getBoundingClientRect();
+      var padG = 4;
+      return { x: br.left - tr.left - padG, y: br.top - tr.top - padG, size: br.width + padG * 2 };
+    }
+
+    window.__positionGlider = function (tab, animate) {
+      var g = document.getElementById('navGlider');
+      var pos = gliderPosFor(tab);
+      if (!g || !pos) return;
+      if (animate === false) g.style.transition = 'none';
+      g.style.width = pos.size + 'px';
+      g.style.height = pos.size + 'px';
+      g.style.transform = 'translate(' + pos.x + 'px,' + pos.y + 'px)';
+      if (animate === false) {
+        void g.offsetWidth;
+        g.style.transition = '';
+      }
+      g.classList.add('nav-glider-ready');
+    };
+
+    window.__updateGliderDrag = function (fromTab, toTab, progress) {
+      var g = document.getElementById('navGlider');
+      var from = gliderPosFor(fromTab);
+      var to = gliderPosFor(toTab);
+      if (!g || !from || !to) return;
+      var x = from.x + (to.x - from.x) * progress;
+      g.style.transition = 'none';
+      g.style.transform = 'translate(' + x + 'px,' + from.y + 'px)';
+      g.classList.add('nav-glider-ready');
+    };
+
+    function initialGlider() {
+      var act = document.querySelector('.nav-btn.active');
+      window.__positionGlider(act ? act.getAttribute('data-tab') : 'input', false);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialGlider);
+    } else {
+      initialGlider();
+    }
+    window.addEventListener('load', initialGlider);
+    setTimeout(initialGlider, 500);
+
+    /* ---------- 4) NAVIGASI DASAR (fallback tanpa animasi) ---------- */
+    window.__basicSwitchTab = function (tab) {
+      if (!tab) return;
+      var target = document.getElementById('view' + tab.charAt(0).toUpperCase() + tab.slice(1));
+      if (!target) return;
+
+      var views = document.querySelectorAll('.app-module');
+      for (var i = 0; i < views.length; i++) views[i].classList.add('hidden');
+      target.classList.remove('hidden');
+
+      var btns = document.querySelectorAll('.nav-btn[data-tab]');
+      for (var j = 0; j < btns.length; j++) {
+        btns[j].classList.toggle('active', btns[j].getAttribute('data-tab') === tab);
+      }
+
+      if (window.__positionGlider) window.__positionGlider(tab, true);
+      if (window.__loadTabData) window.__loadTabData(tab);
+    };
+
+    var navBtns = document.querySelectorAll('.nav-btn[data-tab]');
+    for (var k = 0; k < navBtns.length; k++) {
+      (function (btn) {
+        btn.addEventListener('click', function () {
+          var fn = window.__switchTab || window.__basicSwitchTab;
+          fn(btn.getAttribute('data-tab'));
+        });
+      })(navBtns[k]);
+    }
+
+    /* ---------- 5) PLACEHOLDER DROPDOWN ---------- */
+    var dropdowns = document.querySelectorAll('select.is-placeholder');
+    for (var d = 0; d < dropdowns.length; d++) {
+      (function (sel) {
+        if (sel.value !== '') sel.classList.remove('is-placeholder');
+        sel.addEventListener('change', function () {
+          if (this.value === '' || this.value === null) this.classList.add('is-placeholder');
+          else this.classList.remove('is-placeholder');
+        });
+      })(dropdowns[d]);
+    }
+
+    /* ---------- 6) DEBUG TOAST (kelihatan kalau ada error) ---------- */
+    var toastTimer = null;
+    function showDebugToast(msg) {
+      if (!msg) return;
+      var el = document.getElementById('debugToast');
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'debugToast';
+        document.body.appendChild(el);
+      }
+      el.textContent = '⚠ ' + msg;
+      el.style.display = 'block';
+      el.onclick = function () { el.style.display = 'none'; };
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { el.style.display = 'none'; }, 6000);
+    }
+
+    window.addEventListener('error', function (e) {
+      if (e && e.message) showDebugToast(e.message);
     });
+    window.addEventListener('unhandledrejection', function (e) {
+      try {
+        var r = e && e.reason;
+        showDebugToast(r && r.message ? r.message : String(r));
+      } catch (err) { /* aman */ }
+    });
+
+    /* ---------- 7) Cegah pinch zoom ---------- */
+    document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     document.addEventListener('touchmove', function (e) {
       if (e.scale !== 1) { e.preventDefault(); }
     }, { passive: false });
+  })();
   </script>
 
-  <!-- External Custom JavaScript (Modular) -->
-  <script type="module" src="script.js"></script>
+  <!-- Enhancement layer: swipe carousel, module loader, dll (?v=3 = cache buster) -->
+  <script type="module" src="script.js?v=3"></script>
 </body>
 </html>
