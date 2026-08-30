@@ -7,7 +7,6 @@ export function initDashboard() {
   if (selBulan) selBulan.addEventListener('change', loadDashboardData);
   if (selTahun) selTahun.addEventListener('change', loadDashboardData);
 
-  // Auto load saat dashboard dibuka
   loadDashboardData();
 }
 
@@ -27,9 +26,7 @@ export async function loadDashboardData() {
       tahun: tahun
     };
 
-    console.log("Fetching Dashboard Payload:", payload);
-
-    // Menggunakan POST dengan text/plain menghindarkan pembatasan CORS & redirect strip
+    // Kirim POST dengan text/plain (bebas dari CORS preflight browser)
     const response = await fetch(GAS_URL, {
       method: 'POST',
       headers: {
@@ -39,8 +36,6 @@ export async function loadDashboardData() {
     });
 
     const res = await response.json();
-
-    console.log("Response Data Dashboard:", res);
 
     if (res.status === 'success') {
       renderDashboardUI(res);
