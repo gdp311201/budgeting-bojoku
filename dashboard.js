@@ -20,16 +20,13 @@ export async function loadDashboardData() {
   setDashboardLoading(true);
 
   try {
-    // Sisipkan parameter langsung di URL agar Google Apps Script pasti menerimanya
+    // Parameter dikirim lewat URL Query String
     const targetUrl = `${GAS_URL}?action=getDashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
 
     console.log("Fetching Dashboard URL:", targetUrl);
 
-    const response = await fetch(targetUrl, {
-      method: 'GET',
-      mode: 'cors'
-    });
-
+    // FETCH standar tanpa 'mode: cors' (supaya tidak diblokir browser)
+    const response = await fetch(targetUrl);
     const res = await response.json();
 
     console.log("Response Data Dashboard:", res);
@@ -154,6 +151,6 @@ function setDashboardLoading(isLoading) {
   const container = document.getElementById('viewDashboard');
   if (container) {
     container.style.opacity = isLoading ? "0.5" : "1";
-    container.style.pointerEvents = isLoading ? "none" :="auto";
+    container.style.pointerEvents = isLoading ? "none" : "auto";
   }
 }
