@@ -23,21 +23,49 @@ export async function loadDashboardData() {
     const targetUrl = `${GAS_URL}?action=getdashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
 
     const response = await fetch(targetUrl);
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status + " dari server");
+    }
+
     const res = await response.json();
 
     if (res.status === 'success') {
       renderDashboardUI(res);
+      renderDashboardError(null);
     } else if (res.data) {
       renderDashboardUI(res.data);
+      renderDashboardError(null);
     } else {
-      console.error("Gagal memuat dashboard:", res.message);
-      alert("Gagal mengambil data dashboard: " + (res.message || "Unknown Error"));
+      const msg = res.message || "Unknown Error";
+      console.error("Gagal memuat dashboard:", msg);
+      renderDashboardError(msg);
     }
   } catch (err) {
     console.error("Error fetching dashboard data:", err);
+    renderDashboardError(err.message);
   } finally {
     setDashboardLoading(false);
   }
+}
+
+// Error ditampilkan DI DALAM area dashboard (pengganti alert() yang
+// sempat muncul di atas lock screen)
+function renderDashboardError(msg) {
+  const container = document.getElementById('dashTop5Container');
+  if (!container || !msg) return;
+  container.innerHTML =
+    '<p class="text-xs text-center text-rose-700 font-semibold leading-relaxed">' +
+    'Gagal memuat data dashboard:<br>' + escapeHtml(msg) + '</p>';
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function formatRupiah(num) {
@@ -131,7 +159,7 @@ function renderTop5Expenses(items) {
       <div class="flex items-center justify-between border-b border-pink-200/40 pb-1.5 last:border-0 last:pb-0">
         <div class="flex items-center gap-2">
           <span class="w-4 h-4 rounded-full bg-pink-200/80 text-pink-900 text-[10px] font-bold flex items-center justify-center">${idx + 1}</span>
-          <span class="text-xs font-semibold text-pink-950">${item.subKategori}</span>
+          <span class="text-xs font-semibold text-pink-950">${escapeHtml(item.subKategori)}</span>
         </div>
         <span class="text-xs font-bold text-pink-950">${formatRupiah(item.nominal)}</span>
       </div>
