@@ -21,10 +21,16 @@ export async function loadDashboardData() {
   setDashboardLoading(true);
 
   try {
+    // Memastikan query string diformat secara presisi
     const fetchUrl = `${GAS_URL}?action=getDashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
     console.log("Fetching Dashboard URL:", fetchUrl);
 
-    const response = await fetch(fetchUrl);
+    // KUNCI PERBAIKAN: Menambahkan redirect: "follow" agar query parameter tidak hilang saat disimpangkan Apps Script
+    const response = await fetch(fetchUrl, {
+      method: 'GET',
+      redirect: 'follow'
+    });
+
     const res = await response.json();
 
     console.log("Response Data Dashboard:", res);
