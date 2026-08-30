@@ -1,5 +1,5 @@
 // URL Google Apps Script Web App Terbaru
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwEIgejGF1L9WerZSIk9t8mTxlkmtvwD-sUIJNUd17lp1YbwcEX023lpKNCkywRFWsKw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNpKSzdj6K31lF-M60FP-KwZEuUXPmMBewXfxR9pmC4sYkWCZ1d9c0xqhzM5IpakgMsQ/exec";
 
 export function initMutasi() {
   const mutasiAkun = document.getElementById('mutasiAkun');
