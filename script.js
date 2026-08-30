@@ -54,7 +54,68 @@ function startLiveClock() {
 }
 
 /* =========================================================
-   2) NAVBAR DINAMIS (APP STORE STYLE)
+   2) KALENDER-ONLY — cegah keyboard muncul di field Tanggal
+   Input dikunci: readonly + inputmode="none" supaya tap hanya
+   membuka popup kalender flatpickr, keyboard virtual diem total.
+   ========================================================= */
+const lockedCalendarInputs = new WeakSet();
+
+function lockCalendarInput(el) {
+  if (!el || lockedCalendarInputs.has(el)) return;
+  lockedCalendarInputs.add(el);
+
+  const lock = () => {
+    if (!el.hasAttribute('readonly')) el.setAttribute('readonly', 'readonly');
+    if (el.getAttribute('inputmode') !== 'none') el.setAttribute('inputmode', 'none');
+  };
+
+  lock();
+
+  // Flatpickr bisa menghapus atribut readonly saat init (config allowInput),
+  // jadi atributnya dipantau terus & dikunci ulang otomatis.
+  new MutationObserver(lock).observe(el, {
+    attributes: true,
+    attributeFilter: ['readonly', 'inputmode']
+  });
+}
+
+function enforceCalendarOnlyInput() {
+  lockCalendarInput(document.getElementById('tanggal'));
+
+  // Sapu juga input kalender lain (mis. alt-input flatpickr) setelah modul dimuat
+  const sweep = () => {
+    document.querySelectorAll('input.flatpickr-input, input.alt-input').forEach(lockCalendarInput);
+  };
+  setTimeout(sweep, 800);
+  setTimeout(sweep, 2000);
+}
+
+// Karena input readonly mem-bypass validasi "required" bawaan browser,
+// guard ini memastikan form gak bisa dikirim kalau tanggal masih kosong.
+function guardTanggalWajib() {
+  const form = document.getElementById('txForm');
+  const tgl = document.getElementById('tanggal');
+  if (!form || !tgl) return;
+
+  form.addEventListener('submit', (e) => {
+    if (!tgl.value.trim()) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      tgl.classList.remove('animate-shake');
+      void tgl.offsetWidth;
+      tgl.classList.add('animate-shake');
+
+      // Langsung buka kalendarnya biar user tinggal pilih tanggal
+      if (tgl._flatpickr && typeof tgl._flatpickr.open === 'function') {
+        tgl._flatpickr.open();
+      }
+    }
+  });
+}
+
+/* =========================================================
+   3) NAVBAR FLOATING BUBBLE (DYNAMIC ISLAND STYLE)
    Sliding pill indicator yang meluncur ke tab aktif.
    ========================================================= */
 function positionNavIndicator(animate = true) {
@@ -67,7 +128,7 @@ function positionNavIndicator(animate = true) {
 
   const trackRect = track.getBoundingClientRect();
   const btnRect = activeBtn.getBoundingClientRect();
-  const inset = 5; // pill dibuat sedikit lebih ramping dari tombolnya
+  const inset = 6; // pill dibuat sedikit lebih ramping dari tombolnya
 
   if (!animate) indicator.style.transition = 'none';
 
@@ -80,12 +141,34 @@ function positionNavIndicator(animate = true) {
   }
 }
 
+// Island sopan: sembunyi saat keyboard virtual aktif, muncul lagi saat ditutup
+function initNavbarKeyboardAwareness() {
+  const island = document.querySelector('.nav-island');
+  if (!island || !window.visualViewport) return;
+
+  const vv = window.visualViewport;
+  const check = () => {
+    const keyboardOpen = (window.innerHeight - vv.height) > 120;
+    island.classList.toggle('nav-island-hidden', keyboardOpen);
+  };
+
+  vv.addEventListener('resize', check);
+  vv.addEventListener('scroll', check);
+  check();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const pinInput = document.getElementById('pinInput');
   if (pinInput) pinInput.focus();
 
   // Jalankan live clock (timestamp real-time)
   startLiveClock();
+
+  // Kunci field Tanggal: kalender only, tanpa keyboard
+  enforceCalendarOnlyInput();
+
+  // Guard tanggal wajib (dipasang SEBELUM initTransaksi biar jalan duluan)
+  guardTanggalWajib();
 
   // Attach PIN Listeners
   pinInput?.addEventListener('input', checkPinAuto);
@@ -95,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btnTogglePin')?.addEventListener('click', togglePinVisibility);
 
-  // Attach Navigation Listeners (navbar App Store style)
+  // Attach Navigation Listeners (navbar floating bubble style)
   document.querySelectorAll('.nav-btn[data-tab]').forEach((btn) => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
@@ -110,9 +193,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load Optional Modules jika sudah tersedia
   loadOptionalModules();
 
+  // Island: sembunyi saat keyboard aktif
+  initNavbarKeyboardAwareness();
+
   // Posisikan indikator navbar begitu layout siap (tanpa animasi awal)
   requestAnimationFrame(() => positionNavIndicator(false));
-  setTimeout(() => positionNavIndicator(false), 600);
+  setTimeout(() => positionNavIndicator(false), 700);
+  document.querySelector('.nav-island')?.addEventListener('animationend', () => {
+    positionNavIndicator(false);
+  });
 });
 
 // Reposisi indikator navbar saat layar berubah ukuran / dirotasi
