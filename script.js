@@ -1,63 +1,92 @@
-import { initTransaksi } from './transaksi.js';
-import { initDashboard, loadDashboardData } from './dashboard.js';
+/* =========================================================
+   script.js — ENHANCEMENT LAYER (opsional tapi utamanya jalan)
+   
+   PENTING: Login, navigasi dasar, jam live & glider sudah
+   dijalankan oleh inline script di index.html (non-module),
+   sehingga TETAP JALAN walau file ini error sekalipun.
 
-// PIN Akses Aplikasi
-const CORRECT_PIN = "080798";
+   File ini TIDAK punya static import (semua modul di-load
+   dinamis & tahan error) dan setiap fitur dibungkus try/catch.
+   ========================================================= */
 
-// Urutan tab — dasar navigasi swipe (kiri = maju, kanan = mundur)
+// Referensi fungsi modul (diisi dinamis)
+let loadDashboardData = null;
+let loadMutasiData = null;
+let loadEReceiptData = null;
+let loadSearchData = null;
+
 const TAB_ORDER = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
 let currentTab = 'input';
 
-const viewId = (tab) => `view${tab.charAt(0).toUpperCase()}${tab.slice(1)}`;
+const viewId = function (tab) {
+  return 'view' + tab.charAt(0).toUpperCase() + tab.slice(1);
+};
+
+function safeRun(label, fn) {
+  try {
+    fn();
+  } catch (err) {
+    console.warn('[APP] ' + label + ' gagal (app tetap jalan):', err);
+  }
+}
 
 /* =========================================================
-   1) LIVE CLOCK — Jam, Hari & Tanggal Real-Time (WIB)
+   1) LOADER MODUL — semua dinamis, satu gagal gak menular
    ========================================================= */
-const clockTimeFmt = new Intl.DateTimeFormat('en-GB', {
-  timeZone: 'Asia/Jakarta',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hour12: false
-});
-
-const clockDayFmt = new Intl.DateTimeFormat('id-ID', {
-  timeZone: 'Asia/Jakarta',
-  weekday: 'long'
-});
-
-const clockDateFmt = new Intl.DateTimeFormat('id-ID', {
-  timeZone: 'Asia/Jakarta',
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric'
-});
-
-function updateLiveClock() {
-  const now = new Date();
-  let teks;
-
+async function tryImport(path, label) {
   try {
-    teks = `${clockTimeFmt.format(now)} WIB | ${clockDayFmt.format(now)}, ${clockDateFmt.format(now)}`;
+    return await import(path);
   } catch (err) {
-    const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][now.getDay()];
-    const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][now.getMonth()];
-    const p = (n) => String(n).padStart(2, '0');
-    teks = `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())} WIB | ${hari}, ${now.getDate()} ${bulan} ${now.getFullYear()}`;
+    console.warn('[LOAD] ' + label + ' gagal di-import:', err);
+    return null;
+  }
+}
+
+async function loadAllModules() {
+  const t = await tryImport('./transaksi.js', 'transaksi.js');
+  if (t && typeof t.initTransaksi === 'function') {
+    safeRun('initTransaksi', function () { t.initTransaksi(); });
   }
 
-  document.querySelectorAll('.live-clock').forEach((el) => {
-    el.textContent = teks;
-  });
+  const d = await tryImport('./dashboard.js', 'dashboard.js');
+  if (d && typeof d.initDashboard === 'function') {
+    if (typeof d.loadDashboardData === 'function') loadDashboardData = d.loadDashboardData;
+    safeRun('initDashboard', function () { d.initDashboard(); });
+  }
+
+  const m = await tryImport('./mutasi.js', 'mutasi.js');
+  if (m && typeof m.initMutasi === 'function') {
+    if (typeof m.loadMutasiData === 'function') loadMutasiData = m.loadMutasiData;
+    safeRun('initMutasi', function () { m.initMutasi(); });
+  }
+
+  const r = await tryImport('./receipt.js', 'receipt.js');
+  if (r && typeof r.initReceipt === 'function') {
+    if (typeof r.loadEReceiptData === 'function') loadEReceiptData = r.loadEReceiptData;
+    safeRun('initReceipt', function () { r.initReceipt(); });
+  }
+
+  const s = await tryImport('./search.js', 'search.js');
+  if (s && typeof s.initSearchModule === 'function') {
+    if (typeof s.fetchAndRenderSearchData === 'function') loadSearchData = s.fetchAndRenderSearchData;
+    safeRun('initSearchModule', function () { s.initSearchModule(); });
+  }
 }
 
-function startLiveClock() {
-  updateLiveClock();
-  setInterval(updateLiveClock, 1000);
-}
+// Dipakai oleh navigasi (inline) untuk memuat data per tab
+window.__loadTabData = function (tab) {
+  try {
+    if (tab === 'dashboard' && typeof loadDashboardData === 'function') loadDashboardData();
+    else if (tab === 'mutasi' && typeof loadMutasiData === 'function') loadMutasiData();
+    else if (tab === 'receipt' && typeof loadEReceiptData === 'function') loadEReceiptData();
+    else if (tab === 'search' && typeof loadSearchData === 'function') loadSearchData();
+  } catch (err) {
+    console.warn('[APP] Gagal memuat data tab "' + tab + '":', err);
+  }
+};
 
 /* =========================================================
-   2) KALENDER-ONLY — cegah keyboard muncul di field Tanggal
+   2) KALENDER-ONLY — keyboard gak muncul di field Tanggal
    ========================================================= */
 const lockedCalendarInputs = new WeakSet();
 
@@ -65,13 +94,12 @@ function lockCalendarInput(el) {
   if (!el || lockedCalendarInputs.has(el)) return;
   lockedCalendarInputs.add(el);
 
-  const lock = () => {
+  const lock = function () {
     if (!el.hasAttribute('readonly')) el.setAttribute('readonly', 'readonly');
     if (el.getAttribute('inputmode') !== 'none') el.setAttribute('inputmode', 'none');
   };
 
   lock();
-
   new MutationObserver(lock).observe(el, {
     attributes: true,
     attributeFilter: ['readonly', 'inputmode']
@@ -81,19 +109,20 @@ function lockCalendarInput(el) {
 function enforceCalendarOnlyInput() {
   lockCalendarInput(document.getElementById('tanggal'));
 
-  const sweep = () => {
+  const sweep = function () {
     document.querySelectorAll('input.flatpickr-input, input.alt-input').forEach(lockCalendarInput);
   };
   setTimeout(sweep, 800);
   setTimeout(sweep, 2000);
 }
 
+// Input readonly mem-bypass validasi required → guard manual
 function guardTanggalWajib() {
   const form = document.getElementById('txForm');
   const tgl = document.getElementById('tanggal');
   if (!form || !tgl) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', function (e) {
     if (!tgl.value.trim()) {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -110,62 +139,24 @@ function guardTanggalWajib() {
 }
 
 /* =========================================================
-   3) GLIDER — bubble pink yang meluncur di menu bar.
-   Posisinya dihitung per menu, ikut gerak proporsional
-   saat halaman di-swipe (updateGliderDrag).
+   3) GLIDER (perhitungan posisi ada di inline script)
    ========================================================= */
-function gliderPos(tab) {
-  const track = document.getElementById('navTrack');
-  const btn = document.querySelector(`.nav-btn[data-tab="${tab}"]`);
-  if (!track || !btn) return null;
-  const box = btn.querySelector('.nav-icon-box');
-  if (!box) return null;
-
-  const trackRect = track.getBoundingClientRect();
-  const boxRect = box.getBoundingClientRect();
-  const pad = 4; // glider sedikit lebih besar dari kotak icon
-
-  return {
-    x: boxRect.left - trackRect.left - pad,
-    y: boxRect.top - trackRect.top - pad,
-    size: boxRect.width + pad * 2
-  };
-}
-
-function positionGlider(tab, animate = true) {
-  const glider = document.getElementById('navGlider');
-  const pos = gliderPos(tab);
-  if (!glider || !pos) return;
-
-  glider.style.transition = animate ? '' : 'none';
-  glider.style.width = `${pos.size}px`;
-  glider.style.height = `${pos.size}px`;
-  glider.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
-
-  if (!animate) {
-    void glider.offsetWidth;
-    glider.style.transition = '';
+function positionGlider(tab, animate) {
+  if (typeof window.__positionGlider === 'function') {
+    try { window.__positionGlider(tab, animate); } catch (err) { /* aman */ }
   }
-  glider.classList.add('nav-glider-ready');
 }
 
-function updateGliderDrag(targetTab, progress) {
-  const glider = document.getElementById('navGlider');
-  const from = gliderPos(currentTab);
-  const to = gliderPos(targetTab);
-  if (!glider || !from || !to) return;
-
-  const x = from.x + (to.x - from.x) * progress;
-  glider.style.transition = 'none';
-  glider.style.transform = `translate(${x}px, ${from.y}px)`;
-  glider.classList.add('nav-glider-ready');
+function updateGliderDrag(fromTab, toTab, progress) {
+  if (typeof window.__updateGliderDrag === 'function') {
+    try { window.__updateGliderDrag(fromTab, toTab, progress); } catch (err) { /* aman */ }
+  }
 }
 
 /* =========================================================
-   4) TRANSISI CAROUSEL GAYA INSTAGRAM
-   Saat swipe: halaman aktif & halaman sebelah BERGESER BERSAMAAN
-   1:1 mengikuti jari. Lepas jari: selesai meluncur / snap balik.
-   Klik menu pun memakai transisi slide yang sama.
+   4) CAROUSEL SWIPE GAYA INSTAGRAM
+   Halaman aktif + halaman sebelah bergeser bersamaan 1:1
+   mengikuti jari; lepas jari → lanjut / snap balik.
    ========================================================= */
 const swipe = {
   active: false,
@@ -182,11 +173,37 @@ const swipe = {
 function closeFlatpickrIfOpen() {
   try {
     if (window.flatpickr && Array.isArray(window.flatpickr.instances)) {
-      window.flatpickr.instances.forEach((inst) => {
+      window.flatpickr.instances.forEach(function (inst) {
         if (inst && typeof inst.close === 'function' && inst.isOpen) inst.close();
       });
     }
   } catch (err) { /* aman */ }
+}
+
+function cleanupStage(a, b) {
+  [a, b].forEach(function (v) {
+    if (!v) return;
+    v.style.transition = '';
+    v.style.transform = '';
+    v.style.position = '';
+    v.style.top = '';
+    v.style.left = '';
+    v.style.width = '';
+    v.style.margin = '';
+    v.style.willChange = '';
+  });
+}
+
+function resetSwipeState() {
+  swipe.active = false;
+  swipe.dir = null;
+  swipe.targetTab = null;
+  swipe.currentView = null;
+  swipe.targetView = null;
+  swipe.width = 0;
+  swipe.lastD = 0;
+  swipe.lastX = 0;
+  swipe.lastT = 0;
 }
 
 function stagePrepare(targetTab, direction) {
@@ -202,14 +219,13 @@ function stagePrepare(targetTab, direction) {
 
   viewport.classList.add('pages-clip');
 
-  [currentView, targetView].forEach(v => {
-    v.classList.remove('module-anim', 'module-anim-next', 'module-anim-prev');
+  [currentView, targetView].forEach(function (v) {
+    v.classList.remove('module-anim-next', 'module-anim-prev');
   });
 
   const w = viewport.offsetWidth;
   const dirSign = direction === 'next' ? 1 : -1;
 
-  // Halaman tujuan disiapkan di samping halaman aktif (di luar layar)
   targetView.classList.remove('hidden');
   targetView.style.position = 'absolute';
   targetView.style.top = '0px';
@@ -217,7 +233,7 @@ function stagePrepare(targetTab, direction) {
   targetView.style.width = '100%';
   targetView.style.margin = '0px';
   targetView.style.transition = 'none';
-  targetView.style.transform = `translateX(${dirSign * w}px)`;
+  targetView.style.transform = 'translateX(' + (dirSign * w) + 'px)';
   targetView.style.willChange = 'transform';
 
   currentView.style.transition = 'none';
@@ -238,7 +254,6 @@ function stagePrepare(targetTab, direction) {
 function stageUpdate(dx) {
   if (!swipe.active) return;
 
-  // Kunci arah sesuai stage (biar balik arah di tengah jalan tetap rapi)
   let d = dx;
   if (swipe.dir === 'next') d = Math.min(d, 0);
   else d = Math.max(d, 0);
@@ -246,120 +261,111 @@ function stageUpdate(dx) {
   swipe.lastD = d;
 
   const dirSign = swipe.dir === 'next' ? 1 : -1;
-  swipe.currentView.style.transform = `translateX(${d}px)`;
-  swipe.targetView.style.transform = `translateX(${d + dirSign * swipe.width}px)`;
+  swipe.currentView.style.transform = 'translateX(' + d + 'px)';
+  swipe.targetView.style.transform = 'translateX(' + (d + dirSign * swipe.width) + 'px)';
 
-  // Glider pink ikut bergerak proporsional mengikuti progres swipe
   const progress = Math.min(Math.abs(d) / swipe.width, 1);
-  updateGliderDrag(swipe.targetTab, progress);
+  updateGliderDrag(currentTab, swipe.targetTab, progress);
 }
 
 function stageCommit() {
   if (!swipe.active) return;
-  const { currentView, targetView, width, dir, targetTab } = swipe;
+  const currentView = swipe.currentView;
+  const targetView = swipe.targetView;
+  const width = swipe.width;
+  const dir = swipe.dir;
+  const targetTab = swipe.targetTab;
   const dirSign = dir === 'next' ? 1 : -1;
   const D = 300;
 
   const shell = document.getElementById('appShell');
   const viewport = document.getElementById('pagesViewport');
 
-  // Kunci tinggi kartu & viewport, lalu animasikan ke tinggi halaman baru
-  const shellCur = shell.offsetHeight;
-  const viewCur = viewport.offsetHeight;
-  const targetH = targetView.offsetHeight;
-  shell.style.height = `${shellCur}px`;
-  viewport.style.height = `${viewCur}px`;
+  let shellCur = 0, viewCur = 0, targetH = 0;
+  try {
+    shellCur = shell.offsetHeight;
+    viewCur = viewport.offsetHeight;
+    targetH = targetView.offsetHeight;
+    shell.style.height = shellCur + 'px';
+    viewport.style.height = viewCur + 'px';
+  } catch (err) { /* ukuran opsional */ }
 
-  currentView.style.transition = `transform ${D}ms cubic-bezier(0.22, 1, 0.36, 1)`;
-  targetView.style.transition = `transform ${D}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+  currentView.style.transition = 'transform ' + D + 'ms cubic-bezier(0.22, 1, 0.36, 1)';
+  targetView.style.transition = 'transform ' + D + 'ms cubic-bezier(0.22, 1, 0.36, 1)';
 
-  requestAnimationFrame(() => {
-    currentView.style.transform = `translateX(${-dirSign * width}px)`;
+  requestAnimationFrame(function () {
+    currentView.style.transform = 'translateX(' + (-dirSign * width) + 'px)';
     targetView.style.transform = 'translateX(0px)';
 
-    shell.style.transition = `height ${D}ms cubic-bezier(0.22, 1, 0.36, 1)`;
-    viewport.style.transition = `height ${D}ms cubic-bezier(0.22, 1, 0.36, 1)`;
-    shell.style.height = `${Math.max(shellCur + (targetH - viewCur), 0)}px`;
-    viewport.style.height = `${targetH}px`;
+    try {
+      shell.style.transition = 'height ' + D + 'ms cubic-bezier(0.22, 1, 0.36, 1)';
+      viewport.style.transition = 'height ' + D + 'ms cubic-bezier(0.22, 1, 0.36, 1)';
+      shell.style.height = Math.max(shellCur + (targetH - viewCur), 0) + 'px';
+      viewport.style.height = targetH + 'px';
+    } catch (err) { /* aman */ }
 
-    // Glider meluncur sampai ke menu tujuan
     positionGlider(targetTab, true);
   });
 
-  const finDir = dir;
-  setTimeout(() => finalizeTab(targetTab, finDir), D + 50);
+  setTimeout(function () { finalizeTab(targetTab); }, D + 60);
 }
 
 function stageCancel() {
   if (!swipe.active) return;
-  const { currentView, targetView, width, dir } = swipe;
+  const currentView = swipe.currentView;
+  const targetView = swipe.targetView;
+  const width = swipe.width;
+  const dir = swipe.dir;
   const D = 240;
 
-  currentView.style.transition = `transform ${D}ms cubic-bezier(0.22, 1, 0.36, 1)`;
-  targetView.style.transition = `transform ${D}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+  currentView.style.transition = 'transform ' + D + 'ms cubic-bezier(0.22, 1, 0.36, 1)';
+  targetView.style.transition = 'transform ' + D + 'ms cubic-bezier(0.22, 1, 0.36, 1)';
   currentView.style.transform = 'translateX(0px)';
-  targetView.style.transform = `translateX(${dir === 'next' ? width : -width}px)`;
+  targetView.style.transform = 'translateX(' + (dir === 'next' ? width : -width) + 'px)';
 
-  // Glider balik ke menu asal
   positionGlider(currentTab, true);
 
-  setTimeout(() => {
-    [currentView, targetView].forEach(v => {
-      v.style.transition = '';
-      v.style.transform = '';
-      v.style.position = '';
-      v.style.top = '';
-      v.style.left = '';
-      v.style.width = '';
-      v.style.margin = '';
-      v.style.willChange = '';
-    });
+  setTimeout(function () {
+    cleanupStage(currentView, targetView);
     targetView.classList.add('hidden');
-    document.getElementById('pagesViewport')?.classList.remove('pages-clip');
-
-    swipe.active = false;
-    swipe.dir = null;
-    swipe.targetTab = null;
-    swipe.currentView = null;
-    swipe.targetView = null;
-    swipe.width = 0;
-    swipe.lastD = 0;
-  }, D + 50);
+    const viewport = document.getElementById('pagesViewport');
+    if (viewport) viewport.classList.remove('pages-clip');
+    resetSwipeState();
+  }, D + 60);
 }
 
-function finalizeTab(targetTab, direction) {
+function finalizeTab(targetTab) {
   const shell = document.getElementById('appShell');
   const viewport = document.getElementById('pagesViewport');
   const prevView = swipe.currentView;
   const newView = swipe.targetView;
-  if (!prevView || !newView) return;
+  if (!prevView || !newView) { resetSwipeState(); return; }
 
-  [prevView, newView].forEach(v => {
-    v.style.transition = '';
-    v.style.transform = '';
-    v.style.position = '';
-    v.style.top = '';
-    v.style.left = '';
-    v.style.width = '';
-    v.style.margin = '';
-    v.style.willChange = '';
-  });
-
+  cleanupStage(prevView, newView);
   prevView.classList.add('hidden');
   if (viewport) viewport.classList.remove('pages-clip');
 
   if (shell) { shell.style.transition = ''; shell.style.height = ''; }
   if (viewport) { viewport.style.transition = ''; viewport.style.height = ''; }
 
-  swipe.active = false;
-  swipe.dir = null;
-  swipe.targetTab = null;
-  swipe.currentView = null;
-  swipe.targetView = null;
-  swipe.width = 0;
-  swipe.lastD = 0;
+  resetSwipeState();
+  applyTabState(targetTab);
+}
 
-  applyTabState(targetTab, direction, false);
+function applyTabState(targetTab) {
+  currentTab = targetTab;
+
+  document.querySelectorAll('.nav-btn[data-tab]').forEach(function (btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === targetTab);
+  });
+
+  TAB_ORDER.forEach(function (tab) {
+    const view = document.getElementById(viewId(tab));
+    if (view) view.classList.toggle('hidden', tab !== targetTab);
+  });
+
+  positionGlider(targetTab, true);
+  window.__loadTabData(targetTab);
 }
 
 function initSwipeNavigation() {
@@ -372,7 +378,7 @@ function initSwipeNavigation() {
   let tracking = false, horizontal = false, boundary = false;
   let activeView = null;
 
-  shell.addEventListener('touchstart', (e) => {
+  shell.addEventListener('touchstart', function (e) {
     if (swipe.active || e.touches.length !== 1) { tracking = false; return; }
     if (e.target.closest && e.target.closest(INTERACTIVE)) { tracking = false; return; }
 
@@ -386,7 +392,7 @@ function initSwipeNavigation() {
     activeView = null;
   }, { passive: true });
 
-  shell.addEventListener('touchmove', (e) => {
+  shell.addEventListener('touchmove', function (e) {
     if (!tracking) return;
     const t = e.touches[0];
     const dx = t.clientX - startX;
@@ -394,7 +400,6 @@ function initSwipeNavigation() {
 
     if (!horizontal) {
       if (Math.abs(dx) > 16 && Math.abs(dx) > Math.abs(dy) * 1.4) {
-        // Gerakan jelas horizontal → mulai seret carousel
         horizontal = true;
         e.preventDefault();
         activeView = document.querySelector('.app-module:not(.hidden)');
@@ -417,7 +422,7 @@ function initSwipeNavigation() {
     if (boundary) {
       if (activeView) {
         activeView.style.transition = 'none';
-        activeView.style.transform = `translateX(${dx * 0.3}px)`;
+        activeView.style.transform = 'translateX(' + (dx * 0.3) + 'px)';
       }
       return;
     }
@@ -429,26 +434,26 @@ function initSwipeNavigation() {
     }
   }, { passive: false });
 
-  const endGesture = (e, canceled) => {
+  function endGesture(e, canceled) {
     if (!tracking) return;
     tracking = false;
 
     if (boundary && activeView) {
-      activeView.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
-      activeView.style.transform = '';
       const av = activeView;
-      setTimeout(() => { av.style.transition = ''; }, 260);
+      av.style.transition = 'transform 240ms cubic-bezier(0.22, 1, 0.36, 1)';
+      av.style.transform = '';
+      setTimeout(function () { av.style.transition = ''; }, 260);
       activeView = null;
       return;
     }
 
     if (!(swipe.active && swipe.targetView)) { activeView = null; return; }
 
-    const endX = canceled ? (swipe.lastX || startX) : (e.changedTouches[0]?.clientX ?? startX);
+    const endX = canceled ? (swipe.lastX || startX)
+      : ((e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : startX);
     const dxTotal = endX - startX;
     const d = swipe.lastD || 0;
 
-    // Deteksi flick (sentilan cepat)
     const sinceLast = Date.now() - (swipe.lastT || startT);
     const lastDelta = endX - (swipe.lastX || startX);
     const flick = !canceled && sinceLast < 120 && Math.abs(lastDelta) > 16;
@@ -461,10 +466,10 @@ function initSwipeNavigation() {
     else stageCancel();
 
     activeView = null;
-  };
+  }
 
-  shell.addEventListener('touchend', (e) => endGesture(e, false), { passive: true });
-  shell.addEventListener('touchcancel', (e) => endGesture(e, true), { passive: true });
+  shell.addEventListener('touchend', function (e) { endGesture(e, false); }, { passive: true });
+  shell.addEventListener('touchcancel', function (e) { endGesture(e, true); }, { passive: true });
 }
 
 /* =========================================================
@@ -475,5 +480,93 @@ function initNavbarKeyboardAwareness() {
   if (!bar || !window.visualViewport) return;
 
   const vv = window.visualViewport;
-  const check = () => {
-    const keyboardOpen = (window
+  const check = function () {
+    const keyboardOpen = (window.innerHeight - vv.height) > 120;
+    bar.classList.toggle('nav-bar-hidden', keyboardOpen);
+  };
+
+  vv.addEventListener('resize', check);
+  vv.addEventListener('scroll', check);
+  check();
+}
+
+/* =========================================================
+   6) SWITCH TAB FANCY — upgrade navigasi dasar jadi carousel
+   ========================================================= */
+function fancySwitchTab(targetTab) {
+  if (swipe.active) return;
+  if (TAB_ORDER.indexOf(targetTab) === -1) return;
+
+  if (targetTab === currentTab) {
+    window.__loadTabData(targetTab);
+    return;
+  }
+
+  const from = TAB_ORDER.indexOf(currentTab);
+  const to = TAB_ORDER.indexOf(targetTab);
+  const dir = to > from ? 'next' : 'prev';
+
+  if (stagePrepare(targetTab, dir)) {
+    stageCommit();
+  } else {
+    applyTabState(targetTab);
+    const view = document.getElementById(viewId(targetTab));
+    if (view) {
+      view.classList.remove('module-anim-next', 'module-anim-prev');
+      void view.offsetWidth;
+      view.classList.add(dir === 'next' ? 'module-anim-next' : 'module-anim-prev');
+    }
+  }
+}
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+function boot() {
+  // Sinkronkan tab aktif dari DOM (kalau user sempat klik sebelum module termuat)
+  const activeBtn = document.querySelector('.nav-btn.active');
+  if (activeBtn) {
+    const t = activeBtn.getAttribute('data-tab');
+    if (t && TAB_ORDER.indexOf(t) !== -1) currentTab = t;
+  }
+
+  safeRun('calendar-lock', enforceCalendarOnlyInput);
+  safeRun('tanggal-guard', guardTanggalWajib);
+  safeRun('swipe-nav', initSwipeNavigation);
+  safeRun('keyboard-awareness', initNavbarKeyboardAwareness);
+  safeRun('glider-init', function () { positionGlider(currentTab, false); });
+
+  // Upgrade navigasi dasar (inline) → versi carousel
+  window.__switchTab = fancySwitchTab;
+
+  // Muat semua modul secara dinamis & tahan error
+  loadAllModules();
+
+  // Pastikan glider presisi setelah layout & font siap
+  requestAnimationFrame(function () { positionGlider(currentTab, false); });
+  setTimeout(function () { positionGlider(currentTab, false); }, 400);
+  setTimeout(function () { positionGlider(currentTab, false); }, 900);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () {
+      positionGlider(currentTab, false);
+    }).catch(function () { /* aman */ });
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+
+window.addEventListener('load', function () {
+  safeRun('glider-load', function () { positionGlider(currentTab, false); });
+});
+window.addEventListener('resize', function () {
+  safeRun('glider-resize', function () { positionGlider(currentTab, false); });
+});
+window.addEventListener('orientationchange', function () {
+  setTimeout(function () {
+    safeRun('glider-rotate', function () { positionGlider(currentTab, false); });
+  }, 250);
+});
