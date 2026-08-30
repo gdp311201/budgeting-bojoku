@@ -1,3 +1,7 @@
+/* =========================================================
+   BUDGETING MASTER SYNC — CUSTOM STYLES
+   ========================================================= */
+
 html, body {
   /* Mengunci touch action & mencegah pinch/double-tap zoom secara global */
   touch-action: manipulation;
@@ -80,6 +84,36 @@ input, select, textarea {
 }
 
 /* =========================================================
+   NORMALISASI FIELD TANGGAL (MOBILE-FRIENDLY)
+   Supaya lebar & tinggi bar input "Tanggal" sama persis dengan
+   field Kategori / Sub Kategori di bawahnya.
+   ========================================================= */
+#tanggal,
+input.flatpickr-input {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+#tanggal {
+  width: 100%;
+  min-height: 0;
+}
+
+/* Fallback apabila device tetap memakai native date input */
+input[type="date"]#tanggal {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 0 !important;
+}
+
+input[type="date"]#tanggal::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+}
+
+/* =========================================================
    PENYESUAIAN DROPDOWN & PLACEHOLDER MULTI-SELECT
    ========================================================= */
 
@@ -139,6 +173,39 @@ select option[disabled] {
   display: inline-block;
 }
 
+/* =========================================================
+   LIVE CLOCK (TIMESTAMP JAM, HARI & TANGGAL REAL-TIME)
+   Contoh output: 19:12:54 WIB | Selasa, 27 Agustus 2026
+   ========================================================= */
+
+.live-clock {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: #ec4899;
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: livePulse 1.8s ease-out infinite;
+}
+
+.live-dot-sm {
+  width: 6px;
+  height: 6px;
+  margin-right: 5px;
+}
+
+@keyframes livePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.5); }
+  70%  { box-shadow: 0 0 0 7px rgba(236, 72, 153, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+}
+
 /* Animations */
 @keyframes popIn {
   0% { transform: scale(0.85); opacity: 0; }
@@ -168,27 +235,101 @@ select option[disabled] {
   animation: shake 0.35s ease-in-out;
 }
 
-/* FLOATING BOTTOM NAVIGATION BAR */
+/* =========================================================
+   TRANSISI DINAMIS ANTAR MODUL
+   ========================================================= */
+
+@keyframes moduleIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.module-anim {
+  animation: moduleIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================================
+   NAVBAR DINAMIS — GAYA APP STORE (TONE PINK SENADA APP)
+   Full-width frosted bar + sliding pill indicator + icon pop
+   ========================================================= */
+
+.nav-shell {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.88), rgba(255, 243, 247, 0.94));
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  backdrop-filter: blur(18px) saturate(1.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 -12px 32px -14px rgba(131, 24, 67, 0.3);
+}
+
+/* Ruang aman untuk home indicator (iPhone) */
+.nav-safe-area {
+  height: env(safe-area-inset-bottom, 0px);
+}
+
+/* Pill gradient yang meluncur mengikuti tab aktif */
+.nav-indicator {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  width: 64px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(251, 113, 133, 0.2), rgba(236, 72, 153, 0.26));
+  border: 1px solid rgba(236, 72, 153, 0.32);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 6px 16px -8px rgba(190, 24, 93, 0.45);
+  transform: translateX(8px);
+  transition:
+    transform 0.5s cubic-bezier(0.34, 1.25, 0.5, 1),
+    width 0.5s cubic-bezier(0.34, 1.25, 0.5, 1);
+  will-change: transform, width;
+  pointer-events: none;
+}
+
 .nav-btn {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: hidden;
+  z-index: 1;
+  color: rgba(122, 92, 107, 0.6);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: color 0.25s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-btn:not(.active):hover {
+  color: rgba(157, 23, 77, 0.85);
+}
+
+.nav-btn:focus-visible {
+  outline: 2px solid rgba(236, 72, 153, 0.5);
+  outline-offset: 2px;
 }
 
 .nav-btn:active {
-  transform: scale(0.92);
+  transform: scale(0.9);
+}
+
+.nav-btn svg {
+  transition: stroke-width 0.25s ease;
 }
 
 .nav-btn.active {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #831843;
-  box-shadow: 0 4px 12px -2px rgba(219, 112, 147, 0.3);
+  color: #be185d;
 }
 
-.nav-btn.active span {
-  font-weight: 700;
+.nav-btn.active .nav-label {
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 .nav-btn.active svg {
-  stroke-width: 2.5;
+  stroke-width: 2.4;
+  animation: navIconPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes navIconPop {
+  0%   { transform: scale(1) translateY(0); }
+  45%  { transform: scale(1.25) translateY(-2px); }
+  75%  { transform: scale(0.94) translateY(0); }
+  100% { transform: scale(1.05) translateY(-1px); }
 }
