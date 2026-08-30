@@ -21,14 +21,21 @@ export async function loadDashboardData() {
   setDashboardLoading(true);
 
   try {
-    // Memastikan query string diformat secara presisi
-    const fetchUrl = `${GAS_URL}?action=getDashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
-    console.log("Fetching Dashboard URL:", fetchUrl);
+    const payload = {
+      action: 'getDashboard',
+      bulan: bulan,
+      tahun: tahun
+    };
 
-    // KUNCI PERBAIKAN: Menambahkan redirect: "follow" agar query parameter tidak hilang saat disimpangkan Apps Script
-    const response = await fetch(fetchUrl, {
-      method: 'GET',
-      redirect: 'follow'
+    console.log("Fetching Dashboard Payload:", payload);
+
+    // Menggunakan POST dengan text/plain menghindarkan pembatasan CORS & redirect strip
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(payload)
     });
 
     const res = await response.json();
@@ -84,28 +91,23 @@ function renderDashboardUI(data) {
 
   // 4. Cash Flow Ringkasan
   if (data.cashflow) {
-    // Pemasukan
     if (data.cashflow.pemasukan) {
       if (document.getElementById('dashPemasukan')) document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan.nominal);
       if (document.getElementById('dashPemasukanPct')) document.getElementById('dashPemasukanPct').innerText = Math.round((data.cashflow.pemasukan.pct || 0) * 100) + '%';
     }
 
-    // Hutang
     if (data.cashflow.hutang) {
       if (document.getElementById('dashHutang')) document.getElementById('dashHutang').innerText = formatRupiah(data.cashflow.hutang.nominal);
       if (document.getElementById('dashHutangPct')) document.getElementById('dashHutangPct').innerText = Math.round((data.cashflow.hutang.pct || 0) * 100) + '%';
     }
 
-    // Investasi Bulanan
     if (data.cashflow.investasiBulan) {
       if (document.getElementById('dashInvestasiBulan')) document.getElementById('dashInvestasiBulan').innerText = formatRupiah(data.cashflow.investasiBulan.nominal);
       if (document.getElementById('dashInvestasiBulanPct')) document.getElementById('dashInvestasiBulanPct').innerText = Math.round((data.cashflow.investasiBulan.pct || 0) * 100) + '%';
     }
 
-    // Total Biaya
     if (document.getElementById('dashTotalBiaya')) document.getElementById('dashTotalBiaya').innerText = formatRupiah(data.cashflow.totalBiaya);
 
-    // 5. Detail Kategori Biaya
     const b = data.cashflow.biayaDetail;
     if (b) {
       setBiayaItem('dashKebPokok', 'dashKebPokokPct', b.kebutuhanPokok);
