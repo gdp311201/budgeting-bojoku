@@ -38,7 +38,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-28">
+<body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-32">
 
   <!-- LOCK SCREEN / LOGIN PIN -->
   <div id="lockScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#ca9bb2] transition-all duration-700 ease-in-out">
@@ -106,7 +106,8 @@
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Tanggal</label>
           <div class="relative">
-            <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required 
+            <!-- readonly + inputmode="none" = tap hanya membuka kalender, keyboard TIDAK muncul -->
+            <input type="text" id="tanggal" placeholder="Pilih Tanggal..." required readonly inputmode="none" autocomplete="off"
               class="w-full custom-input rounded-xl pl-3.5 pr-10 py-2 font-medium cursor-pointer">
             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400">
               📅
@@ -667,52 +668,49 @@
     </div>
   </div>
 
-  <!-- DYNAMIC BOTTOM NAVIGATION BAR (APP STORE STYLE) -->
-  <nav class="fixed bottom-0 inset-x-0 z-40">
-    <div class="nav-shell">
-      <div class="max-w-md mx-auto relative px-2 pt-1.5 pb-1.5">
-        <div id="navIndicator" class="nav-indicator" aria-hidden="true"></div>
+  <!-- FLOATING BUBBLE NAVIGATION BAR (DYNAMIC ISLAND STYLE) -->
+  <nav class="nav-island" aria-label="Navigasi utama">
+    <div class="relative">
+      <div id="navIndicator" class="nav-indicator" aria-hidden="true"></div>
 
-        <div class="flex items-stretch justify-around">
+      <div class="flex items-stretch justify-around">
 
-          <button id="navInputBtn" type="button" data-tab="input" class="nav-btn active flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
-            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-            <span class="nav-label text-[10px] font-semibold tracking-tight">Input</span>
-          </button>
+        <button id="navInputBtn" type="button" data-tab="input" class="nav-btn active flex flex-col items-center justify-center flex-1 py-1.5 rounded-full">
+          <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          <span class="nav-label text-[10px] font-semibold tracking-tight">Input</span>
+        </button>
 
-          <button id="navMutasiBtn" type="button" data-tab="mutasi" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
-            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
-            <span class="nav-label text-[10px] font-semibold tracking-tight">Mutasi</span>
-          </button>
+        <button id="navMutasiBtn" type="button" data-tab="mutasi" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-full">
+          <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <span class="nav-label text-[10px] font-semibold tracking-tight">Mutasi</span>
+        </button>
 
-          <button id="navDashBtn" type="button" data-tab="dashboard" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
-            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
-            <span class="nav-label text-[10px] font-semibold tracking-tight">Dashboard</span>
-          </button>
+        <button id="navDashBtn" type="button" data-tab="dashboard" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-full">
+          <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          <span class="nav-label text-[10px] font-semibold tracking-tight">Dashboard</span>
+        </button>
 
-          <button id="navReceiptBtn" type="button" data-tab="receipt" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
-            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            <span class="nav-label text-[10px] font-semibold tracking-tight">Receipt</span>
-          </button>
+        <button id="navReceiptBtn" type="button" data-tab="receipt" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-full">
+          <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span class="nav-label text-[10px] font-semibold tracking-tight">Receipt</span>
+        </button>
 
-          <button id="navSearchBtn" type="button" data-tab="search" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-2xl">
-            <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-            <span class="nav-label text-[10px] font-semibold tracking-tight">Cari</span>
-          </button>
+        <button id="navSearchBtn" type="button" data-tab="search" class="nav-btn flex flex-col items-center justify-center flex-1 py-1.5 rounded-full">
+          <svg class="w-[22px] h-[22px] mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span class="nav-label text-[10px] font-semibold tracking-tight">Cari</span>
+        </button>
 
-        </div>
       </div>
-      <div class="nav-safe-area" aria-hidden="true"></div>
     </div>
   </nav>
 
