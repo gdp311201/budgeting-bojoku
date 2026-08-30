@@ -106,7 +106,7 @@ function guardTanggalWajib() {
       void tgl.offsetWidth;
       tgl.classList.add('animate-shake');
 
-      // Langsung buka kalendarnya biar user tinggal pilih tanggal
+      // Langsung buka kalendernya biar user tinggal pilih tanggal
       if (tgl._flatpickr && typeof tgl._flatpickr.open === 'function') {
         tgl._flatpickr.open();
       }
@@ -116,7 +116,9 @@ function guardTanggalWajib() {
 
 /* =========================================================
    3) NAVBAR FLOATING BUBBLE (DYNAMIC ISLAND STYLE)
-   Sliding pill indicator yang meluncur ke tab aktif.
+   Sliding pill indicator BESAR yang meluncur ke tab aktif.
+   Pill hampir seukuran tombol penuh (inset cuma 2px) supaya
+   icon & label menu gak pernah kepotong.
    ========================================================= */
 function positionNavIndicator(animate = true) {
   const indicator = document.getElementById('navIndicator');
@@ -128,17 +130,31 @@ function positionNavIndicator(animate = true) {
 
   const trackRect = track.getBoundingClientRect();
   const btnRect = activeBtn.getBoundingClientRect();
-  const inset = 6; // pill dibuat sedikit lebih ramping dari tombolnya
+  const inset = 2; // selisih tipis dari tepi tombol (bubble nyaris full-size)
 
   if (!animate) indicator.style.transition = 'none';
 
-  indicator.style.width = `${Math.max(btnRect.width - inset * 2, 24)}px`;
+  indicator.style.width = `${Math.max(btnRect.width - inset * 2, 32)}px`;
   indicator.style.transform = `translateX(${btnRect.left - trackRect.left + inset}px)`;
 
   if (!animate) {
     void indicator.offsetWidth; // paksa reflow biar langsung snap tanpa animasi
     indicator.style.transition = '';
   }
+}
+
+// Ukur ulang posisi pill setelah semua font selesai dimuat,
+// biar lebar label "Dashboard" dsb. terhitung akurat.
+function scheduleIndicatorMeasure() {
+  requestAnimationFrame(() => positionNavIndicator(false));
+  setTimeout(() => positionNavIndicator(false), 300);
+  setTimeout(() => positionNavIndicator(false), 700);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => positionNavIndicator(false)).catch(() => {});
+  }
+  document.querySelector('.nav-island')?.addEventListener('animationend', () => {
+    positionNavIndicator(false);
+  });
 }
 
 // Island sopan: sembunyi saat keyboard virtual aktif, muncul lagi saat ditutup
@@ -197,11 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbarKeyboardAwareness();
 
   // Posisikan indikator navbar begitu layout siap (tanpa animasi awal)
-  requestAnimationFrame(() => positionNavIndicator(false));
-  setTimeout(() => positionNavIndicator(false), 700);
-  document.querySelector('.nav-island')?.addEventListener('animationend', () => {
-    positionNavIndicator(false);
-  });
+  scheduleIndicatorMeasure();
 });
 
 // Reposisi indikator navbar saat layar berubah ukuran / dirotasi
