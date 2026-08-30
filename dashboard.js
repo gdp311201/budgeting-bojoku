@@ -26,6 +26,8 @@ export async function loadDashboardData() {
 
     if (res.status === 'success') {
       renderDashboardUI(res);
+    } else if (res.data && res.status === undefined) {
+      renderDashboardUI(res.data);
     } else {
       console.error("Gagal memuat data dashboard:", res.message);
     }
@@ -41,9 +43,11 @@ function formatRupiah(num) {
 }
 
 function renderDashboardUI(data) {
+  if (!data) return;
+
   // 1. Total Aset Bersih
   const totalAsetEl = document.getElementById('dashTotalAset');
-  if (totalAsetEl) totalAsetEl.innerText = formatRupiah(data.totalAset);
+  if (totalAsetEl) totalAsetEl.innerText = formatRupiah(data.totalAset || data.totalAsetBersih);
 
   // 2. Saldo Kas & Bank
   if (data.bank) {
@@ -68,16 +72,22 @@ function renderDashboardUI(data) {
   // 4. Cash Flow Ringkasan
   if (data.cashflow) {
     // Pemasukan
-    if (document.getElementById('dashPemasukan')) document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan.nominal);
-    if (document.getElementById('dashPemasukanPct')) document.getElementById('dashPemasukanPct').innerText = Math.round((data.cashflow.pemasukan.pct || 0) * 100) + '%';
+    if (data.cashflow.pemasukan) {
+      if (document.getElementById('dashPemasukan')) document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan.nominal);
+      if (document.getElementById('dashPemasukanPct')) document.getElementById('dashPemasukanPct').innerText = Math.round((data.cashflow.pemasukan.pct || data.cashflow.pemasukan.percent || 0) * 100) + '%';
+    }
 
     // Hutang
-    if (document.getElementById('dashHutang')) document.getElementById('dashHutang').innerText = formatRupiah(data.cashflow.hutang.nominal);
-    if (document.getElementById('dashHutangPct')) document.getElementById('dashHutangPct').innerText = Math.round((data.cashflow.hutang.pct || 0) * 100) + '%';
+    if (data.cashflow.hutang) {
+      if (document.getElementById('dashHutang')) document.getElementById('dashHutang').innerText = formatRupiah(data.cashflow.hutang.nominal);
+      if (document.getElementById('dashHutangPct')) document.getElementById('dashHutangPct').innerText = Math.round((data.cashflow.hutang.pct || data.cashflow.hutang.percent || 0) * 100) + '%';
+    }
 
     // Investasi Bulanan
-    if (document.getElementById('dashInvestasiBulan')) document.getElementById('dashInvestasiBulan').innerText = formatRupiah(data.cashflow.investasiBulan.nominal);
-    if (document.getElementById('dashInvestasiBulanPct')) document.getElementById('dashInvestasiBulanPct').innerText = Math.round((data.cashflow.investasiBulan.pct || 0) * 100) + '%';
+    if (data.cashflow.investasiBulan) {
+      if (document.getElementById('dashInvestasiBulan')) document.getElementById('dashInvestasiBulan').innerText = formatRupiah(data.cashflow.investasiBulan.nominal);
+      if (document.getElementById('dashInvestasiBulanPct')) document.getElementById('dashInvestasiBulanPct').innerText = Math.round((data.cashflow.investasiBulan.pct || data.cashflow.investasiBulan.percent || 0) * 100) + '%';
+    }
 
     // Total Biaya
     if (document.getElementById('dashTotalBiaya')) document.getElementById('dashTotalBiaya').innerText = formatRupiah(data.cashflow.totalBiaya);
@@ -106,7 +116,7 @@ function setBiayaItem(nomId, pctId, objData) {
   const pctEl = document.getElementById(pctId);
 
   if (nomEl) nomEl.innerText = formatRupiah(objData.nominal);
-  if (pctEl) pctEl.innerText = Math.round((objData.pct || 0) * 100) + '%';
+  if (pctEl) pctEl.innerText = Math.round((objData.pct || objData.percent || 0) * 100) + '%';
 }
 
 function renderTop5Expenses(items) {
