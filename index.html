@@ -30,8 +30,8 @@
   <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Custom CSS (?v=5 = cache buster) -->
-  <link rel="stylesheet" href="style.css?v=5">
+  <!-- Custom CSS (?v=6 = cache buster) -->
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-32">
 
@@ -196,7 +196,7 @@
           </div>
         </div>
 
-        <!-- TOMBOL LOAD MANUAL (satu-satunya pemicu fetch di modul ini) -->
+        <!-- TOMBOL LOAD MANUAL -->
         <button id="btnLoadDashboard" type="button" class="w-full mb-2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2.5 px-3 rounded-xl shadow-sm hover:shadow-md transition duration-200 text-sm flex justify-center items-center gap-1.5 border border-pink-200/50">
           <span>📊 Tampilkan Dashboard</span>
         </button>
@@ -459,7 +459,7 @@
           </div>
         </div>
 
-        <!-- TOMBOL LOAD MANUAL (satu-satunya pemicu fetch di modul ini) -->
+        <!-- TOMBOL LOAD MANUAL -->
         <button id="btnLoadMutasi" type="button" class="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2.5 px-3 rounded-xl shadow-sm hover:shadow-md transition duration-200 text-sm flex justify-center items-center gap-1.5 border border-pink-200/50">
           <span>🏦 Tampilkan Mutasi</span>
         </button>
@@ -554,7 +554,7 @@
           </div>
         </div>
 
-        <!-- TOMBOL: Tampilkan Data (pemicu fetch) + Cetak -->
+        <!-- TOMBOL: Tampilkan Data + Cetak -->
         <div class="flex gap-2">
           <button id="btnLoadReceipt" type="button" class="w-1/2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2 px-3 rounded-xl shadow-sm text-xs flex justify-center items-center gap-1.5 border border-pink-200/50 transition duration-150">
             📊 Tampilkan Data
@@ -570,7 +570,7 @@
           📅 Data per --:--:-- WIB
         </div>
 
-        <!-- PLACEHOLDER STRUK (terisi setelah klik Tampilkan Data) -->
+        <!-- PLACEHOLDER STRUK -->
         <div id="receiptPaper" class="bg-amber-50/90 rounded-2xl p-4 sm:p-5 border border-amber-200/80 shadow-inner relative overflow-hidden font-mono text-pink-950">
           <div class="text-center py-12">
             <div class="text-4xl mb-3">🧾</div>
@@ -585,7 +585,7 @@
         <div class="flex items-center justify-between pb-2 border-b border-pink-200/50">
           <div>
             <h1 class="text-base font-bold text-pink-950/80 tracking-wide">PENCARIAN BIAYA</h1>
-            <p class="text-[11px] text-pink-800/60 font-medium">Cari & filter histori riwayat pengeluaran</p>
+            <p class="text-[11px] text-pink-800/60 font-medium">Cari, edit & hapus transaksi</p>
           </div>
           <button id="btnRefreshSearch" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-pink-100/80 text-pink-800 border border-pink-200 shadow-sm hover:bg-pink-200 transition">
             🔄 Refresh
@@ -645,26 +645,18 @@
           </div>
         </div>
 
-        <!-- TOMBOL LOAD MANUAL (satu-satunya pemicu fetch di modul ini) -->
+        <!-- TOMBOL LOAD MANUAL -->
         <button id="btnDoSearch" type="button" class="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-semibold py-2.5 px-3 rounded-xl shadow-sm hover:shadow-md transition duration-200 text-sm flex justify-center items-center gap-1.5 border border-pink-200/50">
           <span>🔍 Cari Sekarang</span>
         </button>
+        <p class="text-center text-[10px] text-pink-800/50 font-medium leading-relaxed -mt-1">
+          💡 Geser kartu ke <b>kiri</b> → <b class="text-rose-600">Hapus</b> · ke <b>kanan</b> → <b class="text-blue-600">Edit</b>
+        </p>
         <div id="searchDirtyHint" class="hidden text-center text-[10px] font-bold text-amber-800 bg-amber-100/80 border border-amber-300/70 rounded-full px-3 py-1">
           ⚠ Filter / kata kunci berubah — klik Cari Sekarang
         </div>
         <div id="searchDataStamp" class="hidden text-center text-[10px] font-semibold text-pink-800/50">
           📅 Data per --:--:-- WIB
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div class="bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-300/60 p-2.5 rounded-2xl text-center">
-            <span class="text-[9px] font-bold text-pink-900/70 uppercase block">Total Transaksi</span>
-            <span id="searchTotalCount" class="text-sm font-extrabold text-pink-950 block mt-0.5">—</span>
-          </div>
-          <div class="bg-gradient-to-br from-rose-500/10 to-pink-500/10 border border-rose-300/60 p-2.5 rounded-2xl text-center">
-            <span class="text-[9px] font-bold text-rose-900/70 uppercase block">Total Nominal</span>
-            <span id="searchTotalNominal" class="text-sm font-extrabold text-rose-950 block mt-0.5">—</span>
-          </div>
         </div>
 
         <div class="glass-mini rounded-2xl p-3 border border-pink-200/60 shadow-sm">
@@ -745,6 +737,99 @@
     </div>
   </nav>
 
+  <!-- MODAL KONFIRMASI HAPUS -->
+  <div id="confirmModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-pink-950/30 backdrop-blur-[4px] hidden">
+    <div class="bg-white/90 backdrop-blur-md rounded-3xl p-5 max-w-xs w-full text-center shadow-xl animate-pop">
+      <div class="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center text-3xl shadow-inner bg-rose-100 border border-rose-200">
+        <span>🗑️</span>
+      </div>
+      <h3 class="text-sm font-bold text-rose-950 mb-2">Hapus Transaksi Ini?</h3>
+      <p id="confirmDetail" class="text-[11px] text-pink-900/80 font-semibold bg-pink-50 border border-pink-100 rounded-xl px-3 py-2 mb-2 leading-relaxed text-left"></p>
+      <p class="text-[10px] text-rose-700/80 font-medium mb-4">Tindakan ini permanen & tidak dapat dibatalkan.</p>
+      <div class="flex gap-2">
+        <button id="btnCancelDelete" type="button" class="w-1/2 bg-white/90 text-pink-950 text-xs font-semibold py-2.5 px-4 rounded-xl border border-pink-200/80 shadow-sm transition">
+          Batal
+        </button>
+        <button id="btnConfirmDelete" type="button" class="w-1/2 bg-gradient-to-r from-rose-500 to-red-500 hover:from-rose-600 hover:to-red-600 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm transition">
+          Ya, Hapus
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT TRANSAKSI -->
+  <div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-pink-950/30 backdrop-blur-[4px] hidden overflow-y-auto py-6">
+    <div class="bg-white/92 backdrop-blur-md rounded-3xl p-5 w-full max-w-xs shadow-xl animate-pop">
+      <div class="text-center mb-4">
+        <div class="w-12 h-12 mx-auto mb-2 rounded-2xl flex items-center justify-center text-2xl shadow-inner bg-pink-100 border border-pink-200">✏️</div>
+        <h3 class="text-sm font-bold text-pink-950">Edit Transaksi</h3>
+        <p class="text-[10px] text-pink-800/60 mt-0.5">Perbarui data, lalu simpan perubahan</p>
+      </div>
+
+      <form id="editForm" class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Tanggal</label>
+          <div class="relative">
+            <input type="text" id="editTanggal" required readonly inputmode="none" autocomplete="off" placeholder="Pilih Tanggal..."
+              class="w-full custom-input rounded-xl pl-3.5 pr-9 py-2 font-medium cursor-pointer">
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-pink-400 text-sm">📅</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Kategori</label>
+          <select id="editKategori" class="w-full custom-input is-placeholder rounded-xl px-3.5 py-2">
+            <option value="" disabled selected hidden>-- Pilih Kategori --</option>
+            <option value="💸 PINDAH DANA">💸 PINDAH DANA</option>
+            <option value="💵 PEMASUKAN">💵 PEMASUKAN</option>
+            <option value="💰 TABUNGAN/ INVESTASI">💰 TABUNGAN/ INVESTASI</option>
+            <option value="🍚 KEBUTUHAN POKOK">🍚 KEBUTUHAN POKOK</option>
+            <option value="🏠 TEMPAT TINGGAL">🏠 TEMPAT TINGGAL</option>
+            <option value="🚌 TRANSPORTASI">🚌 TRANSPORTASI</option>
+            <option value="🩺 KESEHATAN">🩺 KESEHATAN</option>
+            <option value="💇 PERAWATAN DIRI">💇 PERAWATAN DIRI</option>
+            <option value="📚 PENGEMBANGAN DIRI">📚 PENGEMBANGAN DIRI</option>
+            <option value="🎉 GAYA HIDUP/ HIBURAN">🎉 GAYA HIDUP/ HIBURAN</option>
+            <option value="💳 HUTANG / CICILAN">💳 HUTANG / CICILAN</option>
+            <option value="⚠️ LAIN-LAIN">⚠️ LAIN-LAIN</option>
+          </select>
+        </div>
+
+        <div>
+          <label id="editLblSubKategori" class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Sub Kategori</label>
+          <select id="editSubKategori" class="w-full custom-input is-placeholder rounded-xl px-3.5 py-2">
+            <option value="" disabled selected hidden>-- Pilih Sub Kategori --</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Nominal (Rp)</label>
+          <input type="text" id="editNominal" inputmode="numeric" autocomplete="off" placeholder="Rp 0" required class="w-full custom-input rounded-xl px-3.5 py-2 font-medium">
+        </div>
+
+        <div>
+          <label id="editLblAkun" class="block text-[11px] font-semibold uppercase tracking-wider text-pink-900/70 mb-1">Akun Bank</label>
+          <select id="editAkun" class="w-full custom-input rounded-xl px-3.5 py-2">
+            <option value="SEABANK">SEABANK</option>
+            <option value="BCA">BCA</option>
+            <option value="MANDIRI">MANDIRI</option>
+            <option value="DANA">DANA</option>
+            <option value="CASH">CASH</option>
+          </select>
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button type="button" id="btnCancelEdit" class="w-1/2 bg-white/90 text-pink-950 text-xs font-semibold py-2.5 px-4 rounded-xl border border-pink-200/80 shadow-sm transition">
+            Batal
+          </button>
+          <button type="submit" id="btnSaveEdit" class="w-1/2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm transition border border-pink-200/50">
+            💾 Simpan Perubahan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- NOTIFICATION MODAL -->
   <div id="cuteModal" class="fixed inset-0 bg-pink-950/20 backdrop-blur-[4px] flex items-center justify-center p-4 z-50 hidden transition-opacity duration-200">
     <div class="bg-white/85 border border-white/80 backdrop-blur-md rounded-3xl p-5 max-w-xs w-full text-center shadow-xl animate-pop relative overflow-hidden">
@@ -763,7 +848,6 @@
        CORE APP — inline script BIASA (bukan module, tanpa import).
        Login, navigasi dasar, jam live & glider jalan di sini,
        KEBAL terhadap error di script.js / modul lain.
-       CATATAN v5: pindah tab TIDAK lagi memicu fetch apapun.
        ========================================================= -->
   <script>
   (function () {
@@ -891,9 +975,7 @@
     setTimeout(initialGlider, 500);
 
     /* ---------- 4) NAVIGASI DASAR (fallback tanpa animasi) ----------
-       PINDAH TAB TIDAK ME-LOAD DATA APAPUN.
-       Data modul dimuat manual via tombol Tampilkan/Cari
-       (listener dipasang oleh masing-masing file modul). */
+       PINDAH TAB TIDAK ME-LOAD DATA APAPUN. */
     window.__basicSwitchTab = function (tab) {
       if (!tab) return;
       var target = document.getElementById('view' + tab.charAt(0).toUpperCase() + tab.slice(1));
@@ -968,7 +1050,7 @@
   })();
   </script>
 
-  <!-- Enhancement layer: swipe carousel, module loader (?v=5 = cache buster) -->
-  <script type="module" src="script.js?v=5"></script>
+  <!-- Enhancement layer: swipe carousel, module loader (?v=6) -->
+  <script type="module" src="script.js?v=6"></script>
 </body>
 </html>
