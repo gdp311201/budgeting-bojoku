@@ -4,9 +4,88 @@ import { initDashboard, loadDashboardData } from './dashboard.js';
 // PIN Akses Aplikasi
 const CORRECT_PIN = "080798";
 
+/* =========================================================
+   1) LIVE CLOCK — Jam, Hari & Tanggal Real-Time (WIB)
+   Contoh output: 19:12:54 WIB | Selasa, 27 Agustus 2026
+   Dipakai di: badge atas, footer bawah & e-receipt.
+   ========================================================= */
+const clockTimeFmt = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Asia/Jakarta',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false
+});
+
+const clockDayFmt = new Intl.DateTimeFormat('id-ID', {
+  timeZone: 'Asia/Jakarta',
+  weekday: 'long'
+});
+
+const clockDateFmt = new Intl.DateTimeFormat('id-ID', {
+  timeZone: 'Asia/Jakarta',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+});
+
+function updateLiveClock() {
+  const now = new Date();
+  let teks;
+
+  try {
+    teks = `${clockTimeFmt.format(now)} WIB | ${clockDayFmt.format(now)}, ${clockDateFmt.format(now)}`;
+  } catch (err) {
+    // Fallback manual (kalau Intl tidak tersedia di browser lama)
+    const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][now.getDay()];
+    const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][now.getMonth()];
+    const p = (n) => String(n).padStart(2, '0');
+    teks = `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())} WIB | ${hari}, ${now.getDate()} ${bulan} ${now.getFullYear()}`;
+  }
+
+  document.querySelectorAll('.live-clock').forEach((el) => {
+    el.textContent = teks;
+  });
+}
+
+function startLiveClock() {
+  updateLiveClock();
+  setInterval(updateLiveClock, 1000);
+}
+
+/* =========================================================
+   2) NAVBAR DINAMIS (APP STORE STYLE)
+   Sliding pill indicator yang meluncur ke tab aktif.
+   ========================================================= */
+function positionNavIndicator(animate = true) {
+  const indicator = document.getElementById('navIndicator');
+  const activeBtn = document.querySelector('.nav-btn.active');
+  if (!indicator || !activeBtn) return;
+
+  const track = indicator.parentElement;
+  if (!track) return;
+
+  const trackRect = track.getBoundingClientRect();
+  const btnRect = activeBtn.getBoundingClientRect();
+  const inset = 5; // pill dibuat sedikit lebih ramping dari tombolnya
+
+  if (!animate) indicator.style.transition = 'none';
+
+  indicator.style.width = `${Math.max(btnRect.width - inset * 2, 24)}px`;
+  indicator.style.transform = `translateX(${btnRect.left - trackRect.left + inset}px)`;
+
+  if (!animate) {
+    void indicator.offsetWidth; // paksa reflow biar langsung snap tanpa animasi
+    indicator.style.transition = '';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const pinInput = document.getElementById('pinInput');
   if (pinInput) pinInput.focus();
+
+  // Jalankan live clock (timestamp real-time)
+  startLiveClock();
 
   // Attach PIN Listeners
   pinInput?.addEventListener('input', checkPinAuto);
@@ -16,12 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btnTogglePin')?.addEventListener('click', togglePinVisibility);
 
-  // Attach Navigation Listeners
-  document.getElementById('navInputBtn')?.addEventListener('click', () => switchTab('input'));
-  document.getElementById('navMutasiBtn')?.addEventListener('click', () => switchTab('mutasi'));
-  document.getElementById('navDashBtn')?.addEventListener('click', () => switchTab('dashboard'));
-  document.getElementById('navReceiptBtn')?.addEventListener('click', () => switchTab('receipt'));
-  document.getElementById('navSearchBtn')?.addEventListener('click', () => switchTab('search'));
+  // Attach Navigation Listeners (navbar App Store style)
+  document.querySelectorAll('.nav-btn[data-tab]').forEach((btn) => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
 
   // Handler Event Listener untuk Dropdown Placeholder Style (Miring & Pudar)
   initPlaceholderDropdowns();
@@ -32,6 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load Optional Modules jika sudah tersedia
   loadOptionalModules();
+
+  // Posisikan indikator navbar begitu layout siap (tanpa animasi awal)
+  requestAnimationFrame(() => positionNavIndicator(false));
+  setTimeout(() => positionNavIndicator(false), 600);
+});
+
+// Reposisi indikator navbar saat layar berubah ukuran / dirotasi
+window.addEventListener('load', () => positionNavIndicator(false));
+window.addEventListener('resize', () => positionNavIndicator(false));
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => positionNavIndicator(false), 250);
 });
 
 // Mengelola Tampilan Dropdown Placeholder
@@ -76,10 +164,7 @@ async function loadOptionalModules() {
       return null;
     });
 
-    // ===== FIX UTAMA =====
-    // Dulu: if (searchMod && searchMod.initSearch) -> SELALU false,
-    // karena yang di-export search.js namanya "initSearchModule".
-    // Akibatnya modul search GAK PERNAH jalan sama sekali.
+    // FIX: nama fungsi yang di-export search.js adalah "initSearchModule"
     if (searchMod && searchMod.initSearchModule) {
       initSearchModule = searchMod.initSearchModule;
       loadSearchData = searchMod.fetchAndRenderSearchData;
@@ -142,7 +227,7 @@ function verifyPin() {
   }
 }
 
-// Tab Switcher Controller
+// Tab Switcher Controller (dengan animasi modul + indikator dinamis)
 function switchTab(targetTab) {
   const tabs = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
 
@@ -151,13 +236,22 @@ function switchTab(targetTab) {
     const btn = document.getElementById(`nav${capitalize(tab)}Btn`);
 
     if (tab === targetTab) {
-      if (view) view.classList.remove('hidden');
+      if (view) {
+        view.classList.remove('hidden');
+        // Animasi entrance biar perpindahan modul terasa dinamis
+        view.classList.remove('module-anim');
+        void view.offsetWidth;
+        view.classList.add('module-anim');
+      }
       if (btn) btn.classList.add('active');
     } else {
       if (view) view.classList.add('hidden');
       if (btn) btn.classList.remove('active');
     }
   });
+
+  // Geser pill indikator ke tab yang baru aktif
+  positionNavIndicator();
 
   if (targetTab === 'dashboard' && typeof loadDashboardData === 'function') {
     loadDashboardData();
@@ -166,7 +260,7 @@ function switchTab(targetTab) {
   } else if (targetTab === 'receipt' && typeof loadEReceiptData === 'function') {
     loadEReceiptData();
   } else if (targetTab === 'search' && typeof loadSearchData === 'function') {
-    // FIX: refresh hasil pencarian tiap kali tab "Cari" dibuka
+    // Refresh hasil pencarian tiap kali tab "Cari" dibuka
     loadSearchData();
   }
 }
