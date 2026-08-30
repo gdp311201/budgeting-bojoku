@@ -49,8 +49,6 @@ export async function loadDashboardData() {
   }
 }
 
-// Error ditampilkan DI DALAM area dashboard (pengganti alert() yang
-// sempat muncul di atas lock screen)
 function renderDashboardError(msg) {
   const container = document.getElementById('dashTop5Container');
   if (!container || !msg) return;
@@ -81,13 +79,26 @@ function renderDashboardUI(data) {
   if (totalAsetEl) totalAsetEl.innerText = formatRupiah(data.totalAset || data.totalAsetBersih);
 
   // 2. Saldo Kas & Bank
+  var totalKasBank = 0;
   if (data.bank) {
-    if (document.getElementById('dashSeabank')) document.getElementById('dashSeabank').innerText = formatRupiah(data.bank.seabank);
-    if (document.getElementById('dashBca')) document.getElementById('dashBca').innerText = formatRupiah(data.bank.bca);
-    if (document.getElementById('dashMandiri')) document.getElementById('dashMandiri').innerText = formatRupiah(data.bank.mandiri);
-    if (document.getElementById('dashDana')) document.getElementById('dashDana').innerText = formatRupiah(data.bank.dana);
-    if (document.getElementById('dashCash')) document.getElementById('dashCash').innerText = formatRupiah(data.bank.cash);
+    var seabankVal = Number(data.bank.seabank) || 0;
+    var bcaVal = Number(data.bank.bca) || 0;
+    var mandiriVal = Number(data.bank.mandiri) || 0;
+    var danaVal = Number(data.bank.dana) || 0;
+    var cashVal = Number(data.bank.cash) || 0;
+
+    totalKasBank = seabankVal + bcaVal + mandiriVal + danaVal + cashVal;
+
+    if (document.getElementById('dashSeabank')) document.getElementById('dashSeabank').innerText = formatRupiah(seabankVal);
+    if (document.getElementById('dashBca')) document.getElementById('dashBca').innerText = formatRupiah(bcaVal);
+    if (document.getElementById('dashMandiri')) document.getElementById('dashMandiri').innerText = formatRupiah(mandiriVal);
+    if (document.getElementById('dashDana')) document.getElementById('dashDana').innerText = formatRupiah(danaVal);
+    if (document.getElementById('dashCash')) document.getElementById('dashCash').innerText = formatRupiah(cashVal);
   }
+  
+  // Render Total Kas & Bank di Ujung Kanan Sub-Header
+  const totalKasBankEl = document.getElementById('dashTotalKasBank');
+  if (totalKasBankEl) totalKasBankEl.innerText = formatRupiah(totalKasBank);
 
   // 3. Saldo Aset Investasi
   if (data.investment) {
@@ -100,24 +111,38 @@ function renderDashboardUI(data) {
     if (document.getElementById('dashInvSaham')) document.getElementById('dashInvSaham').innerText = formatRupiah(data.investment.saham);
   }
 
-  // 4. Cash Flow Ringkasan
+  // 4. Cash Flow Ringkasan & Net Calculation
   if (data.cashflow) {
+    var nominalPemasukan = 0;
+    var nominalHutang = 0;
+    var nominalInvestasi = 0;
+    var nominalTotalBiaya = Number(data.cashflow.totalBiaya) || 0;
+
     if (data.cashflow.pemasukan) {
-      if (document.getElementById('dashPemasukan')) document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan.nominal);
+      nominalPemasukan = Number(data.cashflow.pemasukan.nominal) || 0;
+      if (document.getElementById('dashPemasukan')) document.getElementById('dashPemasukan').innerText = formatRupiah(nominalPemasukan);
       if (document.getElementById('dashPemasukanPct')) document.getElementById('dashPemasukanPct').innerText = Math.round((data.cashflow.pemasukan.pct || 0) * 100) + '%';
     }
 
     if (data.cashflow.hutang) {
-      if (document.getElementById('dashHutang')) document.getElementById('dashHutang').innerText = formatRupiah(data.cashflow.hutang.nominal);
+      nominalHutang = Number(data.cashflow.hutang.nominal) || 0;
+      if (document.getElementById('dashHutang')) document.getElementById('dashHutang').innerText = formatRupiah(nominalHutang);
       if (document.getElementById('dashHutangPct')) document.getElementById('dashHutangPct').innerText = Math.round((data.cashflow.hutang.pct || 0) * 100) + '%';
     }
 
     if (data.cashflow.investasiBulan) {
-      if (document.getElementById('dashInvestasiBulan')) document.getElementById('dashInvestasiBulan').innerText = formatRupiah(data.cashflow.investasiBulan.nominal);
+      nominalInvestasi = Number(data.cashflow.investasiBulan.nominal) || 0;
+      if (document.getElementById('dashInvestasiBulan')) document.getElementById('dashInvestasiBulan').innerText = formatRupiah(nominalInvestasi);
       if (document.getElementById('dashInvestasiBulanPct')) document.getElementById('dashInvestasiBulanPct').innerText = Math.round((data.cashflow.investasiBulan.pct || 0) * 100) + '%';
     }
 
-    if (document.getElementById('dashTotalBiaya')) document.getElementById('dashTotalBiaya').innerText = formatRupiah(data.cashflow.totalBiaya);
+    if (document.getElementById('dashTotalBiaya')) document.getElementById('dashTotalBiaya').innerText = formatRupiah(nominalTotalBiaya);
+
+    // Hitung TOTAL CASH FLOW BULAN INI (Net)
+    // Rumus: PEMASUKAN - HUTANG/CICILAN - INVESTASI BULANAN - TOTAL BIAYA
+    var netCashFlow = nominalPemasukan - nominalHutang - nominalInvestasi - nominalTotalBiaya;
+    const netCashFlowEl = document.getElementById('dashTotalCashFlowNet');
+    if (netCashFlowEl) netCashFlowEl.innerText = formatRupiah(netCashFlow);
 
     const b = data.cashflow.biayaDetail;
     if (b) {
