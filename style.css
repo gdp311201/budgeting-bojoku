@@ -216,7 +216,6 @@ select option[disabled] {
   pointer-events: none;
 }
 
-/* Bubble besar di pojok kanan atas */
 .asset-bubble-lg {
   width: 170px;
   height: 170px;
@@ -225,7 +224,6 @@ select option[disabled] {
   background: rgba(255, 255, 255, 0.13);
 }
 
-/* Bubble sedang di pojok kiri bawah */
 .asset-bubble-md {
   width: 84px;
   height: 84px;
@@ -234,7 +232,6 @@ select option[disabled] {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Bubble kecil yang melayang pelan */
 .asset-bubble-sm {
   width: 26px;
   height: 26px;
@@ -244,7 +241,6 @@ select option[disabled] {
   animation: bubbleFloat 4.5s ease-in-out infinite;
 }
 
-/* Ring putus-putus besar */
 .asset-ring-lg {
   width: 120px;
   height: 120px;
@@ -253,7 +249,6 @@ select option[disabled] {
   border: 1.5px dashed rgba(255, 255, 255, 0.28);
 }
 
-/* Ring kecil yang melayang */
 .asset-ring-sm {
   width: 44px;
   height: 44px;
@@ -263,7 +258,6 @@ select option[disabled] {
   animation: bubbleFloat 5.5s ease-in-out infinite reverse;
 }
 
-/* Titik kecil berkilau */
 .asset-spark {
   width: 8px;
   height: 8px;
@@ -307,26 +301,49 @@ select option[disabled] {
 }
 
 /* =========================================================
-   TRANSISI ANTAR MODUL + DUKUNGAN SWIPE
+   TRANSISI CAROUSEL GAYA INSTAGRAM (SWIPE ANTAR HALAMAN)
+   - pagesViewport = "panggung" halaman; saat transisi diaktifkan,
+     overflow dikunci (pages-clip) supaya halaman yang meluncur
+     terpotong rapi di dalam kartu.
+   - app-module: scroll vertikal tetap native (pan-y),
+     gerakan horizontal ditangani JavaScript.
    ========================================================= */
 
-.app-module {
-  /* Scroll vertikal tetap lancar, gerakan horizontal ditangani JS */
+#pagesViewport {
+  position: relative;
+}
+
+.pages-clip {
+  overflow: hidden;
+}
+
+#appShell {
   touch-action: pan-y;
 }
 
+.app-module {
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.app-module input,
+.app-module textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Fallback animasi entrance (kalau transisi slide tak tersedia) */
 @keyframes moduleInUp {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Masuk dari kanan (swipe kiri / menu berikutnya) */
 @keyframes moduleInNext {
   from { opacity: 0; transform: translateX(46px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
-/* Masuk dari kiri (swipe kanan / menu sebelumnya) */
 @keyframes moduleInPrev {
   from { opacity: 0; transform: translateX(-46px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -345,9 +362,9 @@ select option[disabled] {
 }
 
 /* =========================================================
-   NAVBAR FLOATING — STYLE FINTECH ELEGANT
-   Bar putih frosted semi-transparan; tiap menu punya kotak icon
-   sendiri, aktif = kotak gradient pink terangkat + label bold.
+   NAVBAR FLOATING — TRANSPARENT GLASS (DYNAMIC ISLAND VIBE)
+   Bar tipis semi-transparan + glider pink yang meluncur
+   mengikuti halaman aktif / progres swipe.
    ========================================================= */
 
 .nav-bar {
@@ -359,16 +376,17 @@ select option[disabled] {
   max-width: 26rem;
   z-index: 40;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 0.35rem);
-  padding: 0.5rem 0.75rem 0.4rem;
+  padding: 0.5rem 0.7rem 0.35rem;
   border-radius: 1.75rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 243, 247, 0.84) 100%);
-  -webkit-backdrop-filter: blur(18px) saturate(1.6);
-  backdrop-filter: blur(18px) saturate(1.6);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  /* Lebih transparan ala Dynamic Island — background app tembus */
+  background: rgba(255, 247, 250, 0.34);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8);
+  backdrop-filter: blur(24px) saturate(1.8);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow:
-    0 16px 38px -12px rgba(131, 24, 67, 0.35),
-    0 4px 12px -6px rgba(131, 24, 67, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    0 16px 38px -14px rgba(131, 24, 67, 0.38),
+    0 4px 14px -8px rgba(131, 24, 67, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
   transition: opacity 0.25s ease, transform 0.25s ease;
   animation: navBarIn 0.55s cubic-bezier(0.32, 1.28, 0.44, 1) 0.1s backwards;
 }
@@ -385,10 +403,40 @@ select option[disabled] {
   pointer-events: none;
 }
 
+/* --- Glider: bubble pink yang meluncur ke menu aktif --- */
+#navTrack {
+  position: relative;
+}
+
+.nav-glider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, #f472b6 0%, #ec4899 55%, #db2777 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 10px 22px -8px rgba(219, 39, 119, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition: transform 0.42s cubic-bezier(0.34, 1.3, 0.5, 1);
+  will-change: transform;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+}
+
+.nav-glider-ready {
+  opacity: 1;
+}
+
+/* --- Tombol menu --- */
 .nav-btn {
+  position: relative;
+  z-index: 1;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  color: rgba(122, 92, 107, 0.65);
 }
 
 .nav-btn:focus-visible {
@@ -397,7 +445,8 @@ select option[disabled] {
   border-radius: 1rem;
 }
 
-/* Kotak icon tiap menu */
+/* Kotak icon: chip frosted saat biasa, transparan saat aktif
+   (pink-nya disuplai glider yang berada di belakangnya) */
 .nav-icon-box {
   display: flex;
   align-items: center;
@@ -406,26 +455,21 @@ select option[disabled] {
   height: 2.6rem;
   margin-bottom: 0.3rem;
   border-radius: 1rem;
-  background: rgba(236, 72, 153, 0.08);
-  border: 1px solid rgba(236, 72, 153, 0.14);
-  color: rgba(157, 23, 77, 0.55);
-  transition: all 0.3s cubic-bezier(0.34, 1.4, 0.5, 1);
+  background: rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: rgba(124, 45, 78, 0.62);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 .nav-btn:not(.active):active .nav-icon-box {
   transform: scale(0.88);
-  background: rgba(236, 72, 153, 0.16);
+  background: rgba(255, 255, 255, 0.5);
 }
 
-/* Menu aktif: kotak gradient pink terangkat */
 .nav-btn.active .nav-icon-box {
-  background: linear-gradient(135deg, #f472b6 0%, #ec4899 55%, #db2777 100%);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: transparent;
+  border-color: transparent;
   color: #ffffff;
-  box-shadow:
-    0 10px 20px -8px rgba(219, 39, 119, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transform: translateY(-3px);
 }
 
 .nav-btn.active .nav-icon-box svg {
@@ -437,12 +481,12 @@ select option[disabled] {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: rgba(122, 92, 107, 0.6);
+  color: rgba(110, 64, 86, 0.62);
   transition: color 0.2s ease;
 }
 
 .nav-btn.active .nav-label {
-  color: #be185d;
+  color: #9d174d;
   font-weight: 800;
 }
 
