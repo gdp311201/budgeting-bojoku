@@ -85,8 +85,6 @@ input, select, textarea {
 
 /* =========================================================
    FIELD TANGGAL — KALENDER ONLY (TANPA KEYBOARD)
-   Input dikunci readonly + inputmode none via HTML & script.js,
-   CSS ini memastikan ukurannya tetap sama dengan field lain.
    ========================================================= */
 #tanggal,
 input.flatpickr-input {
@@ -176,8 +174,6 @@ select option[disabled] {
 
 /* =========================================================
    LIVE CLOCK (TIMESTAMP JAM, HARI & TANGGAL REAL-TIME)
-   Dipakai di: footer bawah & e-receipt.
-   Contoh output: 19:12:54 WIB | Selasa, 27 Agustus 2026
    ========================================================= */
 
 .live-clock {
@@ -206,6 +202,79 @@ select option[disabled] {
   0%   { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.5); }
   70%  { box-shadow: 0 0 0 7px rgba(236, 72, 153, 0); }
   100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+}
+
+/* =========================================================
+   KARTU TOTAL ASET BERSIH — DEKORASI LINGKARAN ELEGAN
+   ========================================================= */
+
+.asset-bubble,
+.asset-ring,
+.asset-spark {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+/* Bubble besar di pojok kanan atas */
+.asset-bubble-lg {
+  width: 170px;
+  height: 170px;
+  top: -65px;
+  right: -45px;
+  background: rgba(255, 255, 255, 0.13);
+}
+
+/* Bubble sedang di pojok kiri bawah */
+.asset-bubble-md {
+  width: 84px;
+  height: 84px;
+  bottom: -34px;
+  left: -26px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Bubble kecil yang melayang pelan */
+.asset-bubble-sm {
+  width: 26px;
+  height: 26px;
+  bottom: 20px;
+  right: 64px;
+  background: rgba(255, 255, 255, 0.22);
+  animation: bubbleFloat 4.5s ease-in-out infinite;
+}
+
+/* Ring putus-putus besar */
+.asset-ring-lg {
+  width: 120px;
+  height: 120px;
+  bottom: -50px;
+  right: 28px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.28);
+}
+
+/* Ring kecil yang melayang */
+.asset-ring-sm {
+  width: 44px;
+  height: 44px;
+  top: 16px;
+  left: 58%;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  animation: bubbleFloat 5.5s ease-in-out infinite reverse;
+}
+
+/* Titik kecil berkilau */
+.asset-spark {
+  width: 8px;
+  height: 8px;
+  top: 40px;
+  right: 120px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+@keyframes bubbleFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
 }
 
 /* Animations */
@@ -238,128 +307,148 @@ select option[disabled] {
 }
 
 /* =========================================================
-   TRANSISI DINAMIS ANTAR MODUL
+   TRANSISI ANTAR MODUL + DUKUNGAN SWIPE
    ========================================================= */
 
-@keyframes moduleIn {
+.app-module {
+  /* Scroll vertikal tetap lancar, gerakan horizontal ditangani JS */
+  touch-action: pan-y;
+}
+
+@keyframes moduleInUp {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Masuk dari kanan (swipe kiri / menu berikutnya) */
+@keyframes moduleInNext {
+  from { opacity: 0; transform: translateX(46px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Masuk dari kiri (swipe kanan / menu sebelumnya) */
+@keyframes moduleInPrev {
+  from { opacity: 0; transform: translateX(-46px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 .module-anim {
-  animation: moduleIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: moduleInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.module-anim-next {
+  animation: moduleInNext 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.module-anim-prev {
+  animation: moduleInPrev 0.38s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* =========================================================
-   NAVBAR FLOATING BUBBLE — GAYA DYNAMIC ISLAND
-   Pill mengambang semi-transparan (frosted glass) dengan
-   sliding pill indicator BESAR + icon pop, senada tone pink app.
+   NAVBAR FLOATING — STYLE FINTECH ELEGANT
+   Bar putih frosted semi-transparan; tiap menu punya kotak icon
+   sendiri, aktif = kotak gradient pink terangkat + label bold.
    ========================================================= */
 
-.nav-island {
+.nav-bar {
   position: fixed;
-  left: 1rem;
-  right: 1rem;
+  left: 0.75rem;
+  right: 0.75rem;
   margin-left: auto;
   margin-right: auto;
-  max-width: 28rem; /* selaras dengan lebar kartu utama (max-w-md) */
+  max-width: 26rem;
   z-index: 40;
-  /* Nempel dasar layar (jarak cuma ~5px dari safe-area / home indicator) */
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 0.3rem);
-  padding: 0.375rem;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 240, 246, 0.46) 100%);
-  -webkit-backdrop-filter: blur(20px) saturate(1.7);
-  backdrop-filter: blur(20px) saturate(1.7);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 0.35rem);
+  padding: 0.5rem 0.75rem 0.4rem;
+  border-radius: 1.75rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 243, 247, 0.84) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  backdrop-filter: blur(18px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   box-shadow:
-    0 14px 36px -10px rgba(131, 24, 67, 0.32),
-    0 4px 14px -6px rgba(131, 24, 67, 0.14),
+    0 16px 38px -12px rgba(131, 24, 67, 0.35),
+    0 4px 12px -6px rgba(131, 24, 67, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.95);
   transition: opacity 0.25s ease, transform 0.25s ease;
-  animation: islandIn 0.6s cubic-bezier(0.32, 1.28, 0.44, 1) 0.15s backwards;
+  animation: navBarIn 0.55s cubic-bezier(0.32, 1.28, 0.44, 1) 0.1s backwards;
 }
 
-/* Entrance ala Dynamic Island (translateY saja, biar pengukuran
-   posisi sliding indicator gak terdistorsi oleh transform) */
-@keyframes islandIn {
-  from { transform: translateY(26px); opacity: 0; }
+@keyframes navBarIn {
+  from { transform: translateY(24px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
 }
 
-/* Island menyapa: sembunyi saat keyboard virtual aktif */
-.nav-island-hidden {
+/* Bar menyapa: sembunyi saat keyboard virtual aktif */
+.nav-bar-hidden {
   opacity: 0;
-  transform: translateY(24px) scale(0.94);
-  pointer-events: none;
-}
-
-/* Pill gradient BESAR yang meluncur mengikuti tab aktif.
-   Ukurannya hampir sepenuhnya menutupi tombol (top/bottom 3px),
-   jadi dijamin TIDAK memotong icon & label menu. */
-.nav-indicator {
-  position: absolute;
-  top: 3px;
-  bottom: 3px;
-  left: 0;
-  width: 76px;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, rgba(251, 113, 133, 0.3), rgba(236, 72, 153, 0.36));
-  border: 1px solid rgba(236, 72, 153, 0.4);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    0 6px 16px -8px rgba(190, 24, 93, 0.5);
-  transform: translateX(8px);
-  transition:
-    transform 0.5s cubic-bezier(0.34, 1.25, 0.5, 1),
-    width 0.5s cubic-bezier(0.34, 1.25, 0.5, 1);
-  will-change: transform, width;
+  transform: translateY(20px);
   pointer-events: none;
 }
 
 .nav-btn {
-  position: relative;
-  z-index: 1;
-  color: rgba(122, 92, 107, 0.6);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  transition: color 0.25s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.nav-btn:not(.active):hover {
-  color: rgba(157, 23, 77, 0.85);
+  color: rgba(122, 92, 107, 0.65);
 }
 
 .nav-btn:focus-visible {
   outline: 2px solid rgba(236, 72, 153, 0.5);
   outline-offset: 2px;
+  border-radius: 1rem;
 }
 
-.nav-btn:active {
-  transform: scale(0.9);
+/* Kotak icon tiap menu */
+.nav-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  margin-bottom: 0.3rem;
+  border-radius: 1rem;
+  background: rgba(236, 72, 153, 0.08);
+  border: 1px solid rgba(236, 72, 153, 0.14);
+  color: rgba(157, 23, 77, 0.55);
+  transition: all 0.3s cubic-bezier(0.34, 1.4, 0.5, 1);
 }
 
-.nav-btn svg {
-  transition: stroke-width 0.25s ease;
+.nav-btn:not(.active):active .nav-icon-box {
+  transform: scale(0.88);
+  background: rgba(236, 72, 153, 0.16);
 }
 
-.nav-btn.active {
-  color: #be185d;
+/* Menu aktif: kotak gradient pink terangkat */
+.nav-btn.active .nav-icon-box {
+  background: linear-gradient(135deg, #f472b6 0%, #ec4899 55%, #db2777 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  box-shadow:
+    0 10px 20px -8px rgba(219, 39, 119, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px);
+}
+
+.nav-btn.active .nav-icon-box svg {
+  stroke-width: 2.3;
+  animation: navIconPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: rgba(122, 92, 107, 0.6);
+  transition: color 0.2s ease;
 }
 
 .nav-btn.active .nav-label {
+  color: #be185d;
   font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-.nav-btn.active svg {
-  stroke-width: 2.4;
-  animation: navIconPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 @keyframes navIconPop {
-  0%   { transform: scale(1) translateY(0); }
-  45%  { transform: scale(1.25) translateY(-2px); }
-  75%  { transform: scale(0.94) translateY(0); }
-  100% { transform: scale(1.05) translateY(-1px); }
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.22); }
+  75%  { transform: scale(0.94); }
+  100% { transform: scale(1); }
 }
