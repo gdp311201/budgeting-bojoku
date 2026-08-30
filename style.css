@@ -3,7 +3,6 @@
    ========================================================= */
 
 html, body {
-  /* Mengunci touch action & mencegah pinch/double-tap zoom secara global */
   touch-action: manipulation;
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
@@ -19,8 +18,7 @@ body {
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
 }
 
-/* Wajib font-size minimal 16px pada seluruh elemen input & select */
-/* Mencegah iOS Safari otomatis melakukan 'zoom-in' saat input/select diklik */
+/* Cegah iOS auto zoom saat input diklik */
 input, select, textarea {
   font-size: 16px !important;
 }
@@ -58,13 +56,11 @@ input, select, textarea {
   backdrop-filter: blur(4px);
 }
 
-/* Aksesibilitas & Akseptabilitas Warna Kas & Bank */
 .glass-kasbank {
   background: rgba(236, 253, 245, 0.6);
   border: 1px solid rgba(167, 243, 208, 0.7);
 }
 
-/* Aksesibilitas & Akseptabilitas Warna Aset Investasi */
 .glass-investasi {
   background: rgba(238, 242, 255, 0.6);
   border: 1px solid rgba(199, 210, 254, 0.7);
@@ -98,7 +94,6 @@ input.flatpickr-input {
   cursor: pointer;
 }
 
-/* Fallback apabila device tetap memakai native date input */
 input[type="date"]#tanggal {
   -webkit-appearance: none;
   appearance: none;
@@ -113,7 +108,7 @@ input[type="date"]#tanggal::-webkit-calendar-picker-indicator {
 }
 
 /* =========================================================
-   PENYESUAIAN DROPDOWN & PLACEHOLDER MULTI-SELECT
+   DROPDOWN & PLACEHOLDER MULTI-SELECT
    ========================================================= */
 
 .select-compact {
@@ -147,7 +142,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   PERBAIKAN TAMPILAN MUTASI (KATEGORI SEJAJAR TANGGAL)
+   TAMPILAN MUTASI (KATEGORI SEJAJAR TANGGAL)
    ========================================================= */
 
 .mutasi-header-row {
@@ -173,7 +168,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   LIVE CLOCK (TIMESTAMP JAM, HARI & TANGGAL REAL-TIME)
+   LIVE CLOCK
    ========================================================= */
 
 .live-clock {
@@ -205,7 +200,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   KARTU TOTAL ASET BERSIH — DEKORASI LINGKARAN ELEGAN
+   KARTU TOTAL ASET BERSIH — DEKORASI LINGKARAN
    ========================================================= */
 
 .asset-bubble,
@@ -271,7 +266,10 @@ select option[disabled] {
   50%      { transform: translateY(-7px); }
 }
 
-/* Animations */
+/* =========================================================
+   ANIMASI DASAR
+   ========================================================= */
+
 @keyframes popIn {
   0% { transform: scale(0.85); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
@@ -301,12 +299,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   TRANSISI CAROUSEL GAYA INSTAGRAM (SWIPE ANTAR HALAMAN)
-   - pagesViewport = "panggung" halaman; saat transisi diaktifkan,
-     overflow dikunci (pages-clip) supaya halaman yang meluncur
-     terpotong rapi di dalam kartu.
-   - app-module: scroll vertikal tetap native (pan-y),
-     gerakan horizontal ditangani JavaScript.
+   CAROUSEL HALAMAN (SWIPE GAYA INSTAGRAM)
    ========================================================= */
 
 #pagesViewport {
@@ -333,12 +326,6 @@ select option[disabled] {
   user-select: text;
 }
 
-/* Fallback animasi entrance (kalau transisi slide tak tersedia) */
-@keyframes moduleInUp {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes moduleInNext {
   from { opacity: 0; transform: translateX(46px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -347,10 +334,6 @@ select option[disabled] {
 @keyframes moduleInPrev {
   from { opacity: 0; transform: translateX(-46px); }
   to   { opacity: 1; transform: translateX(0); }
-}
-
-.module-anim {
-  animation: moduleInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .module-anim-next {
@@ -362,9 +345,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   NAVBAR FLOATING — TRANSPARENT GLASS (DYNAMIC ISLAND VIBE)
-   Bar tipis semi-transparan + glider pink yang meluncur
-   mengikuti halaman aktif / progres swipe.
+   NAVBAR FLOATING — TRANSPARENT GLASS + GLIDER PINK
    ========================================================= */
 
 .nav-bar {
@@ -378,7 +359,6 @@ select option[disabled] {
   bottom: calc(env(safe-area-inset-bottom, 0px) + 0.35rem);
   padding: 0.5rem 0.7rem 0.35rem;
   border-radius: 1.75rem;
-  /* Lebih transparan ala Dynamic Island — background app tembus */
   background: rgba(255, 247, 250, 0.34);
   -webkit-backdrop-filter: blur(24px) saturate(1.8);
   backdrop-filter: blur(24px) saturate(1.8);
@@ -396,14 +376,12 @@ select option[disabled] {
   to   { transform: translateY(0); opacity: 1; }
 }
 
-/* Bar menyapa: sembunyi saat keyboard virtual aktif */
 .nav-bar-hidden {
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
 }
 
-/* --- Glider: bubble pink yang meluncur ke menu aktif --- */
 #navTrack {
   position: relative;
 }
@@ -431,7 +409,6 @@ select option[disabled] {
   opacity: 1;
 }
 
-/* --- Tombol menu --- */
 .nav-btn {
   position: relative;
   z-index: 1;
@@ -445,8 +422,6 @@ select option[disabled] {
   border-radius: 1rem;
 }
 
-/* Kotak icon: chip frosted saat biasa, transparan saat aktif
-   (pink-nya disuplai glider yang berada di belakangnya) */
 .nav-icon-box {
   display: flex;
   align-items: center;
@@ -495,4 +470,27 @@ select option[disabled] {
   45%  { transform: scale(1.22); }
   75%  { transform: scale(0.94); }
   100% { transform: scale(1); }
+}
+
+/* =========================================================
+   DEBUG TOAST (muncul hanya kalau ada error)
+   ========================================================= */
+
+#debugToast {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  max-width: 90vw;
+  background: rgba(159, 18, 57, 0.94);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: monospace;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 8px 24px -8px rgba(159, 18, 57, 0.6);
+  display: none;
+  cursor: pointer;
 }
