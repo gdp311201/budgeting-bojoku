@@ -8,7 +8,7 @@
  */
 
 // Ganti URL ini dengan Apps Script Web App Deployment URL Anda
-const GAS_SEARCH_URL = "https://script.google.com/macros/s/AKfycbwYOUR_SCRIPT_ID_HERE/exec";
+const GAS_SEARCH_URL = "https://script.google.com/macros/s/AKfycbyvMao5Rq59c5qG5UuA1VfYN8ifTZGJYHDdoT_OqQASMWhkAgLJsKdGbCa79ygUOZtj1g/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
   initSearchModule();
