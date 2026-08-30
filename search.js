@@ -1,81 +1,189 @@
-<!-- MODUL 5: PENCARIAN BIAYA -->
-    <div id="viewSearch" class="app-module hidden transition-all duration-300 space-y-3.5">
-      <div class="flex items-center justify-between pb-2 border-b border-pink-200/50">
-        <div>
-          <h1 class="text-base font-bold text-pink-950/80 tracking-wide">PENCARIAN BIAYA</h1>
-          <p class="text-[11px] text-pink-800/60 font-medium">Cari & filter histori riwayat pengeluaran</p>
-        </div>
-        <button id="btnRefreshSearch" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-pink-100/80 text-pink-800 border border-pink-200 shadow-sm hover:bg-pink-200 transition">
-          🔄 Refresh
-        </button>
+/**
+ * =========================================================================
+ * search.js — MODUL PENCARIAN TRANSACTION HISTORY
+ * =========================================================================
+ * Menangani komunikasi AJAX dari web ke Apps Script getSearchData
+ * serta merender list transaksi, ringkasan nominal, dan status filter.
+ * =========================================================================
+ */
+
+// Ganti URL ini dengan Apps Script Web App Deployment URL Anda
+const GAS_SEARCH_URL = "https://script.google.com/macros/s/AKfycbwYOUR_SCRIPT_ID_HERE/exec";
+
+document.addEventListener("DOMContentLoaded", () => {
+  initSearchModule();
+});
+
+export function initSearchModule() {
+  const btnRefreshSearch = document.getElementById("btnRefreshSearch");
+  const searchKeyword = document.getElementById("searchKeyword");
+  const searchBulan = document.getElementById("searchBulan");
+  const searchTahun = document.getElementById("searchTahun");
+  const searchSort = document.getElementById("searchSort");
+
+  // Event Listener: Klik Refresh
+  if (btnRefreshSearch) {
+    btnRefreshSearch.addEventListener("click", () => {
+      fetchAndRenderSearchData();
+    });
+  }
+
+  // Event Listener: Realtime input/filter
+  let debounceTimer;
+  if (searchKeyword) {
+    searchKeyword.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        fetchAndRenderSearchData();
+      }, 400); // Penundaan 400ms agar hemat API Call
+    });
+  }
+
+  if (searchBulan) searchBulan.addEventListener("change", fetchAndRenderSearchData);
+  if (searchTahun) searchTahun.addEventListener("change", fetchAndRenderSearchData);
+  if (searchSort) searchSort.addEventListener("change", fetchAndRenderSearchData);
+
+  // Auto Load pertama kali saat dibuka
+  fetchAndRenderSearchData();
+}
+
+/**
+ * Mengambil data dari Apps Script Web App
+ */
+export async function fetchAndRenderSearchData() {
+  const searchListContainer = document.getElementById("searchListContainer");
+  const searchTotalCount = document.getElementById("searchTotalCount");
+  const searchTotalNominal = document.getElementById("searchTotalNominal");
+
+  const bulan = document.getElementById("searchBulan")?.value || "ALL";
+  const tahun = document.getElementById("searchTahun")?.value || "2026";
+  const keyword = document.getElementById("searchKeyword")?.value || "";
+  const sort = document.getElementById("searchSort")?.value || "DESC";
+
+  if (searchListContainer) {
+    searchListContainer.innerHTML = `
+      <div class="text-center py-8">
+        <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-pink-500 mb-2"></div>
+        <p class="text-xs text-pink-800/60 font-medium">Memuat data pencarian...</p>
       </div>
+    `;
+  }
 
-      <!-- FILTER BOX -->
-      <div class="glass-mini rounded-2xl p-3 border border-pink-200/60 shadow-sm space-y-2">
-        <div class="relative">
-          <input 
-            type="text" 
-            id="searchKeyword" 
-            placeholder="Cari transaksi, ketik 'seabank', 'makan', dll..." 
-            class="w-full custom-input rounded-xl pl-8 pr-3 py-2 text-xs font-medium"
-          >
-          <span class="absolute left-2.5 top-2.5 text-xs text-pink-400">🔍</span>
+  try {
+    const url = new URL(GAS_SEARCH_URL);
+    url.searchParams.append("action", "getSearchData");
+    url.searchParams.append("bulan", bulan);
+    url.searchParams.append("tahun", tahun);
+    url.searchParams.append("keyword", keyword);
+    url.searchParams.append("sort", sort);
+
+    const response = await fetch(url.toString(), { method: "GET" });
+    const res = await response.json();
+
+    if (res.status === "success") {
+      renderSearchResults(res);
+    } else {
+      if (searchListContainer) {
+        searchListContainer.innerHTML = `
+          <p class="text-center text-xs text-rose-600 py-6 font-semibold">
+            ⚠️ Gagal memuat: ${res.message || "Terjadi kesalahan"}
+          </p>
+        `;
+      }
+    }
+  } catch (error) {
+    console.error("Fetch Search Error:", error);
+    if (searchListContainer) {
+      searchListContainer.innerHTML = `
+        <p class="text-center text-xs text-rose-600 py-6 font-semibold">
+          ❌ Koneksi Terputus / Script URL Belum Sesuai
+        </p>
+      `;
+    }
+  }
+}
+
+/**
+ * Merender daftar item ke dalam HTML
+ */
+function renderSearchResults(data) {
+  const searchListContainer = document.getElementById("searchListContainer");
+  const searchTotalCount = document.getElementById("searchTotalCount");
+  const searchTotalNominal = document.getElementById("searchTotalNominal");
+
+  const transactions = data.transactions || [];
+
+  // 1. Update Ringkasan Stat
+  if (searchTotalCount) {
+    searchTotalCount.innerText = `${data.totalCount || 0} Transaksi`;
+  }
+  if (searchTotalNominal) {
+    const formatRp = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(data.totalNominal || 0);
+    searchTotalNominal.innerText = formatRp;
+  }
+
+  // 2. Render List jika Kosong
+  if (transactions.length === 0) {
+    if (searchListContainer) {
+      searchListContainer.innerHTML = `
+        <div class="text-center py-8">
+          <span class="text-2xl block mb-1">🔍</span>
+          <p class="text-xs font-semibold text-pink-900/70">Tidak Ada Transaksi Ditemukan</p>
+          <p class="text-[10px] text-pink-800/50 mt-0.5">Coba ubah kata kunci atau filter Bulan/Tahun</p>
         </div>
+      `;
+    }
+    return;
+  }
 
-        <div class="grid grid-cols-3 gap-1.5">
-          <div>
-            <label class="block text-[9px] font-bold uppercase text-pink-900/70 mb-0.5">Bulan</label>
-            <select id="searchBulan" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold text-xs">
-              <option value="ALL" selected>SEMUA</option>
-              <option value="JANUARI">JANUARI</option>
-              <option value="FEBRUARI">FEBRUARI</option>
-              <option value="MARET">MARET</option>
-              <option value="APRIL">APRIL</option>
-              <option value="MEI">MEI</option>
-              <option value="JUNI">JUNI</option>
-              <option value="JULI">JULI</option>
-              <option value="AGUSTUS">AGUSTUS</option>
-              <option value="SEPTEMBER">SEPTEMBER</option>
-              <option value="OKTOBER">OKTOBER</option>
-              <option value="NOVEMBER">NOVEMBER</option>
-              <option value="DESEMBER">DESEMBER</option>
-            </select>
+  // 3. Render Daftar Transaksi
+  let html = "";
+  transactions.forEach((tx) => {
+    const isIncome = tx.kategori.includes("PEMASUKAN");
+    const isPindah = tx.kategori.includes("PINDAH DANA");
+    
+    let badgeColor = "bg-rose-100 text-rose-800 border-rose-200/80";
+    let sign = "-";
+
+    if (isIncome) {
+      badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200/80";
+      sign = "+";
+    } else if (isPindah) {
+      badgeColor = "bg-blue-100 text-blue-800 border-blue-200/80";
+      sign = "⇄";
+    }
+
+    const nominalFormatted = new Intl.NumberFormat("id-ID").format(tx.nominal);
+
+    html += `
+      <div class="glass-card p-2.5 rounded-xl border border-white/80 shadow-sm flex items-center justify-between hover:bg-white/90 transition">
+        <div class="flex flex-col gap-0.5 max-w-[65%]">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md border ${badgeColor}">
+              ${tx.kategori}
+            </span>
+            <span class="text-[10px] font-bold text-pink-950/80 truncate">
+              ${tx.subKategori}
+            </span>
           </div>
-          <div>
-            <label class="block text-[9px] font-bold uppercase text-pink-900/70 mb-0.5">Tahun</label>
-            <select id="searchTahun" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold text-xs">
-              <option value="2026" selected>2026</option>
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
-              <option value="ALL">SEMUA</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[9px] font-bold uppercase text-pink-900/70 mb-0.5">Urutan</label>
-            <select id="searchSort" class="w-full custom-input select-compact rounded-xl py-1.5 font-semibold text-xs">
-              <option value="DESC" selected>Terbaru</option>
-              <option value="ASC">Terlama</option>
-            </select>
+          <div class="flex items-center gap-2 text-[10px] text-pink-900/60 font-medium">
+            <span>📅 ${tx.tgl}</span>
+            <span>•</span>
+            <span>🏦 ${tx.akun}</span>
           </div>
         </div>
-      </div>
 
-      <!-- STAT REKAP RINGKAS HASIL CARI -->
-      <div class="grid grid-cols-2 gap-2">
-        <div class="bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-300/60 p-2.5 rounded-2xl text-center">
-          <span class="text-[9px] font-bold text-pink-900/70 uppercase block">Total Transaksi</span>
-          <span id="searchTotalCount" class="text-sm font-extrabold text-pink-950 block mt-0.5">0 Transaksi</span>
-        </div>
-        <div class="bg-gradient-to-br from-rose-500/10 to-pink-500/10 border border-rose-300/60 p-2.5 rounded-2xl text-center">
-          <span class="text-[9px] font-bold text-rose-900/70 uppercase block">Total Nominal</span>
-          <span id="searchTotalNominal" class="text-sm font-extrabold text-rose-950 block mt-0.5">Rp 0</span>
+        <div class="text-right">
+          <span class="text-xs font-black ${isIncome ? 'text-emerald-700' : isPindah ? 'text-blue-700' : 'text-rose-700'} block">
+            ${sign} Rp ${nominalFormatted}
+          </span>
+          <span class="text-[9px] text-pink-800/40 block">Baris #${tx.rowIndex}</span>
         </div>
       </div>
+    `;
+  });
 
-      <!-- LIST HASIL PENCARIAN -->
-      <div class="glass-mini rounded-2xl p-3 border border-pink-200/60 shadow-sm">
-        <div id="searchListContainer" class="max-h-[380px] overflow-y-auto pr-1 space-y-2">
-          <p class="text-center text-xs text-pink-800/60 py-6">Memuat data pencarian...</p>
-        </div>
-      </div>
-    </div>
+  if (searchListContainer) {
+    searchListContainer.innerHTML = html;
+  }
+}
