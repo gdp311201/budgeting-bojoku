@@ -15,6 +15,7 @@ body {
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
 }
 
+/* Wajib font-size minimal 16px pada seluruh elemen input & select */
 /* Mencegah iOS Safari otomatis melakukan 'zoom-in' saat input/select diklik */
 input, select, textarea {
   font-size: 16px !important;
@@ -49,8 +50,20 @@ input, select, textarea {
 
 .glass-mini {
   background: rgba(255, 255, 255, 0.65);
-  border: none !important; /* Mencegah border pada card mini */
+  border: 1px solid rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(4px);
+}
+
+/* Aksesibilitas & Akseptabilitas Warna Kas & Bank */
+.glass-kasbank {
+  background: rgba(236, 253, 245, 0.6);
+  border: 1px solid rgba(167, 243, 208, 0.7);
+}
+
+/* Aksesibilitas & Akseptabilitas Warna Aset Investasi */
+.glass-investasi {
+  background: rgba(238, 242, 255, 0.6);
+  border: 1px solid rgba(199, 210, 254, 0.7);
 }
 
 .custom-input {
@@ -66,7 +79,10 @@ input, select, textarea {
   box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.2);
 }
 
-/* Dropdown & Scaling */
+/* =========================================================
+   PENYESUAIAN DROPDOWN & PLACEHOLDER MULTI-SELECT
+   ========================================================= */
+
 .select-compact {
   font-size: 16px !important;
   padding-left: 0.35rem !important;
@@ -98,102 +114,9 @@ select option[disabled] {
 }
 
 /* =========================================================
-   STYLE JUDUL SEKSI (Sesuai contoh INPUT TRANSAKSI)
-   ========================================================= */
-.section-title, 
-h2.section-title,
-.title-header {
-  color: #5c2a42 !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.03em !important;
-  font-size: 1.15rem !important;
-  text-transform: uppercase;
-}
-
-/* =========================================================
-   GAYA NOMINAL KAS, BANK, INVESTASI & CASHFLOW
-   Disamakan dengan Rincian Kategori Biaya (Soft & Tidak Tebal)
-   ========================================================= */
-.card-seabank .amount,
-.card-bca .amount,
-.card-mandiri .amount,
-.card-dana .amount,
-.card-cash .amount,
-.card-inv-safety .amount,
-.card-inv-deposito .amount,
-.card-inv-reksadana .amount,
-.card-inv-arisan .amount,
-.card-inv-logam .amount,
-.card-inv-saham .amount,
-.card-mini-amount,
-.card-amount-soft {
-  font-weight: 600 !important; /* Ketebalan sedang yang soft */
-  color: #4a3e47 !important;
-  font-size: 1.05rem;
-}
-
-/* =========================================================
-   PALET WARNA PASTEL KALEM & ELEGAN (TANPA BORDER)
+   PERBAIKAN TAMPILAN MUTASI (KATEGORI SEJAJAR TANGGAL)
    ========================================================= */
 
-/* KAS & BANK */
-.card-seabank {
-  background: rgba(255, 237, 213, 0.65) !important;
-  border: none !important;
-}
-.card-bca {
-  background: rgba(224, 242, 254, 0.65) !important;
-  border: none !important;
-}
-.card-mandiri {
-  background: rgba(224, 231, 255, 0.65) !important;
-  border: none !important;
-}
-.card-dana {
-  background: rgba(207, 250, 254, 0.65) !important;
-  border: none !important;
-}
-.card-cash {
-  background: rgba(209, 250, 229, 0.65) !important;
-  border: none !important;
-}
-
-/* ASET INVESTASI */
-.card-inv-safety {
-  background: rgba(209, 250, 229, 0.6) !important;
-  border: none !important;
-}
-.card-inv-deposito {
-  background: rgba(207, 250, 254, 0.6) !important;
-  border: none !important;
-}
-.card-inv-reksadana {
-  background: rgba(224, 231, 255, 0.6) !important;
-  border: none !important;
-}
-.card-inv-arisan {
-  background: rgba(254, 243, 199, 0.6) !important;
-  border: none !important;
-}
-.card-inv-logam {
-  background: rgba(254, 240, 138, 0.45) !important;
-  border: none !important;
-}
-.card-inv-saham {
-  background: rgba(243, 232, 255, 0.6) !important;
-  border: none !important;
-}
-
-/* CASH FLOW BADGES & CARDS (TANPA BORDER) */
-.card-cashflow-item,
-.badge-total-kas,
-.badge-total-investasi,
-.badge-total-cashflow {
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(70, 60, 80, 0.05) !important;
-}
-
-/* MUTASI CHECKER */
 .mutasi-header-row {
   display: flex !important;
   align-items: center !important;
@@ -245,7 +168,7 @@ h2.section-title,
   animation: shake 0.35s ease-in-out;
 }
 
-/* FLOATING NAV */
+/* FLOATING BOTTOM NAVIGATION BAR */
 .nav-btn {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
