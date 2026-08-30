@@ -7,7 +7,7 @@ export function initDashboard() {
   if (selBulan) selBulan.addEventListener('change', loadDashboardData);
   if (selTahun) selTahun.addEventListener('change', loadDashboardData);
 
-  // Auto load saat pertama kali diinisialisasi
+  // Auto load saat dashboard dibuka
   loadDashboardData();
 }
 
@@ -21,15 +21,21 @@ export async function loadDashboardData() {
   setDashboardLoading(true);
 
   try {
-    const response = await fetch(`${GAS_URL}?action=getDashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`);
+    const fetchUrl = `${GAS_URL}?action=getDashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
+    console.log("Fetching Dashboard URL:", fetchUrl);
+
+    const response = await fetch(fetchUrl);
     const res = await response.json();
+
+    console.log("Response Data Dashboard:", res);
 
     if (res.status === 'success') {
       renderDashboardUI(res);
-    } else if (res.data && res.status === undefined) {
+    } else if (res.data) {
       renderDashboardUI(res.data);
     } else {
-      console.error("Gagal memuat data dashboard:", res.message);
+      console.error("Gagal memuat dashboard:", res.message);
+      alert("Gagal mengambil data dashboard: " + (res.message || "Unknown Error"));
     }
   } catch (err) {
     console.error("Error fetching dashboard data:", err);
@@ -39,7 +45,8 @@ export async function loadDashboardData() {
 }
 
 function formatRupiah(num) {
-  return 'Rp ' + (Number(num) || 0).toLocaleString('id-ID');
+  var val = Number(num) || 0;
+  return 'Rp ' + val.toLocaleString('id-ID');
 }
 
 function renderDashboardUI(data) {
@@ -74,19 +81,19 @@ function renderDashboardUI(data) {
     // Pemasukan
     if (data.cashflow.pemasukan) {
       if (document.getElementById('dashPemasukan')) document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan.nominal);
-      if (document.getElementById('dashPemasukanPct')) document.getElementById('dashPemasukanPct').innerText = Math.round((data.cashflow.pemasukan.pct || data.cashflow.pemasukan.percent || 0) * 100) + '%';
+      if (document.getElementById('dashPemasukanPct')) document.getElementById('dashPemasukanPct').innerText = Math.round((data.cashflow.pemasukan.pct || 0) * 100) + '%';
     }
 
     // Hutang
     if (data.cashflow.hutang) {
       if (document.getElementById('dashHutang')) document.getElementById('dashHutang').innerText = formatRupiah(data.cashflow.hutang.nominal);
-      if (document.getElementById('dashHutangPct')) document.getElementById('dashHutangPct').innerText = Math.round((data.cashflow.hutang.pct || data.cashflow.hutang.percent || 0) * 100) + '%';
+      if (document.getElementById('dashHutangPct')) document.getElementById('dashHutangPct').innerText = Math.round((data.cashflow.hutang.pct || 0) * 100) + '%';
     }
 
     // Investasi Bulanan
     if (data.cashflow.investasiBulan) {
       if (document.getElementById('dashInvestasiBulan')) document.getElementById('dashInvestasiBulan').innerText = formatRupiah(data.cashflow.investasiBulan.nominal);
-      if (document.getElementById('dashInvestasiBulanPct')) document.getElementById('dashInvestasiBulanPct').innerText = Math.round((data.cashflow.investasiBulan.pct || data.cashflow.investasiBulan.percent || 0) * 100) + '%';
+      if (document.getElementById('dashInvestasiBulanPct')) document.getElementById('dashInvestasiBulanPct').innerText = Math.round((data.cashflow.investasiBulan.pct || 0) * 100) + '%';
     }
 
     // Total Biaya
@@ -106,7 +113,6 @@ function renderDashboardUI(data) {
     }
   }
 
-  // 6. Top 5 Pengeluaran Sub-Kategori
   renderTop5Expenses(data.top5Expenses);
 }
 
@@ -116,7 +122,7 @@ function setBiayaItem(nomId, pctId, objData) {
   const pctEl = document.getElementById(pctId);
 
   if (nomEl) nomEl.innerText = formatRupiah(objData.nominal);
-  if (pctEl) pctEl.innerText = Math.round((objData.pct || objData.percent || 0) * 100) + '%';
+  if (pctEl) pctEl.innerText = Math.round((objData.pct || 0) * 100) + '%';
 }
 
 function renderTop5Expenses(items) {
@@ -124,7 +130,7 @@ function renderTop5Expenses(items) {
   if (!container) return;
 
   if (!items || items.length === 0) {
-    container.innerHTML = `<p class="text-xs text-center text-pink-800/60">Tidak ada pengeluaran di bulan ini.</p>`;
+    container.innerHTML = `<p class="text-xs text-center text-pink-800/60">Tidak ada data pengeluaran.</p>`;
     return;
   }
 
@@ -147,7 +153,7 @@ function renderTop5Expenses(items) {
 function setDashboardLoading(isLoading) {
   const container = document.getElementById('viewDashboard');
   if (container) {
-    container.style.opacity = isLoading ? "0.6" : "1";
+    container.style.opacity = isLoading ? "0.5" : "1";
     container.style.pointerEvents = isLoading ? "none" : "auto";
   }
 }
