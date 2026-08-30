@@ -20,16 +20,10 @@ export async function loadDashboardData() {
   setDashboardLoading(true);
 
   try {
-    // Parameter dikirim lewat URL Query String
-    const targetUrl = `${GAS_URL}?action=getDashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
+    const targetUrl = `${GAS_URL}?action=getdashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
 
-    console.log("Fetching Dashboard URL:", targetUrl);
-
-    // FETCH standar tanpa 'mode: cors' (supaya tidak diblokir browser)
     const response = await fetch(targetUrl);
     const res = await response.json();
-
-    console.log("Response Data Dashboard:", res);
 
     if (res.status === 'success') {
       renderDashboardUI(res);
