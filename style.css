@@ -49,7 +49,7 @@ input, select, textarea {
 
 .glass-mini {
   background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: none !important; /* Mencegah border pada card mini */
   backdrop-filter: blur(4px);
 }
 
@@ -97,53 +97,100 @@ select option[disabled] {
   font-style: italic !important;
 }
 
-/* PALET WARNA INTERAKTIF & SOFT PASTEL */
+/* =========================================================
+   STYLE JUDUL SEKSI (Sesuai contoh INPUT TRANSAKSI)
+   ========================================================= */
+.section-title, 
+h2.section-title,
+.title-header {
+  color: #5c2a42 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.03em !important;
+  font-size: 1.15rem !important;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   GAYA NOMINAL KAS, BANK, INVESTASI & CASHFLOW
+   Disamakan dengan Rincian Kategori Biaya (Soft & Tidak Tebal)
+   ========================================================= */
+.card-seabank .amount,
+.card-bca .amount,
+.card-mandiri .amount,
+.card-dana .amount,
+.card-cash .amount,
+.card-inv-safety .amount,
+.card-inv-deposito .amount,
+.card-inv-reksadana .amount,
+.card-inv-arisan .amount,
+.card-inv-logam .amount,
+.card-inv-saham .amount,
+.card-mini-amount,
+.card-amount-soft {
+  font-weight: 600 !important; /* Ketebalan sedang yang soft */
+  color: #4a3e47 !important;
+  font-size: 1.05rem;
+}
+
+/* =========================================================
+   PALET WARNA PASTEL KALEM & ELEGAN (TANPA BORDER)
+   ========================================================= */
+
 /* KAS & BANK */
 .card-seabank {
-  background: linear-gradient(135deg, rgba(255,237,213,0.85) 0%, rgba(254,215,170,0.85) 100%);
-  border: 1px solid rgba(251, 146, 60, 0.4);
+  background: rgba(255, 237, 213, 0.65) !important;
+  border: none !important;
 }
 .card-bca {
-  background: linear-gradient(135deg, rgba(224,242,254,0.85) 0%, rgba(186,230,253,0.85) 100%);
-  border: 1px solid rgba(56, 189, 248, 0.4);
+  background: rgba(224, 242, 254, 0.65) !important;
+  border: none !important;
 }
 .card-mandiri {
-  background: linear-gradient(135deg, rgba(224,231,255,0.85) 0%, rgba(199,210,254,0.85) 100%);
-  border: 1px solid rgba(129, 140, 248, 0.4);
+  background: rgba(224, 231, 255, 0.65) !important;
+  border: none !important;
 }
 .card-dana {
-  background: linear-gradient(135deg, rgba(207,250,254,0.85) 0%, rgba(165,243,252,0.85) 100%);
-  border: 1px solid rgba(34, 211, 238, 0.4);
+  background: rgba(207, 250, 254, 0.65) !important;
+  border: none !important;
 }
 .card-cash {
-  background: linear-gradient(135deg, rgba(209,250,229,0.85) 0%, rgba(167,243,208,0.85) 100%);
-  border: 1px solid rgba(52, 211, 153, 0.4);
+  background: rgba(209, 250, 229, 0.65) !important;
+  border: none !important;
 }
 
 /* ASET INVESTASI */
 .card-inv-safety {
-  background: linear-gradient(135deg, rgba(209,250,229,0.8) 0%, rgba(167,243,208,0.8) 100%);
-  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: rgba(209, 250, 229, 0.6) !important;
+  border: none !important;
 }
 .card-inv-deposito {
-  background: linear-gradient(135deg, rgba(207,250,254,0.8) 0%, rgba(165,243,252,0.8) 100%);
-  border: 1px solid rgba(6, 182, 212, 0.35);
+  background: rgba(207, 250, 254, 0.6) !important;
+  border: none !important;
 }
 .card-inv-reksadana {
-  background: linear-gradient(135deg, rgba(224,231,255,0.8) 0%, rgba(199,210,254,0.8) 100%);
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: rgba(224, 231, 255, 0.6) !important;
+  border: none !important;
 }
 .card-inv-arisan {
-  background: linear-gradient(135deg, rgba(254,243,199,0.8) 0%, rgba(253,230,138,0.8) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  background: rgba(254, 243, 199, 0.6) !important;
+  border: none !important;
 }
 .card-inv-logam {
-  background: linear-gradient(135deg, rgba(254,252,232,0.9) 0%, rgba(254,240,138,0.85) 100%);
-  border: 1px solid rgba(234, 179, 8, 0.4);
+  background: rgba(254, 240, 138, 0.45) !important;
+  border: none !important;
 }
 .card-inv-saham {
-  background: linear-gradient(135deg, rgba(243,232,255,0.8) 0%, rgba(233,213,255,0.8) 100%);
-  border: 1px solid rgba(168, 85, 247, 0.35);
+  background: rgba(243, 232, 255, 0.6) !important;
+  border: none !important;
+}
+
+/* CASH FLOW BADGES & CARDS (TANPA BORDER) */
+.card-cashflow-item,
+.badge-total-kas,
+.badge-total-investasi,
+.badge-total-cashflow {
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(70, 60, 80, 0.05) !important;
 }
 
 /* MUTASI CHECKER */
