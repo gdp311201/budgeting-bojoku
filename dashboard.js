@@ -31,7 +31,7 @@ export async function loadDashboardData() {
     }
   } catch (err) {
     console.error("Error fetching dashboard data:", err);
-  } finally { // <--- SUDAH DIPERBAIKI DARI "font-medium" KE "finally"
+  } finally {
     setDashboardLoading(false);
   }
 }
@@ -41,15 +41,11 @@ function formatRupiah(num) {
 }
 
 function renderDashboardUI(data) {
-  // 1. Total Aset
+  // 1. Total Aset Bersih
   const totalAsetEl = document.getElementById('dashTotalAset');
   if (totalAsetEl) totalAsetEl.innerText = formatRupiah(data.totalAset);
 
-  // 2. Reminder Elephant
-  const reminderEl = document.getElementById('dashReminder');
-  if (reminderEl) reminderEl.innerText = data.reminder || '🌸 Finansial Sehat dan Terjaga!';
-
-  // 3. Bank Balances
+  // 2. Saldo Kas & Bank
   if (data.bank) {
     if (document.getElementById('dashSeabank')) document.getElementById('dashSeabank').innerText = formatRupiah(data.bank.seabank);
     if (document.getElementById('dashBca')) document.getElementById('dashBca').innerText = formatRupiah(data.bank.bca);
@@ -58,35 +54,84 @@ function renderDashboardUI(data) {
     if (document.getElementById('dashCash')) document.getElementById('dashCash').innerText = formatRupiah(data.bank.cash);
   }
 
-  // 4. Cashflow (Pemasukan & Kebutuhan Pokok)
-  if (data.cashflow) {
-    if (document.getElementById('dashPemasukan')) document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan);
-    if (document.getElementById('dashPemasukanPct')) document.getElementById('dashPemasukanPct').innerText = Math.round((data.cashflow.pemasukanPct || 0) * 100) + '%';
-    
-    if (document.getElementById('dashKebutuhan')) document.getElementById('dashKebutuhan').innerText = formatRupiah(data.cashflow.kebutuhanPokok);
-    if (document.getElementById('dashKebutuhanPct')) document.getElementById('dashKebutuhanPct').innerText = Math.round((data.cashflow.kebutuhanPokokPct || 0) * 100) + '%';
+  // 3. Saldo Aset Investasi
+  if (data.investment) {
+    if (document.getElementById('dashTotalInvStatement')) document.getElementById('dashTotalInvStatement').innerText = formatRupiah(data.investment.total);
+    if (document.getElementById('dashInvSafety')) document.getElementById('dashInvSafety').innerText = formatRupiah(data.investment.safetyMoney);
+    if (document.getElementById('dashInvDeposito')) document.getElementById('dashInvDeposito').innerText = formatRupiah(data.investment.deposito);
+    if (document.getElementById('dashInvReksadana')) document.getElementById('dashInvReksadana').innerText = formatRupiah(data.investment.reksadana);
+    if (document.getElementById('dashInvArisan')) document.getElementById('dashInvArisan').innerText = formatRupiah(data.investment.arisan);
+    if (document.getElementById('dashInvLogam')) document.getElementById('dashInvLogam').innerText = formatRupiah(data.investment.logamMulia);
+    if (document.getElementById('dashInvSaham')) document.getElementById('dashInvSaham').innerText = formatRupiah(data.investment.saham);
   }
 
-  // 5. Render Top 5 Sub Kategori
-  const top5Container = document.getElementById('dashTop5Container');
-  if (top5Container) {
-    if (data.topSubCategory && data.topSubCategory.length > 0) {
-      top5Container.innerHTML = data.topSubCategory.map(item => `
-        <div class="flex justify-between items-center border-b border-pink-100/60 pb-1.5 last:border-b-0">
-          <div>
-            <span class="font-bold text-pink-900/50 text-[11px] mr-1">${item.no}.</span>
-            <span class="font-semibold text-pink-950 text-xs">${item.name}</span>
-          </div>
-          <div class="text-right">
-            <span class="font-bold text-pink-950 text-xs block">${formatRupiah(item.total)}</span>
-            <span class="text-[9px] font-bold text-rose-600 block">(${Math.round((item.percent || 0) * 100)}%)</span>
-          </div>
-        </div>
-      `).join('');
-    } else {
-      top5Container.innerHTML = `<p class="text-xs text-center text-pink-800/60 py-2">Tidak ada transaksi pada periode ini.</p>`;
+  // 4. Cash Flow Ringkasan
+  if (data.cashflow) {
+    // Pemasukan
+    if (document.getElementById('dashPemasukan')) document.getElementById('dashPemasukan').innerText = formatRupiah(data.cashflow.pemasukan.nominal);
+    if (document.getElementById('dashPemasukanPct')) document.getElementById('dashPemasukanPct').innerText = Math.round((data.cashflow.pemasukan.pct || 0) * 100) + '%';
+
+    // Hutang
+    if (document.getElementById('dashHutang')) document.getElementById('dashHutang').innerText = formatRupiah(data.cashflow.hutang.nominal);
+    if (document.getElementById('dashHutangPct')) document.getElementById('dashHutangPct').innerText = Math.round((data.cashflow.hutang.pct || 0) * 100) + '%';
+
+    // Investasi Bulanan
+    if (document.getElementById('dashInvestasiBulan')) document.getElementById('dashInvestasiBulan').innerText = formatRupiah(data.cashflow.investasiBulan.nominal);
+    if (document.getElementById('dashInvestasiBulanPct')) document.getElementById('dashInvestasiBulanPct').innerText = Math.round((data.cashflow.investasiBulan.pct || 0) * 100) + '%';
+
+    // Total Biaya
+    if (document.getElementById('dashTotalBiaya')) document.getElementById('dashTotalBiaya').innerText = formatRupiah(data.cashflow.totalBiaya);
+
+    // 5. Detail Kategori Biaya
+    const b = data.cashflow.biayaDetail;
+    if (b) {
+      setBiayaItem('dashKebPokok', 'dashKebPokokPct', b.kebutuhanPokok);
+      setBiayaItem('dashTempatTinggal', 'dashTempatTinggalPct', b.tempatTinggal);
+      setBiayaItem('dashTransportasi', 'dashTransportasiPct', b.transportasi);
+      setBiayaItem('dashKesehatan', 'dashKesehatanPct', b.kesehatan);
+      setBiayaItem('dashPerawatanDiri', 'dashPerawatanDiriPct', b.perawatanDiri);
+      setBiayaItem('dashPengembangan', 'dashPengembanganPct', b.pengembanganDiri);
+      setBiayaItem('dashHiburan', 'dashHiburanPct', b.hiburan);
+      setBiayaItem('dashLainLain', 'dashLainLainPct', b.lainLain);
     }
   }
+
+  // 6. Top 5 Pengeluaran Sub-Kategori
+  renderTop5Expenses(data.top5Expenses);
+}
+
+function setBiayaItem(nomId, pctId, objData) {
+  if (!objData) return;
+  const nomEl = document.getElementById(nomId);
+  const pctEl = document.getElementById(pctId);
+
+  if (nomEl) nomEl.innerText = formatRupiah(objData.nominal);
+  if (pctEl) pctEl.innerText = Math.round((objData.pct || 0) * 100) + '%';
+}
+
+function renderTop5Expenses(items) {
+  const container = document.getElementById('dashTop5Container');
+  if (!container) return;
+
+  if (!items || items.length === 0) {
+    container.innerHTML = `<p class="text-xs text-center text-pink-800/60">Tidak ada pengeluaran di bulan ini.</p>`;
+    return;
+  }
+
+  let html = '';
+  items.forEach((item, idx) => {
+    html += `
+      <div class="flex items-center justify-between border-b border-pink-200/40 pb-1.5 last:border-0 last:pb-0">
+        <div class="flex items-center gap-2">
+          <span class="w-4 h-4 rounded-full bg-pink-200/80 text-pink-900 text-[10px] font-bold flex items-center justify-center">${idx + 1}</span>
+          <span class="text-xs font-semibold text-pink-950">${item.subKategori}</span>
+        </div>
+        <span class="text-xs font-bold text-pink-950">${formatRupiah(item.nominal)}</span>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
 }
 
 function setDashboardLoading(isLoading) {
