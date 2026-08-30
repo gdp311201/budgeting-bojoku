@@ -1,13 +1,70 @@
 import { GAS_URL } from './transaksi.js';
 
+/* =========================================================
+   dashboard.js — MODE MANUAL LOAD
+   - Data HANYA dimuat saat tombol "📊 Tampilkan Dashboard" diklik
+   - Ganti dropdown Bulan/Tahun → hanya muncul hint, TIDAK fetch
+   ========================================================= */
+
+// Filter terakhir yang benar-benar dipakai untuk fetch
+let lastFetchedFilter = null;
+
+function getDashFilter() {
+  return JSON.stringify({
+    bulan: document.getElementById('dashBulan')?.value || 'AGUSTUS',
+    tahun: document.getElementById('dashTahun')?.value || '2026'
+  });
+}
+
+function nowWIB() {
+  try {
+    return new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Jakarta', hour12: false }) + ' WIB';
+  } catch (err) {
+    return new Date().toLocaleTimeString('en-GB', { hour12: false });
+  }
+}
+
+function setDirtyHint(show) {
+  const hint = document.getElementById('dashDirtyHint');
+  if (hint) hint.classList.toggle('hidden', !show);
+}
+
+function updateDataStamp() {
+  const stamp = document.getElementById('dashDataStamp');
+  if (stamp) {
+    stamp.classList.remove('hidden');
+    stamp.textContent = '📅 Data per ' + nowWIB();
+  }
+}
+
+function markDashDirty() {
+  // Dropdown berubah → tampilkan hint (kalau beda dari data terakhir),
+  // JANGAN fetch otomatis.
+  setDirtyHint(lastFetchedFilter !== null && getDashFilter() !== lastFetchedFilter);
+}
+
+function setBtnLoading(isLoading) {
+  const btn = document.getElementById('btnLoadDashboard');
+  if (!btn) return;
+  if (isLoading) {
+    if (!btn.dataset.origHtml) btn.dataset.origHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Memuat Data...';
+  } else {
+    if (btn.dataset.origHtml) btn.innerHTML = btn.dataset.origHtml;
+    btn.disabled = false;
+  }
+}
+
 export function initDashboard() {
-  const selBulan = document.getElementById('dashBulan');
-  const selTahun = document.getElementById('dashTahun');
+  const btnLoad = document.getElementById('btnLoadDashboard');
+  if (btnLoad) btnLoad.addEventListener('click', loadDashboardData);
 
-  if (selBulan) selBulan.addEventListener('change', loadDashboardData);
-  if (selTahun) selTahun.addEventListener('change', loadDashboardData);
+  ['dashBulan', 'dashTahun'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('change', markDashDirty);
+  });
 
-  loadDashboardData();
+  // TIDAK ADA auto-load. Data dimuat manual via tombol.
 }
 
 export async function loadDashboardData() {
@@ -18,6 +75,7 @@ export async function loadDashboardData() {
   const tahun = tahunEl ? tahunEl.value : '2026';
 
   setDashboardLoading(true);
+  setBtnLoading(true);
 
   try {
     const targetUrl = `${GAS_URL}?action=getdashboard&bulan=${encodeURIComponent(bulan)}&tahun=${encodeURIComponent(tahun)}`;
@@ -32,10 +90,14 @@ export async function loadDashboardData() {
 
     if (res.status === 'success') {
       renderDashboardUI(res);
-      renderDashboardError(null);
+      lastFetchedFilter = getDashFilter();
+      setDirtyHint(false);
+      updateDataStamp();
     } else if (res.data) {
       renderDashboardUI(res.data);
-      renderDashboardError(null);
+      lastFetchedFilter = getDashFilter();
+      setDirtyHint(false);
+      updateDataStamp();
     } else {
       const msg = res.message || "Unknown Error";
       console.error("Gagal memuat dashboard:", msg);
@@ -46,6 +108,7 @@ export async function loadDashboardData() {
     renderDashboardError(err.message);
   } finally {
     setDashboardLoading(false);
+    setBtnLoading(false);
   }
 }
 
@@ -136,7 +199,6 @@ function renderDashboardUI(data) {
 
     if (document.getElementById('dashTotalBiaya')) document.getElementById('dashTotalBiaya').innerText = formatRupiah(nominalTotalBiaya);
 
-    // Hitung Cashflow Net: PEMASUKAN - HUTANG - INVESTASI BULANAN - TOTAL BIAYA
     const netCashflow = nominalPemasukan - nominalHutang - nominalInvestasiBulan - nominalTotalBiaya;
     if (document.getElementById('dashTotalNetCashflow')) {
       document.getElementById('dashTotalNetCashflow').innerText = formatRupiah(netCashflow);
