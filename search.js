@@ -19,12 +19,14 @@ export function initSearchModule() {
   const searchTahun = document.getElementById("searchTahun");
   const searchSort = document.getElementById("searchSort");
 
+  // Listener Tombol Refresh
   if (btnRefreshSearch) {
     btnRefreshSearch.addEventListener("click", () => {
       fetchAndRenderSearchData();
     });
   }
 
+  // Listener Input Keyword dengan Debounce (400ms)
   let debounceTimer;
   if (searchKeyword) {
     searchKeyword.addEventListener("input", () => {
@@ -35,22 +37,31 @@ export function initSearchModule() {
     });
   }
 
+  // Listener Change Dropdown Filter
   if (searchBulan) searchBulan.addEventListener("change", fetchAndRenderSearchData);
   if (searchTahun) searchTahun.addEventListener("change", fetchAndRenderSearchData);
   if (searchSort) searchSort.addEventListener("change", fetchAndRenderSearchData);
 
+  // Auto Load Data Pertama Kali saat halaman dibuka
   fetchAndRenderSearchData();
 }
 
+/**
+ * Mengambil Data dari Apps Script Web App Router
+ */
 export async function fetchAndRenderSearchData() {
   const searchListContainer = document.getElementById("searchListContainer");
   const searchTotalCount = document.getElementById("searchTotalCount");
   const searchTotalNominal = document.getElementById("searchTotalNominal");
 
-  const bulan = document.getElementById("searchBulan")?.value || "ALL";
-  const tahun = document.getElementById("searchTahun")?.value || "2026";
+  let bulan = document.getElementById("searchBulan")?.value || "ALL";
+  let tahun = document.getElementById("searchTahun")?.value || "2026";
   const keyword = document.getElementById("searchKeyword")?.value || "";
   const sort = document.getElementById("searchSort")?.value || "DESC";
+
+  // Normalisasi Value "SEMUA" ke "ALL"
+  if (bulan.toUpperCase() === "SEMUA") bulan = "ALL";
+  if (tahun.toUpperCase() === "SEMUA") tahun = "ALL";
 
   if (searchListContainer) {
     searchListContainer.innerHTML = `
@@ -95,6 +106,9 @@ export async function fetchAndRenderSearchData() {
   }
 }
 
+/**
+ * Merender daftar hasil transaksi ke tampilan UI
+ */
 function renderSearchResults(data) {
   const searchListContainer = document.getElementById("searchListContainer");
   const searchTotalCount = document.getElementById("searchTotalCount");
@@ -102,6 +116,7 @@ function renderSearchResults(data) {
 
   const transactions = data.transactions || [];
 
+  // Update Summary Total Transaksi & Nominal
   if (searchTotalCount) {
     searchTotalCount.innerText = `${data.totalCount || 0} Transaksi`;
   }
@@ -110,6 +125,7 @@ function renderSearchResults(data) {
     searchTotalNominal.innerText = formatRp;
   }
 
+  // Jika Data Kosong
   if (transactions.length === 0) {
     if (searchListContainer) {
       searchListContainer.innerHTML = `
@@ -123,6 +139,7 @@ function renderSearchResults(data) {
     return;
   }
 
+  // Render Daftar Item Transaksi
   let html = "";
   transactions.forEach((tx) => {
     const isIncome = tx.kategori.includes("PEMASUKAN");
