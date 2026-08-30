@@ -183,90 +183,97 @@
         </div>
       </div>
 
-      <div class="bg-gradient-to-br from-pink-500/80 to-rose-500/80 rounded-2xl p-4 text-white shadow-md mb-4 border border-white/40">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-pink-100">Total Aset Bersih</span>
-        <div id="dashTotalAset" class="text-2xl font-black tracking-tight mt-0.5">Rp 0</div>
-        <p class="text-[10px] text-pink-100/90 mt-1">Status: Finansial Aman & Terjaga 🌸</p>
+      <!-- TOTAL ASET BERSIH -->
+      <div class="bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl p-4 text-white shadow-md mb-4 border border-white/40">
+        <span class="text-xs font-extrabold uppercase tracking-widest text-pink-100">TOTAL ASET BERSIH</span>
+        <div id="dashTotalAset" class="text-3xl font-black tracking-tight mt-1">Rp 0</div>
+        <p class="text-xs text-pink-100/90 mt-1 font-medium">Status: Finansial Aman & Terjaga 🌸</p>
       </div>
 
       <!-- KAS & BANK -->
-      <div class="mb-4">
-        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Kas & Bank</h3>
+      <div class="mb-5">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-sm font-extrabold text-pink-950 uppercase tracking-wider">KAS & BANK</h3>
+          <span id="dashTotalKasBank" class="text-sm font-black text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded-lg border border-emerald-300">Rp 0</span>
+        </div>
         <div class="grid grid-cols-3 gap-2 mb-2">
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[9px] font-bold text-pink-900/60">SEABANK</span>
-            <span id="dashSeabank" class="text-xs font-bold text-pink-950">Rp 0</span>
+          <div class="card-seabank p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[10px] font-extrabold tracking-wide uppercase text-amber-900">SEABANK</span>
+            <span id="dashSeabank" class="text-xs font-black text-amber-950 mt-0.5 block">Rp 0</span>
           </div>
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[9px] font-bold text-pink-900/60">BCA</span>
-            <span id="dashBca" class="text-xs font-bold text-pink-950">Rp 0</span>
+          <div class="card-bca p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[10px] font-extrabold tracking-wide uppercase text-blue-900">BCA</span>
+            <span id="dashBca" class="text-xs font-black text-blue-950 mt-0.5 block">Rp 0</span>
           </div>
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[9px] font-bold text-pink-900/60">MANDIRI</span>
-            <span id="dashMandiri" class="text-xs font-bold text-pink-950">Rp 0</span>
+          <div class="card-mandiri p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[10px] font-extrabold tracking-wide uppercase text-indigo-900">MANDIRI</span>
+            <span id="dashMandiri" class="text-xs font-black text-indigo-950 mt-0.5 block">Rp 0</span>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[9px] font-bold text-pink-900/60">DANA</span>
-            <span id="dashDana" class="text-xs font-bold text-pink-950">Rp 0</span>
+          <div class="card-dana p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[10px] font-extrabold tracking-wide uppercase text-sky-900">DANA</span>
+            <span id="dashDana" class="text-xs font-black text-sky-950 mt-0.5 block">Rp 0</span>
           </div>
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[9px] font-bold text-pink-900/60">CASH</span>
-            <span id="dashCash" class="text-xs font-bold text-pink-950">Rp 0</span>
+          <div class="card-cash p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[10px] font-extrabold tracking-wide uppercase text-emerald-900">CASH</span>
+            <span id="dashCash" class="text-xs font-black text-emerald-950 mt-0.5 block">Rp 0</span>
           </div>
         </div>
       </div>
 
       <!-- REKAPITULASI ASET INVESTASI -->
-      <div class="mb-4">
+      <div class="mb-5">
         <div class="flex justify-between items-center mb-2">
-          <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider">Aset Investasi</h3>
-          <span id="dashTotalInvStatement" class="text-xs font-extrabold text-blue-900">Rp 0</span>
+          <h3 class="text-sm font-extrabold text-pink-950 uppercase tracking-wider">ASET INVESTASI</h3>
+          <span id="dashTotalInvStatement" class="text-sm font-black text-indigo-900 bg-indigo-100/80 px-2.5 py-0.5 rounded-lg border border-indigo-300">Rp 0</span>
         </div>
         <div class="grid grid-cols-3 gap-2 mb-2">
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[8px] font-bold text-pink-900/60">SAFETY MONEY</span>
-            <span id="dashInvSafety" class="text-[11px] font-bold text-pink-950">Rp 0</span>
+          <div class="card-inv-safety p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[9px] font-extrabold tracking-tight uppercase text-emerald-900">SAFETY MONEY</span>
+            <span id="dashInvSafety" class="text-xs font-black text-emerald-950 mt-0.5 block">Rp 0</span>
           </div>
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[8px] font-bold text-pink-900/60">DEPOSITO</span>
-            <span id="dashInvDeposito" class="text-[11px] font-bold text-pink-950">Rp 0</span>
+          <div class="card-inv-deposito p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[9px] font-extrabold tracking-tight uppercase text-cyan-900">DEPOSITO</span>
+            <span id="dashInvDeposito" class="text-xs font-black text-cyan-950 mt-0.5 block">Rp 0</span>
           </div>
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[8px] font-bold text-pink-900/60">REKSADANA</span>
-            <span id="dashInvReksadana" class="text-[11px] font-bold text-pink-950">Rp 0</span>
+          <div class="card-inv-reksadana p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[9px] font-extrabold tracking-tight uppercase text-blue-900">REKSADANA</span>
+            <span id="dashInvReksadana" class="text-xs font-black text-blue-950 mt-0.5 block">Rp 0</span>
           </div>
         </div>
         <div class="grid grid-cols-3 gap-2">
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[8px] font-bold text-pink-900/60">ARISAN</span>
-            <span id="dashInvArisan" class="text-[11px] font-bold text-pink-950">Rp 0</span>
+          <div class="card-inv-arisan p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[9px] font-extrabold tracking-tight uppercase text-amber-900">ARISAN</span>
+            <span id="dashInvArisan" class="text-xs font-black text-amber-950 mt-0.5 block">Rp 0</span>
           </div>
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[8px] font-bold text-pink-900/60">LOGAM MULIA</span>
-            <span id="dashInvLogam" class="text-[11px] font-bold text-pink-950">Rp 0</span>
+          <div class="card-inv-logam p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[9px] font-extrabold tracking-tight uppercase text-yellow-900">LOGAM MULIA</span>
+            <span id="dashInvLogam" class="text-xs font-black text-yellow-950 mt-0.5 block">Rp 0</span>
           </div>
-          <div class="glass-mini p-2 rounded-xl text-center">
-            <span class="block text-[8px] font-bold text-pink-900/60">SAHAM</span>
-            <span id="dashInvSaham" class="text-[11px] font-bold text-pink-950">Rp 0</span>
+          <div class="card-inv-saham p-2.5 rounded-xl text-center shadow-sm">
+            <span class="block text-[9px] font-extrabold tracking-tight uppercase text-purple-900">SAHAM</span>
+            <span id="dashInvSaham" class="text-xs font-black text-purple-950 mt-0.5 block">Rp 0</span>
           </div>
         </div>
       </div>
 
       <!-- CASH FLOW BULAN INI -->
-      <div class="mb-4">
-        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Cash Flow Bulan Ini</h3>
+      <div class="mb-5">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-sm font-extrabold text-pink-950 uppercase tracking-wider">CASH FLOW BULAN INI</h3>
+          <span id="dashTotalCashFlowNet" class="text-sm font-black text-purple-900 bg-purple-100/90 px-2.5 py-0.5 rounded-lg border border-purple-300">Rp 0</span>
+        </div>
         <div class="grid grid-cols-2 gap-2 mb-2">
           <div class="bg-emerald-500/15 border border-emerald-300/60 p-2.5 rounded-xl">
-            <span class="block text-[10px] font-bold text-emerald-900">💵 PEMASUKAN</span>
+            <span class="block text-[10px] font-extrabold text-emerald-900">💵 PEMASUKAN</span>
             <div class="flex items-baseline justify-between mt-0.5">
               <span id="dashPemasukan" class="text-xs font-bold text-emerald-950">Rp 0</span>
               <span id="dashPemasukanPct" class="text-[9px] font-bold text-emerald-700">0%</span>
             </div>
           </div>
           <div class="bg-purple-500/15 border border-purple-300/60 p-2.5 rounded-xl">
-            <span class="block text-[10px] font-bold text-purple-900">💳 HUTANG/CICILAN</span>
+            <span class="block text-[10px] font-extrabold text-purple-900">💳 HUTANG/CICILAN</span>
             <div class="flex items-baseline justify-between mt-0.5">
               <span id="dashHutang" class="text-xs font-bold text-purple-950">Rp 0</span>
               <span id="dashHutangPct" class="text-[9px] font-bold text-purple-700">0%</span>
@@ -275,14 +282,14 @@
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div class="bg-blue-500/15 border border-blue-300/60 p-2.5 rounded-xl">
-            <span class="block text-[10px] font-bold text-blue-900">💰 INVESTASI BULANAN</span>
+            <span class="block text-[10px] font-extrabold text-blue-900">💰 INVESTASI BULANAN</span>
             <div class="flex items-baseline justify-between mt-0.5">
               <span id="dashInvestasiBulan" class="text-xs font-bold text-blue-950">Rp 0</span>
               <span id="dashInvestasiBulanPct" class="text-[9px] font-bold text-blue-700">0%</span>
             </div>
           </div>
           <div class="bg-rose-500/15 border border-rose-300/60 p-2.5 rounded-xl">
-            <span class="block text-[10px] font-bold text-rose-900">💸 TOTAL BIAYA</span>
+            <span class="block text-[10px] font-extrabold text-rose-900">💸 TOTAL BIAYA</span>
             <div class="flex items-baseline justify-between mt-0.5">
               <span id="dashTotalBiaya" class="text-xs font-bold text-rose-950">Rp 0</span>
             </div>
@@ -291,8 +298,8 @@
       </div>
 
       <!-- RINCIAN KATEGORI BIAYA -->
-      <div class="mb-4">
-        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Rincian Kategori Biaya</h3>
+      <div class="mb-5">
+        <h3 class="text-sm font-extrabold text-pink-950 uppercase tracking-wider mb-2">RINCIAN KATEGORI BIAYA</h3>
         <div class="grid grid-cols-2 gap-2 space-y-0">
           <div class="glass-mini p-2 rounded-xl">
             <span class="block text-[9px] font-bold text-pink-900/70">🍚 KEBUTUHAN POKOK</span>
@@ -355,7 +362,7 @@
 
       <!-- TOP 5 PENGELUARAN SUB-KATEGORI -->
       <div>
-        <h3 class="text-xs font-bold text-pink-950/80 uppercase tracking-wider mb-2">Top 5 Pengeluaran Sub-Kategori</h3>
+        <h3 class="text-sm font-extrabold text-pink-950 uppercase tracking-wider mb-2">TOP 5 PENGELUARAN SUB-KATEGORI</h3>
         <div id="dashTop5Container" class="space-y-2.5 glass-mini p-3 rounded-2xl border border-pink-200/60">
           <p class="text-xs text-center text-pink-800/60">Memuat data top pengeluaran...</p>
         </div>
