@@ -1,5 +1,5 @@
 /* =========================================================
-   BUDGETING MASTER SYNC — CUSTOM STYLES (v8 · GLASS EDITION)
+   BUDGETING MASTER SYNC — CUSTOM STYLES (v9 · GLASS EDITION)
    ========================================================= */
 
 html, body {
@@ -58,9 +58,90 @@ input, select, textarea {
   font-size: 16px !important;
 }
 
-/* Pola gajah kecil — khusus dipakai di login screen */
+/* Pola gajah kecil (SVG lama — kini tidak dipakai, disimpan
+   berjaga-jaga kalau mau dipakai lagi di tempat lain) */
 .watermark-bg {
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Cg fill=\'%23ffffff\'%3E%3Cpath d=\'M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z\'/%3E%3C/g%3E%3C/svg%3E');
+}
+
+/* =========================================================
+   LOCK SCREEN — WALLPAPER BLUR & REDUP
+   Wallpaper sama dengan modul 1–5, tapi di-blur & diredupkan
+   supaya ikon gajah di tengah tetap jadi pusat perhatian.
+
+   Knob tuning (kalau mau utak-atik sendiri):
+   - blur(16px)     → makin besar = makin halus/lembut
+   - brightness(.72) → makin kecil = makin gelap/redup
+   - veil di ::after → gelapin angka opacity kalau teks kurang nempel
+   ========================================================= */
+
+#lockScreen {
+  background-color: #b0889b; /* fallback kalau wallpaper gagal load */
+  overflow: hidden;
+}
+
+/* Layer wallpaper blur + redup */
+#lockScreen::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  background-image:
+    url('https://i.ibb.co/3XcMMzX/wp8104164.jpg'),
+    linear-gradient(135deg, #8a96a8 0%, #ba9eb1 50%, #e3b9ca 100%);
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(16px) brightness(0.72) saturate(1.15);
+  transform: scale(1.12); /* sembunyikan tepi putih akibat blur */
+}
+
+/* Veil gradasi gelap agar teks putih makin terbaca
+   (makin gelap ke bawah, menemani timestamp) */
+#lockScreen::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(90, 50, 70, 0.10) 0%,
+    rgba(90, 50, 70, 0.22) 55%,
+    rgba(90, 50, 70, 0.36) 100%
+  );
+}
+
+/* Glow/halo tipis di teks putih lock screen — biar tetap tajam
+   di atas wallpaper blur berwarna apa pun */
+.text-glow {
+  text-shadow:
+    0 2px 14px rgba(105, 55, 85, 0.55),
+    0 1px 3px rgba(105, 55, 85, 0.40);
+}
+
+/* Timestamp live di bawah kontainer PIN */
+.lock-clock {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 8px rgba(105, 55, 85, 0.6);
+}
+
+/* =========================================================
+   KONTAINER PIN — GLASS TIPIS ELEGAN
+   ========================================================= */
+
+#pinBox {
+  background: rgba(255, 255, 255, 0.20);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 16px 40px -12px rgba(70, 35, 55, 0.45),
+    0 4px 12px -6px rgba(70, 35, 55, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 /* =========================================================
@@ -103,7 +184,7 @@ input, select, textarea {
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-/* Kartu kaca umum — dipakai PIN box (login) & kartu hasil pencarian */
+/* Kartu kaca umum — dipakai kartu hasil pencarian */
 .glass-card {
   background: rgba(255, 255, 255, 0.40);
   backdrop-filter: blur(16px);
