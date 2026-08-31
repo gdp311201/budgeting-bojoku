@@ -1,11 +1,12 @@
 /**
  * =========================================================================
- * setup.js — MODUL SETUP BUDGET (SHEET SET_UP) · v2 RENDER
+ * setup.js — MODUL SETUP BUDGET (SHEET SET_UP) · v3 RENDER
  * =========================================================================
- * v2 — rendering "gaya sheet asli":
- *  - Rp rata KIRI, nominal rata KANAN (semua tabel + input editable)
+ * v3 — rendering "gaya sheet asli" dengan grid rata:
+ *  - Zona nilai pakai .val-grid: [Rp | nominal | %] kolom sejajar sempurna
+ *  - Rp rata KIRI · nominal & % rata KANAN (semua tabel + input editable)
  *  - Rekap Alokasi: nominal & % bersebelahan tanpa garis pemisah
- *  - Tipografi diperbesar & seimbang dengan input (16px global anti-zoom iOS)
+ *  - Tipografi seimbang dengan input (16px global anti-zoom iOS)
  *  - Semua styling via class CSS (style.css) — bukan Tailwind di string JS
  * =========================================================================
  */
@@ -186,16 +187,22 @@ function renderSetupView(data) {
   updateSetupStamp();
 }
 
-/* ============ KOMPONEN NILAI: "Rp" KIRI · NOMINAL KANAN ============ */
+/* ============ KOMPONEN NILAI v3 — GRID [Rp | nominal | %] ============ */
 
-function moneyHtml(num) {
+function valGrid(num, pctVal) {
   const v = Number(num) || 0;
   const s = Math.abs(v).toLocaleString('id-ID');
   const sign = v < 0 ? '-' : '';
-  return `<span class="money"><span class="cur">Rp</span><span class="amt">${sign}${s}</span></span>`;
+  const pctCell = (pctVal === null || pctVal === undefined) ? '' : pctCellHtml(pctVal);
+  return `
+    <span class="val-grid">
+      <span class="cur">Rp</span>
+      <span class="amt">${sign}${s}</span>
+      ${pctCell}
+    </span>`;
 }
 
-function pctHtml(p) {
+function pctCellHtml(p) {
   const v = Number(p) || 0;
   const val = Math.round(v * 1000) / 10;
   return `<span class="pct">${val}%</span>`;
@@ -209,7 +216,7 @@ function renderKategoriSummary(k) {
   const rows = k.rows.map((r) => `
     <div class="alloc-row">
       <span class="alloc-name">${escapeHtml(r.nama)}</span>
-      <span class="alloc-val">${moneyHtml(r.nominal)}${pctHtml(r.pct)}</span>
+      ${valGrid(r.nominal, r.pct)}
     </div>
   `).join('');
 
@@ -222,7 +229,7 @@ function renderKategoriSummary(k) {
     <div>${rows}</div>
     <div class="alloc-sisa">
       <span class="alloc-sisa-label">Sisa Budget</span>
-      <span class="alloc-val">${moneyHtml(k.sisa.nominal)}${pctHtml(k.sisa.pct)}</span>
+      ${valGrid(k.sisa.nominal, k.sisa.pct)}
     </div>
   </section>
   `;
@@ -236,7 +243,7 @@ function renderBanks(b) {
   const rows = b.rows.map((r) => `
     <div class="alloc-row">
       <span class="alloc-name">${escapeHtml(r.nama)}</span>
-      <span class="alloc-val">${moneyHtml(r.saldo)}</span>
+      ${valGrid(r.saldo, null)}
     </div>
   `).join('');
 
@@ -249,7 +256,7 @@ function renderBanks(b) {
     <div>${rows}</div>
     <div class="bank-total">
       <span class="alloc-sisa-label">Total Saldo Awal</span>
-      <span class="alloc-val">${moneyHtml(b.total)}</span>
+      ${valGrid(b.total, null)}
     </div>
   </section>
   `;
@@ -276,7 +283,7 @@ function renderTableSection(t) {
   <section class="setup-section" data-setup-table="${t.id}">
     <div class="setup-sec-head">
       <span class="setup-sec-title">${escapeHtml(t.label)}</span>
-      <span class="alloc-val">${moneyHtml(t.total)}</span>
+      ${valGrid(t.total, null)}
     </div>
     <div class="setup-rows">${rowsHtml}</div>
   </section>
@@ -330,7 +337,8 @@ function updateSectionTotal(tableId) {
     sum += parseInt((inp.value || '').replace(/[^0-9]/g, ''), 10) || 0;
   });
 
-  const amt = section.querySelector('.setup-sec-head .money .amt');
+  // v3: angka total berada di .val-grid .amt pada header section
+  const amt = section.querySelector('.setup-sec-head .val-grid .amt');
   if (amt) amt.textContent = sum.toLocaleString('id-ID');
 }
 
