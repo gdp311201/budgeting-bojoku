@@ -1,13 +1,12 @@
 /**
  * =========================================================================
- * setup.js — MODUL SETUP BUDGET (SHEET SET_UP) · v3 RENDER
+ * setup.js — MODUL SETUP BUDGET (SHEET SET_UP) · v4 RENDER
  * =========================================================================
- * v3 — rendering "gaya sheet asli" dengan grid rata:
- *  - Zona nilai pakai .val-grid: [Rp | nominal | %] kolom sejajar sempurna
- *  - Rp rata KIRI · nominal & % rata KANAN (semua tabel + input editable)
- *  - Rekap Alokasi: nominal & % bersebelahan tanpa garis pemisah
- *  - Tipografi seimbang dengan input (16px global anti-zoom iOS)
- *  - Semua styling via class CSS (style.css) — bukan Tailwind di string JS
+ * v4 — fix alignment:
+ *  - valGrid() kini memakai class "no-pct" untuk tabel TANPA persentase
+ *    (Akun Bank, total kategori) → nominal MENEMPEL ke tepi kanan,
+ *    sejajar dengan tepi kanan kotak input (garis referensi).
+ *  - Tabel dengan % (Rekap Alokasi) tetap 3 kolom: Rp | nominal | %
  * =========================================================================
  */
 
@@ -187,15 +186,18 @@ function renderSetupView(data) {
   updateSetupStamp();
 }
 
-/* ============ KOMPONEN NILAI v3 — GRID [Rp | nominal | %] ============ */
+/* ========= KOMPONEN NILAI v4 — GRID dengan / tanpa kolom % ========= */
 
 function valGrid(num, pctVal) {
   const v = Number(num) || 0;
   const s = Math.abs(v).toLocaleString('id-ID');
   const sign = v < 0 ? '-' : '';
-  const pctCell = (pctVal === null || pctVal === undefined) ? '' : pctCellHtml(pctVal);
+  const hasPct = (pctVal !== null && pctVal !== undefined);
+  const pctCell = hasPct ? pctCellHtml(pctVal) : '';
+  // Tanpa % → class "no-pct": nominal menempel ke tepi kanan (2 kolom)
+  const cls = hasPct ? 'val-grid' : 'val-grid no-pct';
   return `
-    <span class="val-grid">
+    <span class="${cls}">
       <span class="cur">Rp</span>
       <span class="amt">${sign}${s}</span>
       ${pctCell}
@@ -337,7 +339,7 @@ function updateSectionTotal(tableId) {
     sum += parseInt((inp.value || '').replace(/[^0-9]/g, ''), 10) || 0;
   });
 
-  // v3: angka total berada di .val-grid .amt pada header section
+  // v4: angka total berada di .val-grid .amt pada header section
   const amt = section.querySelector('.setup-sec-head .val-grid .amt');
   if (amt) amt.textContent = sum.toLocaleString('id-ID');
 }
