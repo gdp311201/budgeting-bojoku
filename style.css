@@ -1,5 +1,49 @@
 /* =========================================================
-   BUDGETING MASTER SYNC — CUSTOM STYLES (v9 · GLASS EDITION)
+   BUDGETING MASTER SYNC — CUSTOM STYLES (v10 · GLASS EDITION)
+   ========================================================= */
+
+/* =========================================================
+   🎛️ TUNING PANEL — PUSAT KONTROL BLUR
+   Semua angka blur diatur dari blok ini saja.
+   Setelah ubah: push ke GitHub → naikkan ?v= di index.html
+   → hard refresh di HP.
+
+   Panduan nilai (semakin besar = semakin kabur):
+     0px    = tanpa blur (jernih)
+     6-10px = blur tipis
+     14-18px = blur sedang
+     20px+  = blur pekat (kaca es)
+   ========================================================= */
+:root {
+
+  /* [1] Blur WALLPAPER belakang modul 1–5
+         (default 0 = wallpaper jelas; coba 6px-10px kalau mau lembut) */
+  --blur-wallpaper: 0px;
+
+  /* [2] Blur wallpaper LOCK SCREEN (login) */
+  --blur-lockscreen: 8px;
+
+  /* [3] Redup lock screen (0.5 = gelap, 0.72 = default, 1 = terang) */
+  --dim-lockscreen: 0.72;
+
+  /* [4] Blur kontainer besar halaman (kartu putih utama) */
+  --blur-page: 16px;
+
+  /* [5] Blur menu bar navigasi bawah */
+  --blur-nav: 22px;
+
+  /* [6] Blur kotak filter, wadah list, kartu dashboard & baris mutasi */
+  --blur-mini: 12px;
+
+  /* [7] Blur kartu hasil pencarian & kotak PIN */
+  --blur-card: 16px;
+
+  /* [8] Blur kolom input & dropdown */
+  --blur-input: 8px;
+}
+
+/* =========================================================
+   DASAR
    ========================================================= */
 
 html, body {
@@ -16,16 +60,16 @@ body {
 
 /* =========================================================
    WALLPAPER GAJAH (BACKGROUND MODUL 1–5)
-   Dipasang sebagai layer fixed via pseudo-element — aman untuk
-   iOS Safari (background-attachment: fixed bermasalah di iOS).
-   Layer kedua = fallback gradient: kalau link imgbb mati,
-   background otomatis memakai gradasi pink-putih.
+   - Blur-nya diatur via --blur-wallpaper di TUNING PANEL.
+   - Area diperluas -40px keluar viewport supaya tepi putih
+     hasil blur tersembunyi (aman untuk nilai blur berapapun).
+   - Layer kedua = fallback gradient kalau link imgbb mati.
    ========================================================= */
 
 body::before {
   content: "";
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: -40px; left: -40px; right: -40px; bottom: -40px;
   z-index: -2;
   background-image:
     url('https://i.ibb.co/3XcMMzX/wp8104164.jpg'),
@@ -33,12 +77,11 @@ body::before {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
+  filter: blur(var(--blur-wallpaper));
 }
 
-/* Veil gradasi pink-putih tipis di atas wallpaper supaya komponen
-   kaca tetap elegan & teks tetap terbaca.
-   (Mau wallpaper lebih nendang? Kecilkan angka opacity di bawah.
-    Mau lebih soft/putih? Besarkan.) */
+/* Veil gradasi pink-putih di atas wallpaper supaya komponen kaca
+   tetap elegan & teks tetap terbaca. */
 body::after {
   content: "";
   position: fixed;
@@ -58,21 +101,15 @@ input, select, textarea {
   font-size: 16px !important;
 }
 
-/* Pola gajah kecil (SVG lama — kini tidak dipakai, disimpan
-   berjaga-jaga kalau mau dipakai lagi di tempat lain) */
+/* Pola gajah kecil (SVG lama — disimpan berjaga-jaga) */
 .watermark-bg {
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Cg fill=\'%23ffffff\'%3E%3Cpath d=\'M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z\'/%3E%3C/g%3E%3C/svg%3E');
 }
 
 /* =========================================================
-   LOCK SCREEN — WALLPAPER BLUR & REDUP
-   Wallpaper sama dengan modul 1–5, tapi di-blur & diredupkan
-   supaya ikon gajah di tengah tetap jadi pusat perhatian.
-
-   Knob tuning (kalau mau utak-atik sendiri):
-   - blur(16px)     → makin besar = makin halus/lembut
-   - brightness(.72) → makin kecil = makin gelap/redup
-   - veil di ::after → gelapin angka opacity kalau teks kurang nempel
+   LOCK SCREEN — wallpaper blur & redup
+   Blur via --blur-lockscreen, redup via --dim-lockscreen
+   (keduanya di TUNING PANEL).
    ========================================================= */
 
 #lockScreen {
@@ -84,7 +121,7 @@ input, select, textarea {
 #lockScreen::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: -40px; left: -40px; right: -40px; bottom: -40px;
   z-index: 0;
   background-image:
     url('https://i.ibb.co/3XcMMzX/wp8104164.jpg'),
@@ -92,12 +129,10 @@ input, select, textarea {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  filter: blur(1.8px) brightness(0.72) saturate(1.15);
-  transform: scale(1.12); /* sembunyikan tepi putih akibat blur */
+  filter: blur(var(--blur-lockscreen)) brightness(var(--dim-lockscreen)) saturate(1.15);
 }
 
-/* Veil gradasi gelap agar teks putih makin terbaca
-   (makin gelap ke bawah, menemani timestamp) */
+/* Veil gradasi gelap agar teks putih makin terbaca */
 #lockScreen::after {
   content: "";
   position: absolute;
@@ -112,8 +147,7 @@ input, select, textarea {
   );
 }
 
-/* Glow/halo tipis di teks putih lock screen — biar tetap tajam
-   di atas wallpaper blur berwarna apa pun */
+/* Glow/halo tipis di teks putih lock screen */
 .text-glow {
   text-shadow:
     0 2px 14px rgba(105, 55, 85, 0.55),
@@ -130,13 +164,13 @@ input, select, textarea {
 }
 
 /* =========================================================
-   KONTAINER PIN — GLASS TIPIS ELEGAN
+   KONTAINER PIN — glass tipis elegan (blur via --blur-card)
    ========================================================= */
 
 #pinBox {
   background: rgba(255, 255, 255, 0.20);
-  backdrop-filter: blur(16px) saturate(1.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(var(--blur-card)) saturate(1.5);
+  -webkit-backdrop-filter: blur(var(--blur-card)) saturate(1.5);
   border: 1px solid rgba(255, 255, 255, 0.45);
   box-shadow:
     0 16px 40px -12px rgba(70, 35, 55, 0.45),
@@ -154,8 +188,8 @@ input, select, textarea {
   box-shadow: 0 10px 25px -5px rgba(120, 90, 110, 0.2) !important;
   border-radius: 16px !important;
   color: #5c4353 !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(var(--blur-input));
+  -webkit-backdrop-filter: blur(var(--blur-input));
 }
 
 /* Kalender harus tampil di atas modal edit */
@@ -170,13 +204,13 @@ input, select, textarea {
 }
 
 /* =========================================================
-   KONTAINER UTAMA (KARTU HALAMAN) — GLASS TRANSPARAN
+   KONTAINER UTAMA (KARTU HALAMAN) — blur via --blur-page
    ========================================================= */
 
 .app-shell {
   background: rgba(255, 255, 255, 0.30);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(var(--blur-page)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--blur-page)) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow:
     0 18px 45px -12px rgba(90, 55, 75, 0.28),
@@ -184,48 +218,47 @@ input, select, textarea {
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-/* Kartu kaca umum — dipakai kartu hasil pencarian */
+/* Kartu kaca umum — kartu hasil pencarian (blur via --blur-card) */
 .glass-card {
   background: rgba(255, 255, 255, 0.40);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(var(--blur-card));
+  -webkit-backdrop-filter: blur(var(--blur-card));
   border: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow:
     0 12px 32px -10px rgba(90, 55, 75, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-/* Kotak filter, wadah list, kartu kecil di dalam halaman */
+/* Kotak filter & wadah list (blur via --blur-mini) */
 .glass-mini {
   background: rgba(255, 255, 255, 0.42);
   border: 1px solid rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--blur-mini));
+  -webkit-backdrop-filter: blur(var(--blur-mini));
 }
 
-/* Aksesibilitas & Akseptabilitas Warna Kas & Bank */
+/* Warna Kas & Bank */
 .glass-kasbank {
   background: rgba(236, 253, 245, 0.42);
   border: 1px solid rgba(167, 243, 208, 0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--blur-mini));
+  -webkit-backdrop-filter: blur(var(--blur-mini));
 }
 
-/* Aksesibilitas & Akseptabilitas Warna Aset Investasi */
+/* Warna Aset Investasi */
 .glass-investasi {
   background: rgba(238, 242, 255, 0.42);
   border: 1px solid rgba(199, 210, 254, 0.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--blur-mini));
+  -webkit-backdrop-filter: blur(var(--blur-mini));
 }
 
-/* Baris data mutasi — dibuat glass lewat override CSS
-   (ID-based) supaya file mutasi.js tidak perlu diubah */
+/* Baris data mutasi (blur via --blur-mini) */
 #mutasiListContainer > div {
   background: rgba(255, 255, 255, 0.45) !important;
   border-color: rgba(255, 255, 255, 0.65) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(var(--blur-mini));
+  -webkit-backdrop-filter: blur(var(--blur-mini));
 }
 
 #mutasiListContainer > div:hover {
@@ -233,13 +266,13 @@ input, select, textarea {
 }
 
 /* =========================================================
-   INPUT & SELECT — GLASS
+   INPUT & SELECT — blur via --blur-input
    ========================================================= */
 
 .custom-input {
   background: rgba(255, 255, 255, 0.50);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(var(--blur-input));
+  -webkit-backdrop-filter: blur(var(--blur-input));
   border: 1px solid rgba(220, 180, 200, 0.55);
   color: #52404d;
   transition: all 0.2s ease;
@@ -518,7 +551,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   SWIPE CARD ACTIONS — EDIT (kanan) / HAPUS (kiri), gaya Gmail
+   SWIPE CARD ACTIONS — EDIT (kanan) / HAPUS (kiri)
    ========================================================= */
 
 .swipe-item {
@@ -585,16 +618,16 @@ select option[disabled] {
 .swipe-content {
   position: relative;
   z-index: 2;
-  touch-action: pan-y; /* scroll vertikal tetap native */
+  touch-action: pan-y;
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   background: rgba(255, 255, 255, 0.60) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(var(--blur-card));
+  -webkit-backdrop-filter: blur(var(--blur-card));
   cursor: grab;
 }
 
 /* =========================================================
-   NAVBAR FLOATING — GLASS TRANSPARAN (DYNAMIC ISLAND VIBE)
+   NAVBAR FLOATING — blur via --blur-nav
    ========================================================= */
 
 .nav-bar {
@@ -609,8 +642,8 @@ select option[disabled] {
   padding: 0.5rem 0.7rem 0.35rem;
   border-radius: 1.75rem;
   background: rgba(255, 255, 255, 0.30);
-  -webkit-backdrop-filter: blur(22px) saturate(1.7);
-  backdrop-filter: blur(22px) saturate(1.7);
+  -webkit-backdrop-filter: blur(var(--blur-nav)) saturate(1.7);
+  backdrop-filter: blur(var(--blur-nav)) saturate(1.7);
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow:
     0 16px 38px -14px rgba(131, 24, 67, 0.35),
