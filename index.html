@@ -30,8 +30,8 @@
   <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Custom CSS (?v=11 = cache buster) -->
-  <link rel="stylesheet" href="style.css?v=11">
+  <!-- Custom CSS (?v=12 = cache buster) -->
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-32">
 
@@ -216,8 +216,8 @@
           📅 Data per --:--:-- WIB
         </div>
 
-        <!-- KARTU TOTAL ASET BERSIH -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-pink-500/85 via-rose-500/85 to-pink-600/85 rounded-3xl p-4 sm:p-5 text-white shadow-lg mb-4 border border-white/30">
+        <!-- KARTU TOTAL ASET BERSIH (trigger LONG-PRESS → buka Setup) -->
+        <div id="assetCard" class="relative overflow-hidden bg-gradient-to-br from-pink-500/85 via-rose-500/85 to-pink-600/85 rounded-3xl p-4 sm:p-5 text-white shadow-lg mb-4 border border-white/30">
           <span class="asset-bubble asset-bubble-lg" aria-hidden="true"></span>
           <span class="asset-bubble asset-bubble-md" aria-hidden="true"></span>
           <span class="asset-bubble asset-bubble-sm" aria-hidden="true"></span>
@@ -839,6 +839,45 @@
     </div>
   </div>
 
+  <!-- MODAL SETUP BUDGET (tersembunyi — buka via LONG-PRESS kartu Total Aset di Dashboard) -->
+  <div id="setupModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-pink-950/40 backdrop-blur-[5px] hidden">
+    <div class="setup-panel bg-white/92 backdrop-blur-xl w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-pop">
+      <!-- HEADER -->
+      <div class="px-5 pt-4 pb-3 border-b border-pink-200/60 flex items-center justify-between shrink-0">
+        <div>
+          <h3 class="text-sm font-bold text-pink-950 tracking-wide">⚙️ SETUP BUDGET</h3>
+          <p class="text-[10px] text-pink-800/60 font-medium mt-0.5">Parameter alokasi & budget bulanan</p>
+        </div>
+        <button id="btnCloseSetup" type="button" class="w-9 h-9 rounded-full bg-white/70 border border-pink-200/70 text-pink-950 font-bold flex items-center justify-center shadow-sm active:scale-90 transition">✕</button>
+      </div>
+
+      <!-- STAMP -->
+      <div id="setupDataStamp" class="hidden px-5 py-1.5 text-center text-[10px] font-semibold text-pink-800/50 shrink-0">
+        📅 Data per --:--:-- WIB
+      </div>
+
+      <!-- BODY -->
+      <div id="setupBody" class="overflow-y-auto px-4 py-3 space-y-3 grow">
+        <p class="text-center text-xs text-pink-800/60 py-8">Memuat data setup...</p>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="px-4 py-3 border-t border-pink-200/60 bg-white/60 backdrop-blur-md shrink-0 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+        <button id="btnSetupEdit" type="button" class="w-full bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm transition text-sm border border-pink-200/50">
+          ✏️ Edit Data
+        </button>
+        <div id="setupEditActions" class="hidden flex gap-2">
+          <button id="btnSetupCancel" type="button" class="w-1/2 bg-white/90 text-pink-950 font-semibold py-2.5 px-4 rounded-xl border border-pink-200/80 shadow-sm transition text-sm">
+            Batal
+          </button>
+          <button id="btnSetupSave" type="button" class="w-1/2 bg-gradient-to-r from-pink-400 to-rose-400 hover:from-pink-500 hover:to-rose-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm transition text-sm border border-pink-200/50">
+            💾 Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- NOTIFICATION MODAL -->
   <div id="cuteModal" class="fixed inset-0 bg-pink-950/20 backdrop-blur-[4px] flex items-center justify-center p-4 z-50 hidden transition-opacity duration-200">
     <div class="bg-white/85 border border-white/80 backdrop-blur-md rounded-3xl p-5 max-w-xs w-full text-center shadow-xl animate-pop relative overflow-hidden">
@@ -1059,7 +1098,7 @@
   })();
   </script>
 
-  <!-- Enhancement layer: swipe carousel, module loader (?v=6, tidak berubah) -->
-  <script type="module" src="script.js?v=6"></script>
+  <!-- Enhancement layer: swipe carousel, module loader (?v=7 = cache buster baru) -->
+  <script type="module" src="script.js?v=7"></script>
 </body>
 </html>
