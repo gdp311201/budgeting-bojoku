@@ -838,7 +838,7 @@ select option[disabled] {
    di semua baris (Rp rata kiri, nominal rata kanan — gaya sheet). */
 .val-grid {
   display: grid;
-  grid-template-columns: 24px 80px 44px;
+  grid-template-columns: 24px 60px 44px;
   column-gap: 7px;
   align-items: baseline;
   justify-content: end;
@@ -850,7 +850,7 @@ select option[disabled] {
    FIX v4: sebelumnya slot % (44px) tetap dipesankan walau kosong,
    membuat nominal "ketarik ke depan" ±51px. */
 .val-grid.no-pct {
-  grid-template-columns: 24px 131px;
+  grid-template-columns: 24px 111px;
 }
 
 .val-grid .cur {
