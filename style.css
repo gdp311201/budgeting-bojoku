@@ -807,7 +807,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   MODAL SETUP BUDGET — RENDER v3 (GRID RATA, GAYA SHEET)
+   MODAL SETUP BUDGET — RENDER v2 (GAYA SHEET ASLI)
    ========================================================= */
 
 /* Kartu Total Aset = trigger long-press */
@@ -829,42 +829,35 @@ select option[disabled] {
   border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-/* ---- GRID KOLOM NILAI (KUNCI KERAPIAN) ----
-   Zona nilai kanan dibagi 3 kolom dengan lebar tetap:
-   [ Rp ]  [ nominal ]  [ % ] — semua baris sejajar sempurna,
-   nominal & % rata kanan kolomnya masing-masing. */
-.val-grid {
-  display: grid;
-  grid-template-columns: 24px minmax(86px, auto) 44px;
-  column-gap: 7px;
+/* ---- POLA UANG: "Rp" rata KIRI · nominal rata KANAN ----
+   Dipakai di rekap, bank, total section, dan (versi input) di editable. */
+.money {
+  display: inline-flex;
   align-items: baseline;
-  justify-content: end;
-  flex-shrink: 0;
+  min-width: 118px;
   font-variant-numeric: tabular-nums;
 }
 
-.val-grid .cur {
+.money .cur {
+  margin-right: auto;
   font-size: 12px;
   font-weight: 600;
   color: rgba(82, 64, 77, 0.62);
-  text-align: left;
-  white-space: nowrap;
 }
 
-.val-grid .amt {
+.money .amt {
   font-size: 14px;
   font-weight: 700;
   color: #4a3040;
-  text-align: right;
-  white-space: nowrap;
 }
 
-.val-grid .pct {
+/* % bersebelahan dengan nominal (tanpa garis pemisah) */
+.pct {
+  margin-left: 8px;
   font-size: 12.5px;
   font-weight: 700;
   color: #be185d;
-  text-align: right;
-  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---- SECTION ---- */
@@ -921,7 +914,7 @@ select option[disabled] {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   padding: 5.5px 0;
   border-bottom: 1px solid rgba(216, 176, 192, 0.28);
 }
@@ -931,14 +924,19 @@ select option[disabled] {
 }
 
 .alloc-name {
-  flex: 1 1 auto;
-  min-width: 0;
   font-size: 13.5px;
   font-weight: 600;
   color: #4a3040;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
+}
+
+.alloc-val {
+  display: inline-flex;
+  align-items: baseline;
+  flex-shrink: 0;
 }
 
 /* Baris ringkasan (Sisa Budget / Total Saldo) */
@@ -947,9 +945,9 @@ select option[disabled] {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  margin-top: 0.6rem;
-  padding: 0.6rem 0.75rem;
+  gap: 8px;
+  margin-top: 0.55rem;
+  padding: 0.55rem 0.7rem;
   border-radius: 0.75rem;
 }
 
@@ -972,10 +970,9 @@ select option[disabled] {
 
 .alloc-sisa .alloc-sisa-label { color: #8a6116; }
 .bank-total .alloc-sisa-label { color: #146c4a; }
-.alloc-sisa .val-grid .amt,
-.bank-total .val-grid .amt { font-weight: 800; }
-.alloc-sisa .val-grid .pct { color: #8a6116; }
-.bank-total .val-grid .cur { color: rgba(20, 108, 74, 0.65); }
+.alloc-sisa .money .amt,
+.bank-total .money .amt { font-weight: 800; }
+.alloc-sisa .pct { color: #8a6116; }
 
 /* ---- BARIS EDITABLE (input) ---- */
 .setup-rows {
@@ -1020,7 +1017,8 @@ select option[disabled] {
   pointer-events: none;
 }
 
-/* Input: nominal rata KANAN, ruang kiri untuk label "Rp". */
+/* Input: nominal rata KANAN, ruang kiri untuk label "Rp".
+   (font 16px otomatis dari aturan global anti-zoom iOS) */
 .setup-input {
   width: 100%;
   text-align: right;
