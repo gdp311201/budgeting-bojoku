@@ -1,20 +1,16 @@
 /**
  * =========================================================================
- * setup.js — MODUL SETUP BUDGET (SHEET SET_UP)
+ * setup.js — MODUL SETUP BUDGET (SHEET SET_UP) · v2 RENDER
  * =========================================================================
- * AKSES (tersembunyi, tanpa PIN):
- *   LONG-PRESS (tekan & tahan ±0.7 detik) pada kartu "Total Aset Bersih"
- *   di modul Dashboard → panel Setup muncul sebagai bottom sheet.
- *
- * ALUR:
- *   Buka → mode VIEW (input terkunci, hanya lihat)
- *   ✏️ Edit Data → input terkunci dibuka, total dihitung live
- *   💾 Simpan   → kirim ke GAS (whitelist + verifikasi sub kategori)
- *   Batal       → buang perubahan, kembali ke view
+ * v2 — rendering "gaya sheet asli":
+ *  - Rp rata KIRI, nominal rata KANAN (semua tabel + input editable)
+ *  - Rekap Alokasi: nominal & % bersebelahan tanpa garis pemisah
+ *  - Tipografi diperbesar & seimbang dengan input (16px global anti-zoom iOS)
+ *  - Semua styling via class CSS (style.css) — bukan Tailwind di string JS
  * =========================================================================
  */
 
-import { GAS_URL, showCuteModal, formatRupiahInput } from './transaksi.js';
+import { GAS_URL, showCuteModal } from './transaksi.js';
 
 const LONG_PRESS_MS = 700;
 
@@ -113,6 +109,7 @@ function closeSetup() {
 
 async function refreshSetup() {
   setSetupLoading(true);
+  setStamp('📅 Memuat data setup...');
   try {
     const url = new URL(GAS_URL);
     url.searchParams.append('action', 'getSetupData');
@@ -147,18 +144,18 @@ function setSetupLoading(isLoading) {
 }
 
 function renderSetupError(msg) {
+  setStamp('⚠ Gagal memuat data');
   const body = document.getElementById('setupBody');
   if (body) {
     body.innerHTML = `
       <div class="text-center py-10">
         <div class="text-3xl mb-2">⚠️</div>
         <p class="text-xs font-bold text-rose-700">Gagal Memuat Setup</p>
-        <p class="text-[10px] text-pink-900/60 mt-1">${escapeHtml(msg)}</p>
-        <p class="text-[10px] text-pink-900/50 mt-2">Tutup lalu coba buka lagi (long-press kartu Total Aset).</p>
+        <p class="text-[11px] text-pink-900/60 mt-1">${escapeHtml(msg)}</p>
+        <p class="text-[11px] text-pink-900/50 mt-2">Tutup lalu coba buka lagi (long-press kartu Total Aset).</p>
       </div>
     `;
   }
-  // saat error, sembunyikan tombol edit
   document.getElementById('btnSetupEdit')?.classList.add('hidden');
   document.getElementById('setupEditActions')?.classList.add('hidden');
 }
@@ -177,7 +174,7 @@ function renderSetupView(data) {
 
   body.innerHTML = kategoriHtml + banksHtml + tablesHtml;
 
-  // Listener input (buat total live — aktif saat input di-enable)
+  // Listener input (total live — aktif saat input di-enable)
   body.querySelectorAll('.setup-input').forEach((inp) => {
     inp.addEventListener('input', onSetupInput);
   });
@@ -189,31 +186,43 @@ function renderSetupView(data) {
   updateSetupStamp();
 }
 
-/* ---------- RENDER: REKAP KATEGORI (read-only, hasil formula) ---------- */
+/* ============ KOMPONEN NILAI: "Rp" KIRI · NOMINAL KANAN ============ */
+
+function moneyHtml(num) {
+  const v = Number(num) || 0;
+  const s = Math.abs(v).toLocaleString('id-ID');
+  const sign = v < 0 ? '-' : '';
+  return `<span class="money"><span class="cur">Rp</span><span class="amt">${sign}${s}</span></span>`;
+}
+
+function pctHtml(p) {
+  const v = Number(p) || 0;
+  const val = Math.round(v * 1000) / 10;
+  return `<span class="pct">${val}%</span>`;
+}
+
+/* ---------- RENDER: REKAP ALOKASI (read-only, hasil formula) ---------- */
 
 function renderKategoriSummary(k) {
   if (!k || !k.rows || !k.rows.length) return '';
 
   const rows = k.rows.map((r) => `
-    <div class="flex justify-between items-center py-1 border-b border-pink-100/70 last:border-0">
-      <span class="text-[11px] text-pink-900/80 font-semibold truncate pr-2">${escapeHtml(r.nama)}</span>
-      <span class="whitespace-nowrap">
-        <span class="text-[11px] font-bold text-pink-950">${formatRupiah(r.nominal)}</span>
-        <span class="text-[9px] font-bold text-pink-600 ml-1.5">${pctStr(r.pct)}</span>
-      </span>
+    <div class="alloc-row">
+      <span class="alloc-name">${escapeHtml(r.nama)}</span>
+      <span class="alloc-val">${moneyHtml(r.nominal)}${pctHtml(r.pct)}</span>
     </div>
   `).join('');
 
   return `
   <section class="setup-readonly">
-    <div class="flex items-center justify-between mb-1.5">
-      <span class="text-[11px] font-bold text-pink-950/90 uppercase tracking-wide">🧾 Rekap Alokasi</span>
-      <span class="text-[9px] font-bold text-pink-700/70 bg-pink-100/70 border border-pink-200/60 rounded-full px-2 py-0.5">otomatis</span>
+    <div class="setup-sec-head">
+      <span class="setup-sec-title">🧾 Rekap Alokasi</span>
+      <span class="setup-sec-badge">otomatis</span>
     </div>
-    ${rows}
-    <div class="mt-2 flex justify-between items-center bg-amber-100/70 border border-amber-300/60 rounded-xl px-3 py-2">
-      <span class="text-[10px] font-bold text-amber-900 uppercase tracking-wide">Sisa Budget</span>
-      <span class="text-[11px] font-extrabold text-amber-950">${formatRupiah(k.sisa.nominal)} · ${pctStr(k.sisa.pct)}</span>
+    <div>${rows}</div>
+    <div class="alloc-sisa">
+      <span class="alloc-sisa-label">Sisa Budget</span>
+      <span class="alloc-val">${moneyHtml(k.sisa.nominal)}${pctHtml(k.sisa.pct)}</span>
     </div>
   </section>
   `;
@@ -225,22 +234,22 @@ function renderBanks(b) {
   if (!b || !b.rows || !b.rows.length) return '';
 
   const rows = b.rows.map((r) => `
-    <div class="flex justify-between items-center py-1 border-b border-pink-100/70 last:border-0">
-      <span class="text-[11px] text-pink-900/80 font-semibold">${escapeHtml(r.nama)}</span>
-      <span class="text-[11px] font-bold text-emerald-700">${formatRupiah(r.saldo)}</span>
+    <div class="alloc-row">
+      <span class="alloc-name">${escapeHtml(r.nama)}</span>
+      <span class="alloc-val">${moneyHtml(r.saldo)}</span>
     </div>
   `).join('');
 
   return `
   <section class="setup-readonly">
-    <div class="flex items-center justify-between mb-1.5">
-      <span class="text-[11px] font-bold text-pink-950/90 uppercase tracking-wide">🏦 Akun Bank — Saldo Awal</span>
-      <span class="text-[9px] font-bold text-pink-700/70 bg-pink-100/70 border border-pink-200/60 rounded-full px-2 py-0.5">permanen</span>
+    <div class="setup-sec-head">
+      <span class="setup-sec-title">🏦 Akun Bank — Saldo Awal</span>
+      <span class="setup-sec-badge">permanen</span>
     </div>
-    ${rows}
-    <div class="mt-2 flex justify-between items-center bg-emerald-100/60 border border-emerald-300/60 rounded-xl px-3 py-2">
-      <span class="text-[10px] font-bold text-emerald-900 uppercase tracking-wide">Total Saldo Awal</span>
-      <span class="text-[11px] font-extrabold text-emerald-800">${formatRupiah(b.total)}</span>
+    <div>${rows}</div>
+    <div class="bank-total">
+      <span class="alloc-sisa-label">Total Saldo Awal</span>
+      <span class="alloc-val">${moneyHtml(b.total)}</span>
     </div>
   </section>
   `;
@@ -252,21 +261,24 @@ function renderTableSection(t) {
   const rowsHtml = (t.items || []).map((it) => `
     <div class="setup-row">
       <span class="setup-sub" title="${escapeHtml(it.sub)}">${escapeHtml(it.sub)}</span>
-      <input type="text" inputmode="numeric" autocomplete="off" placeholder="Rp 0" disabled
-        id="setup-${t.id}-${it.row}"
-        data-table="${t.id}" data-row="${it.row}"
-        value="${it.value > 0 ? 'Rp ' + it.value.toLocaleString('id-ID') : ''}"
-        class="setup-input custom-input rounded-lg px-2.5 py-1.5 text-xs font-bold text-right">
+      <div class="setup-input-wrap">
+        <span class="setup-input-rp">Rp</span>
+        <input type="text" inputmode="numeric" autocomplete="off" placeholder="0" disabled
+          id="setup-${t.id}-${it.row}"
+          data-table="${t.id}" data-row="${it.row}"
+          value="${it.value > 0 ? it.value.toLocaleString('id-ID') : ''}"
+          class="setup-input custom-input">
+      </div>
     </div>
   `).join('');
 
   return `
   <section class="setup-section" data-setup-table="${t.id}">
-    <div class="flex justify-between items-center mb-1.5">
-      <span class="text-[11px] font-bold text-pink-950/90 uppercase tracking-wide">${escapeHtml(t.label)}</span>
-      <span id="setup-total-${t.id}" class="text-[11px] font-extrabold text-pink-700">${formatRupiah(t.total)}</span>
+    <div class="setup-sec-head">
+      <span class="setup-sec-title">${escapeHtml(t.label)}</span>
+      <span class="alloc-val">${moneyHtml(t.total)}</span>
     </div>
-    <div class="space-y-1.5">${rowsHtml}</div>
+    <div class="setup-rows">${rowsHtml}</div>
   </section>
   `;
 }
@@ -293,8 +305,17 @@ function exitEditMode() {
   renderSetupView(cachedSetup); // reset dari cache (buang perubahan)
 }
 
+/* Formatter khusus setup: digit murni + titik ribuan, TANPA prefix "Rp"
+   (prefix "Rp" sudah jadi label statis di kiri input) */
+function formatSetupInput(el) {
+  let digits = (el.value || '').replace(/[^0-9]/g, '');
+  if (digits === '') { el.value = ''; return; }
+  digits = digits.replace(/^0+(?=\d)/, '');
+  el.value = Number(digits).toLocaleString('id-ID');
+}
+
 function onSetupInput(e) {
-  formatRupiahInput(e.target);
+  formatSetupInput(e.target);
   dirtyCount++;
   const tableId = e.target.getAttribute('data-table');
   if (tableId) updateSectionTotal(tableId);
@@ -309,8 +330,8 @@ function updateSectionTotal(tableId) {
     sum += parseInt((inp.value || '').replace(/[^0-9]/g, ''), 10) || 0;
   });
 
-  const el = document.getElementById(`setup-total-${tableId}`);
-  if (el) el.textContent = formatRupiah(sum);
+  const amt = section.querySelector('.setup-sec-head .money .amt');
+  if (amt) amt.textContent = sum.toLocaleString('id-ID');
 }
 
 async function saveSetup() {
@@ -354,29 +375,19 @@ async function saveSetup() {
 
 /* ====================== HELPER ====================== */
 
-function updateSetupStamp() {
+function setStamp(text) {
   const stamp = document.getElementById('setupDataStamp');
-  if (stamp) {
-    let teks;
-    try {
-      teks = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Jakarta', hour12: false }) + ' WIB';
-    } catch (err) {
-      teks = new Date().toLocaleTimeString('en-GB', { hour12: false });
-    }
-    stamp.classList.remove('hidden');
-    stamp.textContent = '📅 Data per ' + teks;
+  if (stamp) stamp.textContent = text;
+}
+
+function updateSetupStamp() {
+  let teks;
+  try {
+    teks = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Jakarta', hour12: false }) + ' WIB';
+  } catch (err) {
+    teks = new Date().toLocaleTimeString('en-GB', { hour12: false });
   }
-}
-
-function formatRupiah(num) {
-  const v = Number(num) || 0;
-  const s = Math.abs(v).toLocaleString('id-ID');
-  return v < 0 ? '-Rp ' + s : 'Rp ' + s;
-}
-
-function pctStr(p) {
-  const v = Number(p) || 0;
-  return (Math.round(v * 1000) / 10) + '%';
+  setStamp('📅 Data per ' + teks);
 }
 
 function escapeHtml(str) {
