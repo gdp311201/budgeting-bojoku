@@ -1,18 +1,11 @@
 /* =========================================================
-   BUDGETING MASTER SYNC — CUSTOM STYLES (v10 · GLASS EDITION)
+   BUDGETING MASTER SYNC — CUSTOM STYLES (v11 · GLASS EDITION)
    ========================================================= */
 
 /* =========================================================
    🎛️ TUNING PANEL — PUSAT KONTROL BLUR & GELAP/TERANG
-   Semua angka diatur dari blok ini saja.
    Setelah ubah: push ke GitHub → naikkan ?v= di index.html
    → hard refresh di HP.
-
-   Panduan nilai blur (semakin besar = semakin kabur):
-     0px    = tanpa blur (jernih)
-     6-10px = blur tipis
-     14-18px = blur sedang
-     20px+  = blur pekat (kaca es)
    ========================================================= */
 :root {
 
@@ -42,29 +35,23 @@
 
   /* [8] Blur kolom input & dropdown */
   --blur-input: 8px;
-
+   
   /* ---------- GELAP / TERANG ---------- */
 
   /* [9] Gelap-terang WALLPAPER modul 1–5 (brightness)
          1 = normal · 0.75 = lebih gelap · 1.15 = lebih terang */
   --dim-wallpaper: 0.75;
 
-  /* [10] Kekuatan VEIL (lapisan pink-putih di atas wallpaper).
-          Memengaruhi kesan terang keseluruhan background.
-          1 = seperti sekarang · 0.5 = setengah kuat (wallpaper lebih
-          terlihat) · 0 = tanpa veil sama sekali */
+  /* [10] Kekuatan VEIL (lapisan pink-putih di atas wallpaper)
+          1 = seperti sekarang · 0.5 = setengah kuat · 0 = tanpa veil */
   --veil-strength: 1;
 
-  /* [11] Terang-putih-nya KARTU HALAMAN utama (app-shell).
-          0.30 = seperti sekarang · makin BESAR = makin putih/solid ·
-          makin KECIL = makin transparan (wallpaper tembus) */
+  /* [11] Terang-putih-nya KARTU HALAMAN utama
+          makin BESAR = makin putih/solid · makin KECIL = makin transparan */
   --page-light: 0.30;
 
-  /* [12] Gelap-nya KARTU HALAMAN utama (nuansa dark mode).
-          0 = mati (normal) · 0.2 = agak gelap · 0.35 = cukup gelap.
-          ⚠ PAKAI HATI-HATI: teks app ini berwarna gelap, jadi kalau
-          kartu terlalu gelap, tulisannya susah kebaca. Max aman ±0.3.
-          Tips: pasangkan dengan --page-light kecil (mis. 0.10). */
+  /* [12] Gelap-nya KARTU HALAMAN utama (nuansa dark mode)
+          0 = mati · max aman ±0.3 (lebih dari itu teks susah kebaca) */
   --page-dark: 0;
 }
 
@@ -86,10 +73,6 @@ body {
 
 /* =========================================================
    WALLPAPER GAJAH (BACKGROUND MODUL 1–5)
-   - Blur via --blur-wallpaper, gelap/terang via --dim-wallpaper.
-   - Area diperluas -40px keluar viewport supaya tepi putih
-     hasil blur tersembunyi.
-   - Layer kedua = fallback gradient kalau link imgbb mati.
    ========================================================= */
 
 body::before {
@@ -106,8 +89,7 @@ body::before {
   filter: blur(var(--blur-wallpaper)) brightness(var(--dim-wallpaper));
 }
 
-/* Veil gradasi pink-putih di atas wallpaper.
-   Kekuatannya diatur via --veil-strength. */
+/* Veil gradasi pink-putih di atas wallpaper */
 body::after {
   content: "";
   position: fixed;
@@ -135,16 +117,13 @@ input, select, textarea {
 
 /* =========================================================
    LOCK SCREEN — wallpaper blur & redup
-   Blur via --blur-lockscreen, redup via --dim-lockscreen.
-   (Independent dari modul 1–5.)
    ========================================================= */
 
 #lockScreen {
-  background-color: #b0889b; /* fallback kalau wallpaper gagal load */
+  background-color: #b0889b;
   overflow: hidden;
 }
 
-/* Layer wallpaper blur + redup */
 #lockScreen::before {
   content: "";
   position: absolute;
@@ -159,7 +138,6 @@ input, select, textarea {
   filter: blur(var(--blur-lockscreen)) brightness(var(--dim-lockscreen)) saturate(1.15);
 }
 
-/* Veil gradasi gelap agar teks putih makin terbaca */
 #lockScreen::after {
   content: "";
   position: absolute;
@@ -174,14 +152,12 @@ input, select, textarea {
   );
 }
 
-/* Glow/halo tipis di teks putih lock screen */
 .text-glow {
   text-shadow:
     0 2px 14px rgba(105, 55, 85, 0.55),
     0 1px 3px rgba(105, 55, 85, 0.40);
 }
 
-/* Timestamp live di bawah kontainer PIN */
 .lock-clock {
   font-size: 11px;
   font-weight: 600;
@@ -191,7 +167,7 @@ input, select, textarea {
 }
 
 /* =========================================================
-   KONTAINER PIN — glass tipis elegan (blur via --blur-card)
+   KONTAINER PIN
    ========================================================= */
 
 #pinBox {
@@ -219,7 +195,6 @@ input, select, textarea {
   -webkit-backdrop-filter: blur(var(--blur-input));
 }
 
-/* Kalender harus tampil di atas modal edit */
 .flatpickr-calendar.open {
   z-index: 99999 !important;
 }
@@ -231,14 +206,11 @@ input, select, textarea {
 }
 
 /* =========================================================
-   KONTAINER UTAMA (KARTU HALAMAN) — 
-   Terang via --page-light, gelap via --page-dark,
-   blur via --blur-page. Semua di TUNING PANEL.
+   KONTAINER UTAMA (KARTU HALAMAN)
    ========================================================= */
 
 .app-shell {
   background-color: transparent;
-  /* Dua lapis: [lapis putih (di atas)] + [lapis gelap (di bawah)] */
   background-image:
     linear-gradient(rgba(255, 255, 255, var(--page-light)), rgba(255, 255, 255, var(--page-light))),
     linear-gradient(rgba(44, 26, 38, var(--page-dark)), rgba(44, 26, 38, var(--page-dark)));
@@ -251,7 +223,6 @@ input, select, textarea {
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-/* Kartu kaca umum — kartu hasil pencarian (blur via --blur-card) */
 .glass-card {
   background: rgba(255, 255, 255, 0.40);
   backdrop-filter: blur(var(--blur-card));
@@ -262,7 +233,6 @@ input, select, textarea {
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-/* Kotak filter & wadah list (blur via --blur-mini) */
 .glass-mini {
   background: rgba(255, 255, 255, 0.42);
   border: 1px solid rgba(255, 255, 255, 0.7);
@@ -270,7 +240,6 @@ input, select, textarea {
   -webkit-backdrop-filter: blur(var(--blur-mini));
 }
 
-/* Warna Kas & Bank */
 .glass-kasbank {
   background: rgba(236, 253, 245, 0.42);
   border: 1px solid rgba(167, 243, 208, 0.55);
@@ -278,7 +247,6 @@ input, select, textarea {
   -webkit-backdrop-filter: blur(var(--blur-mini));
 }
 
-/* Warna Aset Investasi */
 .glass-investasi {
   background: rgba(238, 242, 255, 0.42);
   border: 1px solid rgba(199, 210, 254, 0.55);
@@ -286,7 +254,6 @@ input, select, textarea {
   -webkit-backdrop-filter: blur(var(--blur-mini));
 }
 
-/* Baris data mutasi (blur via --blur-mini) */
 #mutasiListContainer > div {
   background: rgba(255, 255, 255, 0.45) !important;
   border-color: rgba(255, 255, 255, 0.65) !important;
@@ -299,7 +266,7 @@ input, select, textarea {
 }
 
 /* =========================================================
-   INPUT & SELECT — blur via --blur-input
+   INPUT & SELECT
    ========================================================= */
 
 .custom-input {
@@ -318,7 +285,7 @@ input, select, textarea {
 }
 
 /* =========================================================
-   FIELD TANGGAL — KALENDER ONLY (TANPA KEYBOARD)
+   FIELD TANGGAL — KALENDER ONLY
    ========================================================= */
 
 #tanggal,
@@ -381,7 +348,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   TAMPILAN MUTASI (KATEGORI SEJAJAR TANGGAL)
+   TAMPILAN MUTASI
    ========================================================= */
 
 .mutasi-header-row {
@@ -584,7 +551,15 @@ select option[disabled] {
 }
 
 /* =========================================================
-   SWIPE CARD ACTIONS — EDIT (kanan) / HAPUS (kiri)
+   SWIPE CARD ACTIONS — SOFT GLOW CANDY 🍬
+   EDIT (biru lembut) / HAPUS (merah rose lembut).
+   - Gradasi pastel + inti cahaya radial dari dalam
+   - Ring putih tipis + highlight glossy di tepi atas
+   - Label putih bold + text-shadow pekat (tetap tajam)
+   - Halo luar tipis: sebagian terpotong container, sisanya
+     menyala menembus tepi kartu translucent saat digeser
+   - "Napas" glow hanya aktif saat kartu terbuka penuh
+     (hemat performa — gak jalan saat tersembunyi)
    ========================================================= */
 
 .swipe-item {
@@ -602,7 +577,7 @@ select option[disabled] {
   align-items: stretch;
   z-index: 1;
   opacity: 0;
-  transition: opacity 0.16s ease;
+  transition: opacity 0.24s ease;
 }
 
 /* Terlihat saat: kartu terbuka, ATAU sedang diseret */
@@ -625,27 +600,91 @@ select option[disabled] {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.03em;
+  gap: 4px;
+  font-size: 17px; /* ukuran emoji ikon */
   color: #ffffff;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.45);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  transition: filter 0.18s ease, transform 0.18s ease;
 }
 
+.swipe-btn span {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+/* ---- EDIT · biru lembut ---- */
 .swipe-btn-edit {
-  background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+  background:
+    radial-gradient(circle at 50% 26%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0) 58%),
+    linear-gradient(165deg, #93c5fd 0%, #60a5fa 48%, #3b82f6 100%);
+  text-shadow: 0 1px 4px rgba(29, 78, 216, 0.65), 0 0 10px rgba(29, 78, 216, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -4px 10px rgba(30, 64, 175, 0.30),
+    0 0 18px rgba(96, 165, 250, 0.42);
 }
 
+/* ---- HAPUS · merah rose lembut ---- */
 .swipe-btn-delete {
-  background: linear-gradient(135deg, #fb7185 0%, #be123c 100%);
+  background:
+    radial-gradient(circle at 50% 26%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0) 58%),
+    linear-gradient(165deg, #fda4af 0%, #fb7185 48%, #f43f5e 100%);
+  text-shadow: 0 1px 4px rgba(159, 18, 57, 0.65), 0 0 10px rgba(159, 18, 57, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -4px 10px rgba(159, 18, 57, 0.28),
+    0 0 18px rgba(251, 113, 133, 0.42);
 }
 
+/* Ditekan: tombol sedikit mengecil + menerang */
 .swipe-btn:active {
-  filter: brightness(1.15);
+  filter: brightness(1.1);
+  transform: scale(0.96);
+}
+
+/* Napas glow — hanya saat kartu terbuka penuh */
+.swipe-item.swipe-open .swipe-btn-edit {
+  animation: glowBreatheBlue 2.6s ease-in-out infinite;
+}
+
+.swipe-item.swipe-open .swipe-btn-delete {
+  animation: glowBreatheRose 2.6s ease-in-out infinite;
+}
+
+@keyframes glowBreatheBlue {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      inset 0 -4px 10px rgba(30, 64, 175, 0.30),
+      0 0 16px rgba(96, 165, 250, 0.35);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -4px 10px rgba(30, 64, 175, 0.30),
+      inset 0 0 22px rgba(147, 197, 253, 0.35),
+      0 0 30px rgba(96, 165, 250, 0.60);
+  }
+}
+
+@keyframes glowBreatheRose {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.75),
+      inset 0 -4px 10px rgba(159, 18, 57, 0.28),
+      0 0 16px rgba(251, 113, 133, 0.35);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      inset 0 -4px 10px rgba(159, 18, 57, 0.28),
+      inset 0 0 22px rgba(253, 164, 175, 0.35),
+      0 0 30px rgba(251, 113, 133, 0.60);
+  }
 }
 
 .swipe-content {
@@ -660,7 +699,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   NAVBAR FLOATING — blur via --blur-nav
+   NAVBAR FLOATING
    ========================================================= */
 
 .nav-bar {
@@ -788,7 +827,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   DEBUG TOAST (muncul hanya kalau ada error)
+   DEBUG TOAST
    ========================================================= */
 
 #debugToast {
