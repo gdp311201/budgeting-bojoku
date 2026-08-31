@@ -1,5 +1,5 @@
 /* =========================================================
-   BUDGETING MASTER SYNC — CUSTOM STYLES (v11 · GLASS EDITION)
+   BUDGETING MASTER SYNC — CUSTOM STYLES (v12 · GLASS EDITION)
    ========================================================= */
 
 /* =========================================================
@@ -552,14 +552,6 @@ select option[disabled] {
 
 /* =========================================================
    SWIPE CARD ACTIONS — SOFT GLOW CANDY 🍬
-   EDIT (biru lembut) / HAPUS (merah rose lembut).
-   - Gradasi pastel + inti cahaya radial dari dalam
-   - Ring putih tipis + highlight glossy di tepi atas
-   - Label putih bold + text-shadow pekat (tetap tajam)
-   - Halo luar tipis: sebagian terpotong container, sisanya
-     menyala menembus tepi kartu translucent saat digeser
-   - "Napas" glow hanya aktif saat kartu terbuka penuh
-     (hemat performa — gak jalan saat tersembunyi)
    ========================================================= */
 
 .swipe-item {
@@ -824,6 +816,89 @@ select option[disabled] {
   45%  { transform: scale(1.22); }
   75%  { transform: scale(0.94); }
   100% { transform: scale(1); }
+}
+
+/* =========================================================
+   MODAL SETUP BUDGET — TRIGGER & PANEL (BARU v12)
+   ========================================================= */
+
+/* Kartu Total Aset = trigger long-press.
+   Matikan callout/selection iOS supaya long-press mulus. */
+#assetCard {
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+
+/* Feedback visual saat jari menahan kartu (sebelum 0.7 detik) */
+#assetCard.lp-press {
+  transform: scale(0.97);
+  filter: brightness(1.08);
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+/* Panel setup (bottom sheet) */
+.setup-panel {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+/* Section read-only (rekap & bank) */
+.setup-readonly {
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 0.75rem 0.9rem;
+}
+
+/* Section editable */
+.setup-section {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(220, 180, 200, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 0.75rem 0.9rem;
+}
+
+/* Baris sub kategori + input nominal */
+.setup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.setup-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: #52404d;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.setup-input {
+  flex: 0 0 42%;
+  max-width: 42%;
+}
+
+/* Tampilan terkunci (mode view) */
+.setup-input:disabled {
+  background: rgba(255, 255, 255, 0.32);
+  border-style: dashed;
+  color: rgba(82, 64, 77, 0.75);
+  cursor: default;
+}
+
+/* Tampilan aktif (mode edit) */
+.setup-input.setup-input-live {
+  background: rgba(255, 255, 255, 0.9);
+  border-style: solid;
 }
 
 /* =========================================================
