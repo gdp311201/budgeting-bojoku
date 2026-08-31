@@ -1,5 +1,5 @@
 /* =========================================================
-   BUDGETING MASTER SYNC — CUSTOM STYLES
+   BUDGETING MASTER SYNC — CUSTOM STYLES (v7 · GLASS EDITION)
    ========================================================= */
 
 html, body {
@@ -8,14 +8,43 @@ html, body {
   overflow-x: hidden;
 }
 
-body { 
-  background-color: #d8b0c0;
-  background-image: 
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23ffffff' fill-opacity='0.18'%3E%3Cpath d='M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z M13 30 c0-2.8 2.2-5 5-5 h1 v8 h-1 c-2.8 0-5-2.2-5-5 z M25 18 c2.8 0 5 2.2 5 5 s-2.2 5-5 5 s-5-2.2-5-5 s2.2-5 5-5 z'/%3E%3Ccircle cx='27' cy='15' r='1.5' fill='%23d8b0c0' fill-opacity='0.5'/%3E%3Cpath d='M75 58 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C53.2 62.4 50 65.8 50 70 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C73.8 75.1 75 71.7 75 68 v-10 z M53 70 c0-2.8 2.2-5 5-5 h1 v8 h-1 c-2.8 0-5-2.2-5-5 z M65 58 c2.8 0 5 2.2 5 5 s-2.2 5-5 5 s-5-2.2-5-5 s2.2-5 5-5 z'/%3E%3Ccircle cx='67' cy='55' r='1.5' fill='%23d8b0c0' fill-opacity='0.5'/%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(135deg, #8a96a8 0%, #ba9eb1 50%, #e3b9ca 100%);
-  background-attachment: fixed;
-  color: #4a3e47; 
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+body {
+  background-color: #d8b0c0; /* fallback saat wallpaper masih loading */
+  color: #4a3e47;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* =========================================================
+   WALLPAPER GAJAH (BACKGROUND MODUL 1–5)
+   Dipasang sebagai layer fixed via pseudo-element — aman untuk
+   iOS Safari (background-attachment: fixed bermasalah di iOS).
+   Login screen punya background sendiri & otomatis menutup layer ini.
+   ========================================================= */
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -2;
+  background: url('https://i.ibb.co/xKFPK6xD/wp8104164.jpg') center center / cover no-repeat;
+}
+
+/* Veil gradasi pink-putih tipis di atas wallpaper supaya komponen
+   kaca tetap elegan & teks tetap terbaca.
+   (Mau wallpaper lebih nendang? Kecilkan angka opacity di bawah.
+    Mau lebih soft/putih? Besarkan.) */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    165deg,
+    rgba(255, 246, 250, 0.45) 0%,
+    rgba(255, 246, 250, 0.20) 42%,
+    rgba(216, 176, 192, 0.34) 100%
+  );
 }
 
 /* Cegah iOS auto zoom saat input diklik */
@@ -23,20 +52,26 @@ input, select, textarea {
   font-size: 16px !important;
 }
 
+/* Pola gajah kecil — khusus dipakai di login screen */
 .watermark-bg {
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Cg fill=\'%23ffffff\'%3E%3Cpath d=\'M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z\'/%3E%3C/g%3E%3C/svg%3E');
 }
 
+/* =========================================================
+   FLATPICKR (KALENDER)
+   ========================================================= */
+
 .flatpickr-calendar {
-  background: rgba(255, 245, 248, 0.95) !important;
+  background: rgba(255, 245, 248, 0.96) !important;
   border: 1.5px solid #d8b0c0 !important;
   box-shadow: 0 10px 25px -5px rgba(120, 90, 110, 0.2) !important;
   border-radius: 16px !important;
   color: #5c4353 !important;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-/* Kalender flatpickr harus di atas modal edit */
+/* Kalender harus tampil di atas modal edit */
 .flatpickr-calendar.open {
   z-index: 99999 !important;
 }
@@ -47,39 +82,84 @@ input, select, textarea {
   color: white !important;
 }
 
+/* =========================================================
+   KONTAINER UTAMA (KARTU HALAMAN) — GLASS TRANSPARAN
+   ========================================================= */
+
+.app-shell {
+  background: rgba(255, 255, 255, 0.30);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 18px 45px -12px rgba(90, 55, 75, 0.28),
+    0 4px 14px -6px rgba(90, 55, 75, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Kartu kaca umum — dipakai PIN box (login) & kartu hasil pencarian */
 .glass-card {
-  background: rgba(255, 255, 255, 0.52);
+  background: rgba(255, 255, 255, 0.40);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 12px 32px -10px rgba(90, 55, 75, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* Kotak filter, wadah list, kartu kecil di dalam halaman */
+.glass-mini {
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Aksesibilitas & Akseptabilitas Warna Kas & Bank */
+.glass-kasbank {
+  background: rgba(236, 253, 245, 0.42);
+  border: 1px solid rgba(167, 243, 208, 0.55);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 0 12px 35px rgba(70, 60, 80, 0.15);
 }
 
-.glass-mini {
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
-}
-
-.glass-kasbank {
-  background: rgba(236, 253, 245, 0.6);
-  border: 1px solid rgba(167, 243, 208, 0.7);
-}
-
+/* Aksesibilitas & Akseptabilitas Warna Aset Investasi */
 .glass-investasi {
-  background: rgba(238, 242, 255, 0.6);
-  border: 1px solid rgba(199, 210, 254, 0.7);
+  background: rgba(238, 242, 255, 0.42);
+  border: 1px solid rgba(199, 210, 254, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
+
+/* Baris data mutasi — dibuat glass lewat override CSS
+   (ID-based) supaya file mutasi.js tidak perlu diubah */
+#mutasiListContainer > div {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border-color: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#mutasiListContainer > div:hover {
+  background: rgba(255, 255, 255, 0.62) !important;
+}
+
+/* =========================================================
+   INPUT & SELECT — GLASS
+   ========================================================= */
 
 .custom-input {
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(220, 180, 200, 0.7);
+  background: rgba(255, 255, 255, 0.50);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(220, 180, 200, 0.55);
   color: #52404d;
   transition: all 0.2s ease;
 }
 
 .custom-input:focus {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.82);
   border-color: #c88ea7;
   box-shadow: 0 0 0 3px rgba(200, 142, 167, 0.2);
 }
@@ -87,6 +167,7 @@ input, select, textarea {
 /* =========================================================
    FIELD TANGGAL — KALENDER ONLY (TANPA KEYBOARD)
    ========================================================= */
+
 #tanggal,
 input.flatpickr-input {
   box-sizing: border-box;
@@ -147,7 +228,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   TAMPILAN MUTASI
+   TAMPILAN MUTASI (KATEGORI SEJAJAR TANGGAL)
    ========================================================= */
 
 .mutasi-header-row {
@@ -351,6 +432,9 @@ select option[disabled] {
 
 /* =========================================================
    SWIPE CARD ACTIONS — EDIT (kanan) / HAPUS (kiri), gaya Gmail
+   Kartu kini translucent — tombol aksi di belakangnya dibuat
+   fade-in hanya saat kartu sedang digeser / terbuka, supaya
+   tidak "membayangi" kartu dalam kondisi normal.
    ========================================================= */
 
 .swipe-item {
@@ -367,6 +451,15 @@ select option[disabled] {
   display: flex;
   align-items: stretch;
   z-index: 1;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+/* Terlihat saat: kartu terbuka, ATAU sedang diseret
+   (inline style "translate" terpasang oleh handler drag) */
+.swipe-item.swipe-open .swipe-actions,
+.swipe-item:has(.swipe-content[style*="translate"]) .swipe-actions {
+  opacity: 1;
 }
 
 .swipe-actions-left {
@@ -406,18 +499,19 @@ select option[disabled] {
   filter: brightness(1.15);
 }
 
-/* Kartu harus OPAK supaya tombol di belakangnya gak tembus */
 .swipe-content {
   position: relative;
   z-index: 2;
-  touch-action: pan-y; /* scroll vertikal tetap native, horizontal ditangani JS */
+  touch-action: pan-y; /* scroll vertikal tetap native */
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-  background: rgba(255, 255, 255, 0.97) !important;
+  background: rgba(255, 255, 255, 0.60) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   cursor: grab;
 }
 
 /* =========================================================
-   NAVBAR FLOATING — TRANSPARENT GLASS + GLIDER PINK
+   NAVBAR FLOATING — GLASS TRANSPARAN (DYNAMIC ISLAND VIBE)
    ========================================================= */
 
 .nav-bar {
@@ -431,14 +525,14 @@ select option[disabled] {
   bottom: calc(env(safe-area-inset-bottom, 0px) + 0.35rem);
   padding: 0.5rem 0.7rem 0.35rem;
   border-radius: 1.75rem;
-  background: rgba(255, 247, 250, 0.34);
-  -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  backdrop-filter: blur(24px) saturate(1.8);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.30);
+  -webkit-backdrop-filter: blur(22px) saturate(1.7);
+  backdrop-filter: blur(22px) saturate(1.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow:
-    0 16px 38px -14px rgba(131, 24, 67, 0.38),
-    0 4px 14px -8px rgba(131, 24, 67, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    0 16px 38px -14px rgba(131, 24, 67, 0.35),
+    0 4px 14px -8px rgba(131, 24, 67, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
   transition: opacity 0.25s ease, transform 0.25s ease;
   animation: navBarIn 0.55s cubic-bezier(0.32, 1.28, 0.44, 1) 0.1s backwards;
 }
@@ -502,7 +596,7 @@ select option[disabled] {
   height: 2.6rem;
   margin-bottom: 0.3rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.30);
   border: 1px solid rgba(255, 255, 255, 0.5);
   color: rgba(124, 45, 78, 0.62);
   transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
