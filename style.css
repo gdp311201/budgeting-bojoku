@@ -48,6 +48,18 @@
 
   /* [12] Gelap-nya KARTU HALAMAN utama (nuansa dark mode) */
   --page-dark: 0;
+   
+  /* ---------- GERAKAN WALLPAPER ---------- */
+
+  /* [13] Gerakan wallpaper modul 1–5. Pilihan:
+         wallpaper-kenburns → zoom pelan + drift diagonal (paling lembut)
+         wallpaper-pan      → mengambang kiri ↔ kanan pelan
+         none               → diam (paling hemat baterai) */
+  --wallpaper-motion: wallpaper-kenburns;
+
+  /* [14] Durasi satu siklus (semakin BESAR = semakin LAMBAT).
+         45s = sangat halus. Mau lebih terasa? Coba 25s. */
+  --wallpaper-motion-speed: 45s;
 }
 
 /* =========================================================
@@ -82,6 +94,30 @@ body::before {
   background-size: cover;
   background-repeat: no-repeat;
   filter: blur(var(--blur-wallpaper)) brightness(var(--dim-wallpaper));
+
+  /* 🎬 GERAKAN WALLPAPER — dikendalikan dari TUNING PANEL [13] & [14] */
+  animation-name: var(--wallpaper-motion, none);
+  animation-duration: var(--wallpaper-motion-speed, 45s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+/* ---- Gaya 1: Ken Burns — zoom pelan + mengambang diagonal ---- */
+@keyframes wallpaper-kenburns {
+  0%, 100% { transform: scale(1) translate(0%, 0%); }
+  50%      { transform: scale(1.07) translate(1.3%, -1.1%); }
+}
+
+/* ---- Gaya 2: Pan — hanyut kiri ↔ kanan ---- */
+@keyframes wallpaper-pan {
+  0%, 100% { transform: scale(1.1) translateX(-1.8%); }
+  50%      { transform: scale(1.1) translateX(1.8%); }
+}
+
+/* Hormati setting sistem "kurangi gerakan" (aksesibilitas) */
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation-name: none; }
 }
 
 body::after {
