@@ -5,11 +5,10 @@
    script di index.html (non-module) — tetap jalan walau file
    ini error sekalipun.
 
-   PERUBAHAN BESAR v5 (MODE MANUAL-LOAD):
-   - TIDAK ADA lagi fetch otomatis saat pindah/swipe tab.
-   - Data modul (Dashboard/Mutasi/Receipt/Cari) HANYA dimuat
-     saat tombol "Tampilkan/Cari" diklik — listener-nya
-     dipasang oleh masing-masing file modul.
+   MODE MANUAL-LOAD:
+   - TIDAK ADA fetch otomatis saat pindah/swipe tab.
+   - Data modul HANYA dimuat saat tombol "Tampilkan/Cari" diklik.
+   - v7: + setup.js (panel Setup Budget via long-press kartu Total Aset)
    ========================================================= */
 
 const TAB_ORDER = ['input', 'mutasi', 'dashboard', 'receipt', 'search'];
@@ -64,6 +63,12 @@ async function loadAllModules() {
   const s = await tryImport('./search.js', 'search.js');
   if (s && typeof s.initSearchModule === 'function') {
     safeRun('initSearchModule', function () { s.initSearchModule(); });
+  }
+
+  // MODUL SETUP BUDGET (panel rahasia via long-press kartu Total Aset)
+  const u = await tryImport('./setup.js', 'setup.js');
+  if (u && typeof u.initSetupModule === 'function') {
+    safeRun('initSetupModule', function () { u.initSetupModule(); });
   }
 }
 
