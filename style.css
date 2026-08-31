@@ -30,7 +30,7 @@
   --blur-page: 3px;
 
   /* [5] Blur menu bar navigasi bawah */
-  --blur-nav: 10px;
+  --blur-nav: 3px;
 
   /* [6] Blur kotak filter, wadah list, kartu dashboard & baris mutasi */
   --blur-mini: 12px;
