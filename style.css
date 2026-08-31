@@ -1,5 +1,5 @@
 /* =========================================================
-   BUDGETING MASTER SYNC — CUSTOM STYLES (v13 · GLASS EDITION)
+   BUDGETING MASTER SYNC — CUSTOM STYLES (v15 · GLASS EDITION)
    ========================================================= */
 
 /* =========================================================
@@ -203,7 +203,7 @@ input, select, textarea {
    ========================================================= */
 
 .app-shell {
-  background-color: Transparent;
+  background-color: transparent;
   background-image:
     linear-gradient(rgba(255, 255, 255, var(--page-light)), rgba(255, 255, 255, var(--page-light))),
     linear-gradient(rgba(44, 26, 38, var(--page-dark)), rgba(44, 26, 38, var(--page-dark)));
@@ -807,7 +807,7 @@ select option[disabled] {
 }
 
 /* =========================================================
-   MODAL SETUP BUDGET — RENDER v3 (GRID RATA, GAYA SHEET)
+   MODAL SETUP BUDGET — RENDER v4 (GRID FIXED, FLUSH KANAN)
    ========================================================= */
 
 /* Kartu Total Aset = trigger long-press */
@@ -829,18 +829,28 @@ select option[disabled] {
   border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-/* ---- GRID KOLOM NILAI (KUNCI KERAPIAN) ----
-   Zona nilai kanan dibagi 3 kolom dengan lebar tetap:
-   [ Rp ]  [ nominal ]  [ % ] — semua baris sejajar sempurna,
-   nominal & % rata kanan kolomnya masing-masing. */
+/* ---- GRID KOLOM NILAI (KUNCI KERAPIAN) — v4 ----
+   Zona nilai = blok fixed 182px di sisi kanan, kolom LEBAR TETAP:
+   • Dengan %  : [Rp 24px | nominal 100px | % 44px]
+   • Tanpa %   : [Rp 24px | nominal 151px] → nominal MENEMPEL ke
+     tepi kanan (sejajar tepi kanan kotak input editable).
+   Lebar total kedua varian sama (182px) → posisi "Rp" konsisten
+   di semua baris (Rp rata kiri, nominal rata kanan — gaya sheet). */
 .val-grid {
   display: grid;
-  grid-template-columns: 24px minmax(86px, auto) 44px;
+  grid-template-columns: 24px 100px 44px;
   column-gap: 7px;
   align-items: baseline;
   justify-content: end;
   flex-shrink: 0;
   font-variant-numeric: tabular-nums;
+}
+
+/* Varian TANPA kolom % — nominal flush ke tepi kanan.
+   FIX v4: sebelumnya slot % (44px) tetap dipesankan walau kosong,
+   membuat nominal "ketarik ke depan" ±51px. */
+.val-grid.no-pct {
+  grid-template-columns: 24px 151px;
 }
 
 .val-grid .cur {
@@ -1040,6 +1050,7 @@ select option[disabled] {
   background: rgba(255, 255, 255, 0.92);
   border-style: solid;
 }
+
 /* =========================================================
    DEBUG TOAST
    ========================================================= */
