@@ -186,22 +186,16 @@ function renderSetupView(data) {
   updateSetupStamp();
 }
 
-/* ============ KOMPONEN NILAI v3 — GRID [Rp | nominal | %] ============ */
+/* ============ KOMPONEN NILAI: "Rp" KIRI · NOMINAL KANAN ============ */
 
-function valGrid(num, withPct) {
+function moneyHtml(num) {
   const v = Number(num) || 0;
   const s = Math.abs(v).toLocaleString('id-ID');
   const sign = v < 0 ? '-' : '';
-  const pctCell = withPct ? pctCellHtml : '';
-  return `
-    <span class="val-grid">
-      <span class="cur">Rp</span>
-      <span class="amt">${sign}${s}</span>
-      ${pctCell}
-    </span>`;
+  return `<span class="money"><span class="cur">Rp</span><span class="amt">${sign}${s}</span></span>`;
 }
 
-function pctCellHtml(p) {
+function pctHtml(p) {
   const v = Number(p) || 0;
   const val = Math.round(v * 1000) / 10;
   return `<span class="pct">${val}%</span>`;
@@ -215,7 +209,7 @@ function renderKategoriSummary(k) {
   const rows = k.rows.map((r) => `
     <div class="alloc-row">
       <span class="alloc-name">${escapeHtml(r.nama)}</span>
-      ${valGrid(r.nominal, r.pct)}
+      <span class="alloc-val">${moneyHtml(r.nominal)}${pctHtml(r.pct)}</span>
     </div>
   `).join('');
 
@@ -228,7 +222,7 @@ function renderKategoriSummary(k) {
     <div>${rows}</div>
     <div class="alloc-sisa">
       <span class="alloc-sisa-label">Sisa Budget</span>
-      ${valGrid(k.sisa.nominal, k.sisa.pct)}
+      <span class="alloc-val">${moneyHtml(k.sisa.nominal)}${pctHtml(k.sisa.pct)}</span>
     </div>
   </section>
   `;
@@ -242,7 +236,7 @@ function renderBanks(b) {
   const rows = b.rows.map((r) => `
     <div class="alloc-row">
       <span class="alloc-name">${escapeHtml(r.nama)}</span>
-      ${valGrid(r.saldo, null)}
+      <span class="alloc-val">${moneyHtml(r.saldo)}</span>
     </div>
   `).join('');
 
@@ -255,7 +249,7 @@ function renderBanks(b) {
     <div>${rows}</div>
     <div class="bank-total">
       <span class="alloc-sisa-label">Total Saldo Awal</span>
-      ${valGrid(b.total, null)}
+      <span class="alloc-val">${moneyHtml(b.total)}</span>
     </div>
   </section>
   `;
@@ -282,7 +276,7 @@ function renderTableSection(t) {
   <section class="setup-section" data-setup-table="${t.id}">
     <div class="setup-sec-head">
       <span class="setup-sec-title">${escapeHtml(t.label)}</span>
-      ${valGrid(t.total, null)}
+      <span class="alloc-val">${moneyHtml(t.total)}</span>
     </div>
     <div class="setup-rows">${rowsHtml}</div>
   </section>
