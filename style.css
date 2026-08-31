@@ -1,5 +1,5 @@
 /* =========================================================
-   BUDGETING MASTER SYNC — CUSTOM STYLES (v12 · GLASS EDITION)
+   BUDGETING MASTER SYNC — CUSTOM STYLES (v13 · GLASS EDITION)
    ========================================================= */
 
 /* =========================================================
@@ -11,8 +11,7 @@
 
   /* ---------- BLUR ---------- */
 
-  /* [1] Blur WALLPAPER belakang modul 1–5
-         (default 0 = wallpaper jelas; coba 6px-10px kalau mau lembut) */
+  /* [1] Blur WALLPAPER belakang modul 1–5 */
   --blur-wallpaper: 0px;
 
   /* [2] Blur wallpaper LOCK SCREEN (login) */
@@ -35,23 +34,19 @@
 
   /* [8] Blur kolom input & dropdown */
   --blur-input: 8px;
-   
+
   /* ---------- GELAP / TERANG ---------- */
 
-  /* [9] Gelap-terang WALLPAPER modul 1–5 (brightness)
-         1 = normal · 0.75 = lebih gelap · 1.15 = lebih terang */
+  /* [9] Gelap-terang WALLPAPER modul 1–5 (brightness) */
   --dim-wallpaper: 0.75;
 
-  /* [10] Kekuatan VEIL (lapisan pink-putih di atas wallpaper)
-          1 = seperti sekarang · 0.5 = setengah kuat · 0 = tanpa veil */
+  /* [10] Kekuatan VEIL (lapisan pink-putih di atas wallpaper) */
   --veil-strength: 1;
 
-  /* [11] Terang-putih-nya KARTU HALAMAN utama
-          makin BESAR = makin putih/solid · makin KECIL = makin transparan */
+  /* [11] Terang-putih-nya KARTU HALAMAN utama */
   --page-light: 0.30;
 
-  /* [12] Gelap-nya KARTU HALAMAN utama (nuansa dark mode)
-          0 = mati · max aman ±0.3 (lebih dari itu teks susah kebaca) */
+  /* [12] Gelap-nya KARTU HALAMAN utama (nuansa dark mode) */
   --page-dark: 0;
 }
 
@@ -66,7 +61,7 @@ html, body {
 }
 
 body {
-  background-color: #d8b0c0; /* fallback saat wallpaper masih loading */
+  background-color: #d8b0c0;
   color: #4a3e47;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
@@ -89,7 +84,6 @@ body::before {
   filter: blur(var(--blur-wallpaper)) brightness(var(--dim-wallpaper));
 }
 
-/* Veil gradasi pink-putih di atas wallpaper */
 body::after {
   content: "";
   position: fixed;
@@ -110,7 +104,6 @@ input, select, textarea {
   font-size: 16px !important;
 }
 
-/* Pola gajah kecil (SVG lama — disimpan berjaga-jaga) */
 .watermark-bg {
   background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 80 80\'%3E%3Cg fill=\'%23ffffff\'%3E%3Cpath d=\'M35 18 c0-5.5-4.5-10-10-10 s-10 4.5-10 10 c0 1.2 0.2 2.3 0.6 3.4 C13.2 22.4 10 25.8 10 30 c0 4.4 3.6 8 8 8 h2 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-5 h6 v5 c0 1.1 0.9 2 2 2 h3 c1.1 0 2-0.9 2-2 v-6.2 C33.8 35.1 35 31.7 35 28 v-10 z\'/%3E%3C/g%3E%3C/svg%3E');
 }
@@ -210,7 +203,7 @@ input, select, textarea {
    ========================================================= */
 
 .app-shell {
-  background-color: transparent;
+  background-color: Transparent;
   background-image:
     linear-gradient(rgba(255, 255, 255, var(--page-light)), rgba(255, 255, 255, var(--page-light))),
     linear-gradient(rgba(44, 26, 38, var(--page-dark)), rgba(44, 26, 38, var(--page-dark)));
@@ -572,7 +565,6 @@ select option[disabled] {
   transition: opacity 0.24s ease;
 }
 
-/* Terlihat saat: kartu terbuka, ATAU sedang diseret */
 .swipe-item.swipe-open .swipe-actions,
 .swipe-item:has(.swipe-content[style*="translate"]) .swipe-actions {
   opacity: 1;
@@ -593,7 +585,7 @@ select option[disabled] {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  font-size: 17px; /* ukuran emoji ikon */
+  font-size: 17px;
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.45);
   cursor: pointer;
@@ -608,7 +600,6 @@ select option[disabled] {
   letter-spacing: 0.08em;
 }
 
-/* ---- EDIT · biru lembut ---- */
 .swipe-btn-edit {
   background:
     radial-gradient(circle at 50% 26%, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0) 58%),
@@ -620,7 +611,6 @@ select option[disabled] {
     0 0 18px rgba(96, 165, 250, 0.42);
 }
 
-/* ---- HAPUS · merah rose lembut ---- */
 .swipe-btn-delete {
   background:
     radial-gradient(circle at 50% 26%, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0) 58%),
@@ -632,13 +622,11 @@ select option[disabled] {
     0 0 18px rgba(251, 113, 133, 0.42);
 }
 
-/* Ditekan: tombol sedikit mengecil + menerang */
 .swipe-btn:active {
   filter: brightness(1.1);
   transform: scale(0.96);
 }
 
-/* Napas glow — hanya saat kartu terbuka penuh */
 .swipe-item.swipe-open .swipe-btn-edit {
   animation: glowBreatheBlue 2.6s ease-in-out infinite;
 }
@@ -819,11 +807,10 @@ select option[disabled] {
 }
 
 /* =========================================================
-   MODAL SETUP BUDGET — TRIGGER & PANEL (BARU v12)
+   MODAL SETUP BUDGET — RENDER v2 (GAYA SHEET ASLI)
    ========================================================= */
 
-/* Kartu Total Aset = trigger long-press.
-   Matikan callout/selection iOS supaya long-press mulus. */
+/* Kartu Total Aset = trigger long-press */
 #assetCard {
   -webkit-touch-callout: none;
   user-select: none;
@@ -831,73 +818,224 @@ select option[disabled] {
   cursor: pointer;
 }
 
-/* Feedback visual saat jari menahan kartu (sebelum 0.7 detik) */
+/* Feedback visual saat jari menahan kartu */
 #assetCard.lp-press {
   transform: scale(0.97);
   filter: brightness(1.08);
   transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-/* Panel setup (bottom sheet) */
 .setup-panel {
   border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-/* Section read-only (rekap & bank) */
+/* ---- POLA UANG: "Rp" rata KIRI · nominal rata KANAN ----
+   Dipakai di rekap, bank, total section, dan (versi input) di editable. */
+.money {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 118px;
+  font-variant-numeric: tabular-nums;
+}
+
+.money .cur {
+  margin-right: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(82, 64, 77, 0.62);
+}
+
+.money .amt {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4a3040;
+}
+
+/* % bersebelahan dengan nominal (tanpa garis pemisah) */
+.pct {
+  margin-left: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #be185d;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- SECTION ---- */
+.setup-readonly,
+.setup-section {
+  border-radius: 1rem;
+  padding: 0.8rem 0.95rem;
+}
+
 .setup-readonly {
   background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 1rem;
-  padding: 0.75rem 0.9rem;
 }
 
-/* Section editable */
 .setup-section {
   background: rgba(255, 255, 255, 0.55);
   border: 1px solid rgba(220, 180, 200, 0.55);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 1rem;
-  padding: 0.75rem 0.9rem;
 }
 
-/* Baris sub kategori + input nominal */
+.setup-sec-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 0.45rem;
+}
+
+.setup-sec-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #6b2b47;
+}
+
+.setup-sec-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(157, 23, 77, 0.75);
+  background: rgba(255, 228, 238, 0.8);
+  border: 1px solid rgba(236, 72, 153, 0.25);
+  border-radius: 9999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---- BARIS REKAP & BANK (read-only) ---- */
+.alloc-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5.5px 0;
+  border-bottom: 1px solid rgba(216, 176, 192, 0.28);
+}
+
+.alloc-row:last-child {
+  border-bottom: 0;
+}
+
+.alloc-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #4a3040;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.alloc-val {
+  display: inline-flex;
+  align-items: baseline;
+  flex-shrink: 0;
+}
+
+/* Baris ringkasan (Sisa Budget / Total Saldo) */
+.alloc-sisa,
+.bank-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 0.55rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.75rem;
+}
+
+.alloc-sisa {
+  background: rgba(255, 243, 205, 0.75);
+  border: 1px solid rgba(214, 168, 74, 0.35);
+}
+
+.bank-total {
+  background: rgba(213, 245, 230, 0.75);
+  border: 1px solid rgba(74, 165, 122, 0.30);
+}
+
+.alloc-sisa-label {
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.alloc-sisa .alloc-sisa-label { color: #8a6116; }
+.bank-total .alloc-sisa-label { color: #146c4a; }
+.alloc-sisa .money .amt,
+.bank-total .money .amt { font-weight: 800; }
+.alloc-sisa .pct { color: #8a6116; }
+
+/* ---- BARIS EDITABLE (input) ---- */
+.setup-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .setup-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
 }
 
 .setup-sub {
-  font-size: 11px;
-  font-weight: 600;
-  color: #52404d;
   flex: 1 1 auto;
   min-width: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #4a3040;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.setup-input {
-  flex: 0 0 42%;
-  max-width: 42%;
+.setup-input-wrap {
+  position: relative;
+  flex: 0 0 46%;
+  max-width: 46%;
 }
 
-/* Tampilan terkunci (mode view) */
+/* Label "Rp" statis di kiri dalam kotak input */
+.setup-input-rp {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(82, 64, 77, 0.62);
+  pointer-events: none;
+}
+
+/* Input: nominal rata KANAN, ruang kiri untuk label "Rp".
+   (font 16px otomatis dari aturan global anti-zoom iOS) */
+.setup-input {
+  width: 100%;
+  text-align: right;
+  padding: 7px 12px 7px 36px;
+  font-weight: 700;
+  border-radius: 0.7rem;
+}
+
 .setup-input:disabled {
   background: rgba(255, 255, 255, 0.32);
   border-style: dashed;
-  color: rgba(82, 64, 77, 0.75);
+  color: rgba(74, 48, 64, 0.8);
   cursor: default;
 }
 
-/* Tampilan aktif (mode edit) */
 .setup-input.setup-input-live {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   border-style: solid;
 }
 
