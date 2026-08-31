@@ -18,7 +18,7 @@
 
   /* [1] Blur WALLPAPER belakang modul 1–5
          (default 0 = wallpaper jelas; coba 6px-10px kalau mau lembut) */
-  --blur-wallpaper: 0.5px;
+  --blur-wallpaper: 1px;
 
   /* [2] Blur wallpaper LOCK SCREEN (login) */
   --blur-lockscreen: 1.8px;
@@ -27,7 +27,7 @@
   --dim-lockscreen: 0.72;
 
   /* [4] Blur kontainer besar halaman (kartu putih utama) */
-  --blur-page: 6px;
+  --blur-page: 3px;
 
   /* [5] Blur menu bar navigasi bawah */
   --blur-nav: 10px;
