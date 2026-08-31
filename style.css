@@ -26,7 +26,7 @@
   --blur-lockscreen: 1.8px;
 
   /* [3] Redup lock screen (0.5 = gelap, 0.72 = default, 1 = terang) */
-  --dim-lockscreen: 0.72;
+  --dim-lockscreen: 0.85;
 
   /* [4] Blur kontainer besar halaman (kartu putih utama) */
   --blur-page: 3px;
