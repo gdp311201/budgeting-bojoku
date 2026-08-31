@@ -30,8 +30,8 @@
   <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Custom CSS (?v=12 = cache buster) -->
-  <link rel="stylesheet" href="style.css?v=13">
+  <!-- Custom CSS (?v=14 = cache buster) -->
+  <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-32">
 
@@ -842,17 +842,17 @@
     <!-- MODAL SETUP BUDGET (tersembunyi — buka via LONG-PRESS kartu Total Aset di Dashboard) -->
   <div id="setupModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-pink-950/40 backdrop-blur-[5px] hidden">
     <div class="setup-panel bg-white/92 backdrop-blur-xl w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-pop">
-      <!-- HEADER -->
-      <div class="px-5 pt-4 pb-3 border-b border-pink-200/60 flex items-center justify-between shrink-0">
+            <!-- HEADER -->
+      <div class="px-5 pt-4 pb-3 border-b border-pink-200/60 flex items-center justify-between shrink-0 bg-gradient-to-r from-pink-500/90 to-rose-500/90">
         <div>
-          <h3 class="text-[15px] font-bold text-pink-950 tracking-wide">⚙️ SETUP BUDGET</h3>
-          <p class="text-[11px] text-pink-800/80 font-semibold mt-0.5">Parameter alokasi &amp; budget bulanan</p>
+          <h3 class="text-[15px] font-bold text-white tracking-wide drop-shadow">⚙️ SETUP BUDGET</h3>
+          <p class="text-[11px] text-white/90 font-semibold mt-0.5 drop-shadow-sm">Parameter alokasi &amp; budget bulanan</p>
         </div>
-        <button id="btnCloseSetup" type="button" class="w-9 h-9 rounded-full bg-white/70 border border-pink-200/70 text-pink-950 font-bold flex items-center justify-center shadow-sm active:scale-90 transition">✕</button>
+        <button id="btnCloseSetup" type="button" class="w-9 h-9 rounded-full bg-white/25 border border-white/40 text-white font-bold flex items-center justify-center shadow-sm active:scale-90 transition backdrop-blur-sm">✕</button>
       </div>
 
       <!-- STAMP (selalu tampil, di-update oleh setup.js) -->
-      <div id="setupDataStamp" class="px-5 py-1.5 text-center text-[11px] font-semibold text-pink-800/75 shrink-0">
+      <div id="setupDataStamp" class="px-5 py-1.5 text-center text-[11px] font-semibold text-white/95 shrink-0 bg-pink-500/80 backdrop-blur-sm">
         📅 Memuat data setup...
       </div>
 
