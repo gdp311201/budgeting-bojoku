@@ -1,5 +1,5 @@
 /* =========================================================
-   BUDGETING MASTER SYNC — CUSTOM STYLES (v7 · GLASS EDITION)
+   BUDGETING MASTER SYNC — CUSTOM STYLES (v8 · GLASS EDITION)
    ========================================================= */
 
 html, body {
@@ -18,7 +18,8 @@ body {
    WALLPAPER GAJAH (BACKGROUND MODUL 1–5)
    Dipasang sebagai layer fixed via pseudo-element — aman untuk
    iOS Safari (background-attachment: fixed bermasalah di iOS).
-   Login screen punya background sendiri & otomatis menutup layer ini.
+   Layer kedua = fallback gradient: kalau link imgbb mati,
+   background otomatis memakai gradasi pink-putih.
    ========================================================= */
 
 body::before {
@@ -26,7 +27,12 @@ body::before {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: -2;
-  background: url('https://i.ibb.co/xKFPK6xD/wp8104164.jpg') center center / cover no-repeat;
+  background-image:
+    url('https://i.ibb.co/3XcMMzX/wp8104164.jpg'),
+    linear-gradient(135deg, #8a96a8 0%, #ba9eb1 50%, #e3b9ca 100%);
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 /* Veil gradasi pink-putih tipis di atas wallpaper supaya komponen
@@ -432,9 +438,6 @@ select option[disabled] {
 
 /* =========================================================
    SWIPE CARD ACTIONS — EDIT (kanan) / HAPUS (kiri), gaya Gmail
-   Kartu kini translucent — tombol aksi di belakangnya dibuat
-   fade-in hanya saat kartu sedang digeser / terbuka, supaya
-   tidak "membayangi" kartu dalam kondisi normal.
    ========================================================= */
 
 .swipe-item {
@@ -455,8 +458,7 @@ select option[disabled] {
   transition: opacity 0.16s ease;
 }
 
-/* Terlihat saat: kartu terbuka, ATAU sedang diseret
-   (inline style "translate" terpasang oleh handler drag) */
+/* Terlihat saat: kartu terbuka, ATAU sedang diseret */
 .swipe-item.swipe-open .swipe-actions,
 .swipe-item:has(.swipe-content[style*="translate"]) .swipe-actions {
   opacity: 1;
