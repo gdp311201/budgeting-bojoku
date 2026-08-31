@@ -38,7 +38,7 @@
   --blur-mini: 12px;
 
   /* [7] Blur kartu hasil pencarian & kotak PIN */
-  --blur-card: 10px;
+  --blur-card: 5px;
 
   /* [8] Blur kolom input & dropdown */
   --blur-input: 8px;
