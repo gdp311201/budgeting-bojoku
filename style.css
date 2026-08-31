@@ -47,7 +47,7 @@
 
   /* [9] Gelap-terang WALLPAPER modul 1–5 (brightness)
          1 = normal · 0.75 = lebih gelap · 1.15 = lebih terang */
-  --dim-wallpaper: 1;
+  --dim-wallpaper: 0.75;
 
   /* [10] Kekuatan VEIL (lapisan pink-putih di atas wallpaper).
           Memengaruhi kesan terang keseluruhan background.
