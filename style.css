@@ -3,12 +3,12 @@
    ========================================================= */
 
 /* =========================================================
-   🎛️ TUNING PANEL — PUSAT KONTROL BLUR
-   Semua angka blur diatur dari blok ini saja.
+   🎛️ TUNING PANEL — PUSAT KONTROL BLUR & GELAP/TERANG
+   Semua angka diatur dari blok ini saja.
    Setelah ubah: push ke GitHub → naikkan ?v= di index.html
    → hard refresh di HP.
 
-   Panduan nilai (semakin besar = semakin kabur):
+   Panduan nilai blur (semakin besar = semakin kabur):
      0px    = tanpa blur (jernih)
      6-10px = blur tipis
      14-18px = blur sedang
@@ -16,30 +16,56 @@
    ========================================================= */
 :root {
 
+  /* ---------- BLUR ---------- */
+
   /* [1] Blur WALLPAPER belakang modul 1–5
          (default 0 = wallpaper jelas; coba 6px-10px kalau mau lembut) */
-  --blur-wallpaper: 1px;
+  --blur-wallpaper: 0px;
 
   /* [2] Blur wallpaper LOCK SCREEN (login) */
-  --blur-lockscreen: 1.8px;
+  --blur-lockscreen: 8px;
 
   /* [3] Redup lock screen (0.5 = gelap, 0.72 = default, 1 = terang) */
   --dim-lockscreen: 0.72;
 
   /* [4] Blur kontainer besar halaman (kartu putih utama) */
-  --blur-page: 3px;
+  --blur-page: 16px;
 
   /* [5] Blur menu bar navigasi bawah */
-  --blur-nav: 3px;
+  --blur-nav: 22px;
 
   /* [6] Blur kotak filter, wadah list, kartu dashboard & baris mutasi */
   --blur-mini: 12px;
 
   /* [7] Blur kartu hasil pencarian & kotak PIN */
-  --blur-card: 10px;
+  --blur-card: 16px;
 
   /* [8] Blur kolom input & dropdown */
   --blur-input: 8px;
+
+  /* ---------- GELAP / TERANG ---------- */
+
+  /* [9] Gelap-terang WALLPAPER modul 1–5 (brightness)
+         1 = normal · 0.75 = lebih gelap · 1.15 = lebih terang */
+  --dim-wallpaper: 1;
+
+  /* [10] Kekuatan VEIL (lapisan pink-putih di atas wallpaper).
+          Memengaruhi kesan terang keseluruhan background.
+          1 = seperti sekarang · 0.5 = setengah kuat (wallpaper lebih
+          terlihat) · 0 = tanpa veil sama sekali */
+  --veil-strength: 1;
+
+  /* [11] Terang-putih-nya KARTU HALAMAN utama (app-shell).
+          0.30 = seperti sekarang · makin BESAR = makin putih/solid ·
+          makin KECIL = makin transparan (wallpaper tembus) */
+  --page-light: 0.30;
+
+  /* [12] Gelap-nya KARTU HALAMAN utama (nuansa dark mode).
+          0 = mati (normal) · 0.2 = agak gelap · 0.35 = cukup gelap.
+          ⚠ PAKAI HATI-HATI: teks app ini berwarna gelap, jadi kalau
+          kartu terlalu gelap, tulisannya susah kebaca. Max aman ±0.3.
+          Tips: pasangkan dengan --page-light kecil (mis. 0.10). */
+  --page-dark: 0;
 }
 
 /* =========================================================
@@ -60,9 +86,9 @@ body {
 
 /* =========================================================
    WALLPAPER GAJAH (BACKGROUND MODUL 1–5)
-   - Blur-nya diatur via --blur-wallpaper di TUNING PANEL.
+   - Blur via --blur-wallpaper, gelap/terang via --dim-wallpaper.
    - Area diperluas -40px keluar viewport supaya tepi putih
-     hasil blur tersembunyi (aman untuk nilai blur berapapun).
+     hasil blur tersembunyi.
    - Layer kedua = fallback gradient kalau link imgbb mati.
    ========================================================= */
 
@@ -77,17 +103,18 @@ body::before {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  filter: blur(var(--blur-wallpaper));
+  filter: blur(var(--blur-wallpaper)) brightness(var(--dim-wallpaper));
 }
 
-/* Veil gradasi pink-putih di atas wallpaper supaya komponen kaca
-   tetap elegan & teks tetap terbaca. */
+/* Veil gradasi pink-putih di atas wallpaper.
+   Kekuatannya diatur via --veil-strength. */
 body::after {
   content: "";
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   z-index: -1;
   pointer-events: none;
+  opacity: var(--veil-strength);
   background: linear-gradient(
     165deg,
     rgba(255, 246, 250, 0.45) 0%,
@@ -108,8 +135,8 @@ input, select, textarea {
 
 /* =========================================================
    LOCK SCREEN — wallpaper blur & redup
-   Blur via --blur-lockscreen, redup via --dim-lockscreen
-   (keduanya di TUNING PANEL).
+   Blur via --blur-lockscreen, redup via --dim-lockscreen.
+   (Independent dari modul 1–5.)
    ========================================================= */
 
 #lockScreen {
@@ -204,11 +231,17 @@ input, select, textarea {
 }
 
 /* =========================================================
-   KONTAINER UTAMA (KARTU HALAMAN) — blur via --blur-page
+   KONTAINER UTAMA (KARTU HALAMAN) — 
+   Terang via --page-light, gelap via --page-dark,
+   blur via --blur-page. Semua di TUNING PANEL.
    ========================================================= */
 
 .app-shell {
-  background: rgba(255, 255, 255, 0.30);
+  background-color: transparent;
+  /* Dua lapis: [lapis putih (di atas)] + [lapis gelap (di bawah)] */
+  background-image:
+    linear-gradient(rgba(255, 255, 255, var(--page-light)), rgba(255, 255, 255, var(--page-light))),
+    linear-gradient(rgba(44, 26, 38, var(--page-dark)), rgba(44, 26, 38, var(--page-dark)));
   backdrop-filter: blur(var(--blur-page)) saturate(1.4);
   -webkit-backdrop-filter: blur(var(--blur-page)) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.55);
