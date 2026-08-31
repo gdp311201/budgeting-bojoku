@@ -30,26 +30,27 @@
   <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Custom CSS (?v=8 = cache buster) -->
-  <link rel="stylesheet" href="style.css?v=8">
+  <!-- Custom CSS (?v=9 = cache buster) -->
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-32">
 
-  <!-- LOCK SCREEN / LOGIN PIN -->
-  <div id="lockScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#ca9bb2] transition-all duration-700 ease-in-out">
-    <div class="absolute inset-0 opacity-20 pointer-events-none watermark-bg"></div>
+  <!-- LOCK SCREEN / LOGIN PIN (wallpaper blur & redup via style.css) -->
+  <div id="lockScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center transition-all duration-700 ease-in-out">
     
     <div class="relative z-10 text-center px-4 w-full max-w-xs">
+      <!-- IKON GAJAH — JANGAN DIRUBAH -->
       <div class="animate-glow-elephant inline-block mb-3">
         <img src="https://i.ibb.co/dJDL0bzv/Untitled-design.png" alt="Elephant Logo" class="w-44 h-44 sm:w-52 sm:h-52 object-contain">
       </div>
       
-      <span class="block text-xs font-semibold uppercase tracking-[0.25em] text-pink-200/90 mb-1">Welcome Back</span>
-      <h2 class="text-white font-bold text-2xl sm:text-3xl tracking-tight">Budgeting Master Sync</h2>
-      <p class="text-pink-100/80 text-xs font-normal mt-1.5 tracking-wide">Made with Love, Julyo Sechar ❤️</p>
+      <span class="text-glow block text-[11px] font-semibold uppercase tracking-[0.25em] text-white/85 mb-1">Welcome Back</span>
+      <h2 class="text-glow text-white font-bold text-2xl sm:text-3xl tracking-tight drop-shadow-lg">Budgeting Master Sync</h2>
+      <p class="text-glow text-white/85 text-xs font-normal mt-1.5 tracking-wide">Made with Love, Julyo Sechar ❤️</p>
 
-      <div id="pinBox" class="mt-6 glass-card p-4 rounded-2xl shadow-lg border border-white/60">
-        <label for="pinInput" class="block text-xs font-semibold text-pink-950/80 mb-2 tracking-wide">
+      <!-- KONTAINER PIN — glass transparan (styled by #pinBox di CSS) -->
+      <div id="pinBox" class="mt-6 p-4 rounded-2xl">
+        <label for="pinInput" class="text-glow block text-xs font-semibold text-white/90 mb-2 tracking-wide">
           🔒 MASUKKAN 6 DIGIT PIN
         </label>
         
@@ -62,16 +63,24 @@
             pattern="[0-9]*"
             autocomplete="off"
             placeholder="• • • • • •" 
-            class="w-full text-center text-lg font-bold tracking-[0.3em] py-2 px-3 rounded-xl bg-white/45 backdrop-blur-md border border-pink-300/70 text-pink-950 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:bg-white/70 placeholder-pink-300"
+            class="w-full text-center text-lg font-bold tracking-[0.3em] py-2 px-3 rounded-xl bg-white/40 backdrop-blur-md border border-white/50 text-pink-950 focus:outline-none focus:ring-2 focus:ring-pink-200/80 focus:bg-white/60 placeholder-pink-400/80"
           >
-          <button type="button" id="btnTogglePin" class="absolute right-3 text-pink-700/70 hover:text-pink-950 text-xs font-medium focus:outline-none">
+          <button type="button" id="btnTogglePin" class="absolute right-3 text-pink-950/60 hover:text-pink-950 text-xs font-medium focus:outline-none">
             <span id="eyeIcon">👁️</span>
           </button>
         </div>
 
-        <p id="pinError" class="text-[11px] font-bold text-rose-800 hidden mt-2">
-          ❌ PIN Salah! Coba lagi.
+        <p id="pinError" class="hidden mt-2">
+          <span class="inline-block text-[11px] font-bold text-white bg-rose-500/85 border border-rose-300/40 rounded-full px-3 py-1 shadow-md">
+            ❌ PIN Salah! Coba lagi.
+          </span>
         </p>
+      </div>
+
+      <!-- LIVE TIMESTAMP (jam, hari & tanggal — otomatis jalan via .live-clock) -->
+      <div class="mt-4 inline-flex items-center justify-center">
+        <span class="live-dot live-dot-sm" aria-hidden="true"></span>
+        <span class="live-clock lock-clock">--:--:-- WIB | -</span>
       </div>
     </div>
   </div>
