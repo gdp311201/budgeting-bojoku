@@ -30,8 +30,8 @@
   <!-- html2canvas Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Custom CSS (?v=14 = cache buster) -->
-  <link rel="stylesheet" href="style.css?v=15">
+  <!-- Custom CSS (?v=16 = cache buster) -->
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body class="flex flex-col items-center justify-start min-h-screen p-3 sm:p-4 pb-32">
 
@@ -84,6 +84,15 @@
       </div>
     </div>
   </div>
+
+  <!-- 🎵 MUSIK BACKSOUND — tombol & audio
+       (FAB z-index 45 < lock screen 50 → hanya kelihatan SETELAH login;
+        musik dipicu di verifyPin() saat PIN benar) -->
+  <button id="btnMusicFab" type="button" aria-label="Musik" title="Nyalakan / matikan musik">
+    <span class="music-icon">🎵</span>
+    <span class="music-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+  </button>
+  <audio id="bgMusic" src="backsound.mp3" loop preload="auto"></audio>
 
   <!-- MAIN CONTAINER -->
   <div id="appShell" class="w-full max-w-md app-shell rounded-3xl p-5 sm:p-6 relative overflow-hidden my-auto">
@@ -839,11 +848,11 @@
     </div>
   </div>
 
-      <!-- MODAL SETUP BUDGET (tersembunyi — buka via LONG-PRESS kartu Total Aset di Dashboard) -->
+  <!-- MODAL SETUP BUDGET (tersembunyi — buka via LONG-PRESS kartu Total Aset di Dashboard) -->
   <div id="setupModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-pink-950/40 backdrop-blur-[5px] hidden">
     <div class="setup-panel bg-white/92 backdrop-blur-xl w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-pop">
-      <!-- HEADER -->
-      <div class="px-5 pt-4 pb-3 border-b border-pink-200/60 flex items-center justify-between shrink-0">
+      <!-- HEADER (gradient pink agar teks putih terbaca) -->
+      <div class="px-5 pt-4 pb-3 border-b border-pink-200/60 flex items-center justify-between shrink-0 bg-gradient-to-r from-pink-500/90 to-rose-500/90">
         <div>
           <h3 class="text-[15px] font-bold text-white tracking-wide drop-shadow">⚙️ SETUP BUDGET</h3>
           <p class="text-[11px] text-white/90 font-semibold mt-0.5 drop-shadow-sm">Parameter alokasi &amp; budget bulanan</p>
@@ -852,7 +861,7 @@
       </div>
 
       <!-- STAMP (selalu tampil, di-update oleh setup.js) -->
-      <div id="setupDataStamp" class="px-5 py-1.5 text-center text-[11px] font-semibold text-white/95 shrink-0 bg-pink-950/40 backdrop-blur-[5px]">
+      <div id="setupDataStamp" class="px-5 py-1.5 text-center text-[11px] font-semibold text-white/95 shrink-0 bg-pink-500/80 backdrop-blur-sm">
         📅 Memuat data setup...
       </div>
 
@@ -894,7 +903,7 @@
 
   <!-- =========================================================
        CORE APP — inline script BIASA (bukan module, tanpa import).
-       Login, navigasi dasar, jam live & glider jalan di sini,
+       Login, musik, navigasi dasar, jam live & glider jalan di sini,
        KEBAL terhadap error di script.js / modul lain.
        ========================================================= -->
   <script>
@@ -913,6 +922,9 @@
     function verifyPin() {
       if (!pinInput) return;
       if (pinInput.value === CORRECT_PIN) {
+        // 🎵 Musik mulai di sini — ngetik PIN = user gesture → play() diizinkan browser
+        musicPlay();
+
         if (pinError) pinError.classList.add('hidden');
         if (lockScreen) {
           lockScreen.classList.add('opacity-0', 'pointer-events-none');
@@ -949,6 +961,79 @@
         else { pinInput.type = 'password'; eyeIcon.innerText = '👁️'; }
       });
     }
+
+    /* ---------- 1b) MUSIK BACKSOUND ---------- */
+    var bgMusic = document.getElementById('bgMusic');
+    var btnMusicFab = document.getElementById('btnMusicFab');
+    var musicWanted = (localStorage.getItem('bms_music') !== 'off'); // default: ON
+    var musicFadeTimer = null;
+    var MUSIC_VOLUME = 0.35; // pelan — musik latar, bukan konser
+
+    function musicFadeTo(target, done) {
+      if (!bgMusic) { if (done) done(); return; }
+      if (musicFadeTimer) clearInterval(musicFadeTimer);
+      var steps = 16;
+      var start = bgMusic.volume;
+      var i = 0;
+      musicFadeTimer = setInterval(function () {
+        i++;
+        bgMusic.volume = Math.max(0, Math.min(1, start + (target - start) * (i / steps)));
+        if (i >= steps) {
+          clearInterval(musicFadeTimer);
+          musicFadeTimer = null;
+          if (done) done();
+        }
+      }, 50);
+    }
+
+    function updateMusicFab() {
+      if (!btnMusicFab) return;
+      btnMusicFab.classList.toggle('music-on', !!(bgMusic && !bgMusic.paused));
+    }
+
+    function musicPlay() {
+      if (!bgMusic || !musicWanted) return;
+      if (bgMusic.paused) {
+        bgMusic.volume = 0;
+        var p = bgMusic.play();
+        if (p && typeof p.then === 'function') {
+          p.then(function () {
+            musicFadeTo(MUSIC_VOLUME);
+            updateMusicFab();
+          }).catch(function () {
+            // Autoplay diblokir browser → coba lagi di interaksi berikutnya
+            var retry = function () {
+              document.removeEventListener('pointerdown', retry);
+              if (musicWanted && bgMusic.paused) {
+                bgMusic.play().then(function () {
+                  musicFadeTo(MUSIC_VOLUME);
+                  updateMusicFab();
+                }).catch(function () { updateMusicFab(); });
+              }
+            };
+            document.addEventListener('pointerdown', retry);
+          });
+        } else {
+          musicFadeTo(MUSIC_VOLUME);
+        }
+      } else {
+        musicFadeTo(MUSIC_VOLUME);
+      }
+      updateMusicFab();
+    }
+
+    function musicPause() {
+      if (!bgMusic) return;
+      musicFadeTo(0, function () { bgMusic.pause(); updateMusicFab(); });
+    }
+
+    function toggleMusic() {
+      musicWanted = !musicWanted;
+      try { localStorage.setItem('bms_music', musicWanted ? 'on' : 'off'); } catch (err) { /* aman */ }
+      if (musicWanted) musicPlay(); else musicPause();
+    }
+
+    if (btnMusicFab) btnMusicFab.addEventListener('click', toggleMusic);
 
     /* ---------- 2) LIVE CLOCK (WIB, tanpa Intl) ---------- */
     function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -1098,7 +1183,7 @@
   })();
   </script>
 
-  <!-- Enhancement layer: swipe carousel, module loader (?v=7 = cache buster baru) -->
+  <!-- Enhancement layer: swipe carousel, module loader (?v=7, tidak berubah) -->
   <script type="module" src="script.js?v=7"></script>
 </body>
 </html>
