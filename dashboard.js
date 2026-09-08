@@ -152,7 +152,7 @@ function renderDashboardUI(data) {
     if (document.getElementById('dashSeabank')) document.getElementById('dashSeabank').innerText = formatRupiah(seabank);
     if (document.getElementById('dashBca')) document.getElementById('dashBca').innerText = formatRupiah(bca);
     if (document.getElementById('dashMandiri')) document.getElementById('dashMandiri').innerText = formatRupiah(mandiri);
-    if (document.getElementById('dashDana')) document.getElementById('dashDana').innerText = formatRuhiah(dana);
+    if (document.getElementById('dashDana')) document.getElementById('dashDana').innerText = formatRupiah(dana);
     if (document.getElementById('dashCash')) document.getElementById('dashCash').innerText = formatRupiah(cash);
 
     const totalKasBank = seabank + bca + mandiri + dana + cash;
