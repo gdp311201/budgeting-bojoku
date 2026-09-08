@@ -967,7 +967,7 @@
     var btnMusicFab = document.getElementById('btnMusicFab');
     var musicWanted = (localStorage.getItem('bms_music') !== 'off'); // default: ON
     var musicFadeTimer = null;
-    var MUSIC_VOLUME = 0.35; // pelan — musik latar, bukan konser
+    var MUSIC_VOLUME = 0.35;
 
     function musicFadeTo(target, done) {
       if (!bgMusic) { if (done) done(); return; }
@@ -1180,6 +1180,33 @@
     document.addEventListener('touchmove', function (e) {
       if (e.scale !== 1) { e.preventDefault(); }
     }, { passive: false });
+
+    /* ---------- 8) AUTO-SYNC DROPDOWN BULAN/TAHUN → WAKTU SEKARANG (WIB) ---------- */
+    /* Dropdown Bulan/Tahun di Dashboard, E-Receipt & Mutasi otomatis mengikuti
+       bulan berjalan (pakai jam WIB, sama kayak jam live di app).
+       Contoh: sekarang September → semua dropdown langsung SEPTEMBER saat app
+       dibuka. Bulan/tahun bergeser ke depan → dropdown ikut otomatis.
+       (searchBulan tetap "SEMUA" — default desain modul pencarian;
+        searchTahun ikut disinkronkan.) */
+    function syncBulanTahunSekarang() {
+      var n = wibNow();
+      var bulanIni = BULAN[n.getMonth()].toUpperCase(); // 'JANUARI' … 'DESEMBER'
+      var tahunIni = String(n.getFullYear());
+
+      var bulanIds = ['dashBulan', 'receiptBulan', 'mutasiBulan'];
+      for (var b = 0; b < bulanIds.length; b++) {
+        var selB = document.getElementById(bulanIds[b]);
+        if (selB) selB.value = bulanIni;
+      }
+
+      var tahunIds = ['dashTahun', 'receiptTahun', 'mutasiTahun', 'searchTahun'];
+      for (var t = 0; t < tahunIds.length; t++) {
+        var selT = document.getElementById(tahunIds[t]);
+        if (selT) selT.value = tahunIni;
+      }
+    }
+
+    syncBulanTahunSekarang(); // jalankan sekali setiap app dibuka
   })();
   </script>
 
