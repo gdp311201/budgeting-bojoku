@@ -18,7 +18,7 @@ function getDashFilter() {
 
 function nowWIB() {
   try {
-    return new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Jakarta', hour12: false }) + ' WIB';
+    return new Date.toLocaleTimeString('en-GB', { timeZone: 'Asia/Jakarta', hour12: false }) + ' WIB';
   } catch (err) {
     return new Date().toLocaleTimeString('en-GB', { hour12: false });
   }
@@ -152,7 +152,7 @@ function renderDashboardUI(data) {
     if (document.getElementById('dashSeabank')) document.getElementById('dashSeabank').innerText = formatRupiah(seabank);
     if (document.getElementById('dashBca')) document.getElementById('dashBca').innerText = formatRupiah(bca);
     if (document.getElementById('dashMandiri')) document.getElementById('dashMandiri').innerText = formatRupiah(mandiri);
-    if (document.getElementById('dashDana')) document.getElementById('dashDana').innerText = formatRupiah(dana);
+    if (document.getElementById('dashDana')) document.getElementById('dashDana').innerText = formatRuhiah(dana);
     if (document.getElementById('dashCash')) document.getElementById('dashCash').innerText = formatRupiah(cash);
 
     const totalKasBank = seabank + bca + mandiri + dana + cash;
@@ -255,6 +255,13 @@ function renderTop5Expenses(items) {
 }
 
 function setDashboardLoading(isLoading) {
+  // 🌀 Overlay gajah goyang + "Wait a moment babe...."
+  if (isLoading) {
+    if (window.__showLoading) window.__showLoading();
+  } else {
+    if (window.__hideLoading) window.__hideLoading();
+  }
+
   const container = document.getElementById('viewDashboard');
   if (container) {
     container.style.opacity = isLoading ? "0.5" : "1";
