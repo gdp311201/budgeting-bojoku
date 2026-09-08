@@ -95,6 +95,16 @@
   </button>
   <audio id="bgMusic" src="backsound.mp3?v=3" loop preload="auto"></audio>
 
+<!-- 🌀 LOADING OVERLAY — gajah goyang + "Wait a moment babe...." -->
+  <div id="loadingOverlay" class="fixed inset-0 z-[55] flex items-center justify-center hidden">
+    <div class="text-center px-6">
+      <div class="loading-elephant inline-block mb-3">
+        <img src="https://i.ibb.co/dJDL0bzv/Untitled-design.png" alt="Memuat..." class="w-32 h-32 sm:w-36 sm:h-36 object-contain">
+      </div>
+      <p class="loading-text">Wait a moment babe....</p>
+    </div>
+  </div>
+  
   <!-- MAIN CONTAINER -->
   <div id="appShell" class="w-full max-w-md app-shell rounded-3xl p-5 sm:p-6 relative overflow-hidden my-auto">
     
@@ -1036,6 +1046,22 @@
 
     if (btnMusicFab) btnMusicFab.addEventListener('click', toggleMusic);
 
+    /* ---------- 1c) LOADING OVERLAY (gajah goyang + glow) ---------- */
+    var loadingOverlayEl = document.getElementById('loadingOverlay');
+    var loadingRef = 0;
+
+    window.__showLoading = function () {
+      if (!loadingOverlayEl) return;
+      loadingRef++;
+      loadingOverlayEl.classList.remove('hidden');
+    };
+
+    window.__hideLoading = function () {
+      if (!loadingOverlayEl) return;
+      loadingRef = Math.max(0, loadingRef - 1);
+      if (loadingRef === 0) loadingOverlayEl.classList.add('hidden');
+    };
+    
     /* ---------- 2) LIVE CLOCK (WIB, tanpa Intl) ---------- */
     function pad(n) { return (n < 10 ? '0' : '') + n; }
     var HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
