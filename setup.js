@@ -12,7 +12,7 @@
 
 import { GAS_URL, showCuteModal } from './transaksi.js';
 
-const LONG_PRESS_MS = 3000;
+const LONG_PRESS_MS = 5000;
 
 let setupReady = false;
 let editMode = false;
